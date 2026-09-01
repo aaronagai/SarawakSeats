@@ -36,4 +36,5 @@ extraction pass and by reading rendered pages.
 
 ## Build
 
-None. Single self-contained `index.html` with the data inlined.
+None. `index.html` carries the data, styles and scripts inline; `kuching.svg`
+is the only separate asset.

@@ -29,6 +29,7 @@ img{max-width:100%}
      which fall through to the platform UI face. */
   --sans:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --rounded:ui-rounded,"SF Pro Rounded","SF Compact Rounded",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --radius:32px;
   --dot-veil:#FEFEFD;
   --dot-blob-1:rgba(20,20,20,.34); --dot-blob-2:rgba(20,20,20,.20); --dot-blob-3:rgba(20,20,20,.14);
   --ground:#FEFEFD; --surface:#FFFFFF; --surface-2:#FAFAF8; --surface-3:#F1F1EE;
@@ -63,7 +64,9 @@ img{max-width:100%}
 
 *{box-sizing:border-box}
 body{
-  background:var(--ground); color:var(--ink);
+  /* the canvas is the sign-off plane, not the page: .page paints --ground on top
+     of it, so its rounded bottom corners actually reveal something */
+  background:var(--surface-3); color:var(--ink);
   font-family:var(--sans);
   font-size:14px; line-height:1.6; -webkit-font-smoothing:antialiased;
 }
@@ -140,6 +143,13 @@ h1{
   font-size:clamp(2.1rem,1.1rem + 3.4vw,3.9rem); line-height:1.08; letter-spacing:-.03em;
   text-wrap:balance; overflow-wrap:break-word; color:var(--ink); max-width:20ch;
 }
+.h1-mark{
+  display:inline-block; height:.82em; width:auto;
+  vertical-align:-.1em; margin:0 .06em 0 .1em;
+}
+/* the mark and the word after it are one unit — Chrome will otherwise break
+   between them and strand the building at the end of a line */
+.h1-unit{white-space:nowrap}
 @media (min-width:1280px){ h1{font-size:58px; letter-spacing:-.022em; max-width:22ch} }
 @media (max-width:579px){
   h1{max-width:13em; font-size:clamp(1.85rem,7.8vw,2.3rem); line-height:1.14; letter-spacing:-.035em}
@@ -276,18 +286,30 @@ mark{
 }
 
 footer{
-  margin-top:64px; padding-top:26px; border-top:1px solid var(--rule);
-  font-size:12px; line-height:1.7; color:var(--muted);
+  margin-top:60px; padding-top:26px; border-top:1px solid var(--rule);
   display:flex; flex-direction:column; gap:12px;
 }
-footer strong{color:var(--ink-2); font-weight:600}
-footer a{color:var(--ink-2); text-decoration:underline; text-underline-offset:3px}
-footer a:hover{color:var(--ink)}
-footer .src{max-width:74ch}
-.foot-mark{
-  font-family:var(--rounded); font-size:12px; font-weight:600;
-  letter-spacing:.26em; text-transform:uppercase; color:var(--ink-2);
+.foot-note{
+  margin:0; max-width:74ch; font-size:12px; font-weight:400; line-height:18px;
+  letter-spacing:-.1px; color:var(--muted);
 }
+.foot-note strong{color:var(--ink-2); font-weight:600}
+.foot-note a{color:var(--ink-2); text-decoration:underline; text-underline-offset:3px}
+.foot-note a:hover{color:var(--ink)}
+.foot-row{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:12px 16px; padding-top:10px;
+}
+.foot-copy{
+  margin:0; font-size:12px; line-height:18px; letter-spacing:-.1px;
+  color:var(--muted); flex:1 1 auto; min-width:0;
+}
+.foot-links{display:flex; align-items:center; gap:16px; flex-shrink:0; margin-left:auto}
+.foot-links a{
+  font-size:12px; line-height:18px; letter-spacing:-.1px;
+  color:var(--muted); text-decoration:none;
+}
+.foot-links a:hover{color:var(--ink)}
 
 @media (max-width:640px){
   .wrap{padding:0 16px 64px}
@@ -311,15 +333,19 @@ footer .src{max-width:74ch}
    that spacer the page never scrolls far enough to expose it, so the no-JS path
    is plain document flow with the sign-off already visible. */
 body.has-reveal .signoff{position:fixed; inset:auto 0 0 0; z-index:0}
+.page{
+  background:var(--ground); margin-bottom:var(--radius);
+  border-bottom-left-radius:var(--radius); border-bottom-right-radius:var(--radius);
+}
 body.has-reveal .page{
   position:relative; z-index:1; display:flow-root;
-  background:var(--ground); margin-bottom:var(--reveal-h,0px);
+  margin-bottom:var(--reveal-h,0px);
 }
 #reveal-sentinel{height:1px; margin-top:-1px}
 /* Nothing to reveal on a short screen, and a fixed band would eat it. */
 @media (max-height:560px){
   body.has-reveal .signoff{position:static}
-  body.has-reveal .page{margin-bottom:0}
+  body.has-reveal .page{margin-bottom:var(--radius)}
 }
 .signoff{
   background:var(--surface-3); text-align:center;
@@ -352,7 +378,7 @@ body.has-reveal .page{
     <div class="wrap hero-inner">
       <div class="bname">SarawakSeats</div>
       <p class="kicker">Sumber dari <span class="kicon" aria-hidden="true"><img src="data:image/webp;base64,UklGRowFAABXRUJQVlA4IIAFAAAwHQCdASotADYAPjESh0KiIQwGqwAQAYJbADSKAieXvyJWesucBtgP5PugPQA/ZLrEf1m9gD9gPTa9ib9xvRVtgDzh76PbP18/dbLd/UPyI/Mj2ct1b/TvyK/Krj/Mj7h3+F/K7+tc4H0p/mHqT/jH9o/Jn+e84NQE/jf87/uX5M/3L4hf5v8s/XL83f5z82P7l9g38b/mf+I/uH7j/4D///937jvW1+sfsm/rK15rcTLY7/RP3z4NtRKQf7LKPBQA01a+X4NX4y095CKYHkLIjHzqxbGKqC2E5eQEYNKZaX4eHBPiZG9RW1ro21hADn0XgAD+//7OAVn+Np//0VSswXuLz4BPsg3qWxNMCLP4C5fgGdnje2aX+y4dfzOT/+s4tVoOhZVE3J5+JJQNzLXvv7/up45L3mJQxWF8WeuXd3uwMV3SOvJzIi3Y7vqrfnPRplUZamD/boaSEUVXQ+zZ9ZAySLU3hmxKb5aNpxrJV9Rsg9Aq55OtR4Rjj4OW0Rnx5Ce6g5rk5TvD0lek+PACpCp9/PaMSGd8ANa0EsklXZD3HrC+4ACaSaG8+QYAWwP4eGNvGcj9Utz/TI6Ypji2wx01kcJcGjF8OkIvVoCeoYJEP0pu03Z3Rvl3/8AYl/SsDke6x163RpZgfQRKs1CfQupdE8sVWu0LP0cdVZUcIEWW5dUdlEWx6Z/FGIk88Ka8i5K+89WrVLwDC7QSNQ2jZwWf/4m51vWTWtDf8eGUP6VgTHxxS954MJTlhaVExxn9Wyfkln1XaYXJzY1eoD1e3fBsP6Zd26Qgyxl/8/nOSFUDIpVO+fqCIQtL1d7G+0snWqRGa6Oe+IuQ+S1IxeKl5UI2yakL/xK98ZWYag6kzzSirHftEs+phdx9J9QFGwLOOp01ZcZeHzHXcNE2I12gfM6zLXOqG2PMtZY2PtUxm6ppVgMNAD0mz1Jp841cgbBnmRtk9BpjXhcMOMf/mCQypyG0NHGXT7CIwI0S1PkqhZDV3onc+YunnBohvPdK5V/iOWJZ6FxKsCCPdigL1YJzVgaizNbw+eGTNw+rQ3aMbmI3jdArt4hxfR3ERS5N8vqhbajO7hm4lOKaj5INCzdMoLMb0dcLszzWuSZGf21UWs2E46gJi+bpbJYvzpnbLxe+wioiE/yrPF+gBYfYeStIlWoAeEp+MVOUXUjgUSgp6c5Zx6f//eeQMhEvyVsTkWFIrQF/ogoMNdLIQfHmdlfh5vvCH7/x+v83ZQafea5Tnzk5/m9M7VOzfmNE1EmXYUpcbZ+10jj8bC0erLq3Yz7DPQLbmegbRQPSUtDTvKg2McHZN8TiuqOAEsn9u35//oobvhdXYMSQ75hbJgRO6R+YIp4tAxwSqwDX//hqIU108iAflIy/waMOOn4KPvhNsVVW/RHI/2f/erUZQQDp1O9SBtwm9sgb0xw8n99hGWmZCR6jXtpC8+N5iSQ0b01q9a+f9ZzLogssuvhRMONrm3OySRSgF5d9DoYNp42S3y7hA7dv4Jy1eSI4cdtLJROHzPfR38qtSr+h2xbO95ZGJ+HVg5TOx4XRaLXgGW9Wfp3+MIlxAppt/uH6Ow4Fa+ZuOsU8Uj6tyPOWky2PMfgtUAmeOTUN5uX8HFUL7NBE+Yn4hXf9/AZXEWu7w2UYjXXKrP6+SuSjNjIo+xpjvweDjbgKVrBkQEQbEHvTDG0m+XX/+Nv85AIs2Wd/+Nipj0w56tYMG/76dgY4DNh3tWLKdU911QOtpqSZsFNuPuBRNslrxukUiuMMng/lOvKiRaOP1PobAQ9TsPKELvjAHFPRKrHzr+P6teya2oQi87xLUcUjNNFSGUP5PEmSaCyIzo+oaFmV+fSZuwdwAN9iCVYa0uAA" alt="" width="45" height="54" decoding="async"></span> SPR Malaysia</p>
-      <h1>Terokai Cadangan Persempadanan Sarawak</h1>
+      <h1>Terokai Cadangan Persempadanan<span class="h1-unit"><img class="h1-mark" src="kuching.svg" alt="" width="483" height="425" decoding="async">Sarawak</span></h1>
       <p class="lede">Terokai cadangan persempadanan baharu Sarawak berdasarkan data yang diterbitkan oleh SPR, lengkap dengan maklumat kawasan dan bilangan pengundi.</p>
       <div class="hero-ctas">
         <button class="cta cta--fill" type="button" id="ctaSearch">Cari daerah mengundi</button>
@@ -390,9 +416,14 @@ body.has-reveal .page{
   <div class="list" id="list"></div>
 
   <footer>
-    <p class="src"><strong>Sumber:</strong> Notis Syor Untuk Pameran Kali Pertama (Jadual Kedua), Suruhanjaya Pilihan Raya Malaysia &mdash; notis di bawah Seksyen 4 Bahagian II Jadual Ketiga Belas kepada Perlembagaan Persekutuan, Fasal (2) Perkara 113. Bilangan pemilih berdasarkan Daftar Pemilih yang diwartakan pada 29 Januari 2026 [P.U. (B) 35/2026].</p>
-    <p>Angka di halaman ini disemak terhadap jumlah kecil setiap DUN dan setiap parlimen dalam notis asal, serta jumlah keseluruhan 2,037,648 pemilih. <a href="https://myst.spr.gov.my/pameran-syor" target="_blank" rel="noopener">Portal rasmi pameran syor SPR</a></p>
-    <p><span class="foot-mark">SarawakSeats</span><br>Halaman tidak rasmi &mdash; untuk memudahkan pembacaan sahaja. Rujuk dokumen SPR untuk tujuan rasmi.</p>
+    <p class="foot-note"><strong>Sumber:</strong> Notis Syor Untuk Pameran Kali Pertama (Jadual Kedua), Suruhanjaya Pilihan Raya Malaysia &mdash; notis di bawah Seksyen 4 Bahagian II Jadual Ketiga Belas kepada Perlembagaan Persekutuan, Fasal (2) Perkara 113. Bilangan pemilih berdasarkan Daftar Pemilih yang diwartakan pada 29 Januari 2026 [P.U. (B) 35/2026]. Angka disemak terhadap jumlah kecil setiap DUN dan setiap parlimen dalam notis asal, serta jumlah keseluruhan 2,037,648 pemilih.</p>
+    <div class="foot-row">
+      <p class="foot-copy">&copy; 2026 SarawakSeats. Halaman tidak rasmi &mdash; rujuk dokumen SPR untuk tujuan rasmi.</p>
+      <div class="foot-links">
+        <a href="https://myst.spr.gov.my/pameran-syor" target="_blank" rel="noopener">Portal SPR</a>
+        <a href="https://github.com/aaronagai/SarawakSeats" target="_blank" rel="noopener">GitHub</a>
+      </div>
+    </div>
   </footer>
     <div id="reveal-sentinel" aria-hidden="true"></div>
 </div>
