@@ -29,6 +29,8 @@ img{max-width:100%}
      which fall through to the platform UI face. */
   --sans:system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
   --rounded:ui-rounded,"SF Pro Rounded","SF Compact Rounded",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --dot-veil:#FEFEFD;
+  --dot-blob-1:rgba(20,20,20,.34); --dot-blob-2:rgba(20,20,20,.20); --dot-blob-3:rgba(20,20,20,.14);
   --ground:#FEFEFD; --surface:#FFFFFF; --surface-2:#FAFAF8; --surface-3:#F1F1EE;
   --ink:#333333; --ink-2:#5C5C5A; --muted:#909088;
   --rule:#E3E3DF; --rule-2:#CBCBC5;
@@ -38,6 +40,8 @@ img{max-width:100%}
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
+    --dot-veil:#161615;
+    --dot-blob-1:rgba(236,236,231,.30); --dot-blob-2:rgba(236,236,231,.18); --dot-blob-3:rgba(236,236,231,.12);
     --ground:#161615; --surface:#1C1C1B; --surface-2:#201F1E; --surface-3:#2A2A27;
     --ink:#EDEDEA; --ink-2:#B6B6B1; --muted:#87877F;
     --rule:#2E2E2B; --rule-2:#424240;
@@ -47,6 +51,8 @@ img{max-width:100%}
   }
 }
 :root[data-theme="dark"]{
+  --dot-veil:#161615;
+  --dot-blob-1:rgba(236,236,231,.30); --dot-blob-2:rgba(236,236,231,.18); --dot-blob-3:rgba(236,236,231,.12);
   --ground:#161615; --surface:#1C1C1B; --surface-2:#201F1E; --surface-3:#2A2A27;
   --ink:#EDEDEA; --ink-2:#B6B6B1; --muted:#87877F;
   --rule:#2E2E2B; --rule-2:#424240;
@@ -70,17 +76,71 @@ body{
 }
 
 /* ---------- masthead ---------- */
-.mast{padding:56px 0 0; display:flex; flex-direction:column; align-items:center; text-align:center; gap:20px}
+/* ---------- Hero, after the petrolprice landing page ----------
+   Dotted glow: a veil in the page colour with 1.2px holes punched through it,
+   over blurred blobs. The dots only read where a blob sits behind them. The
+   original hardcodes #fff, so veil and blobs are tokens here to survive dark. */
+.hero{position:relative; isolation:isolate; overflow:hidden;
+  padding:clamp(30px,6vh,64px) 0 clamp(26px,4vh,46px)}
+.hero-inner{position:relative; z-index:1; display:flex; flex-direction:column;
+  align-items:center; text-align:center; padding-bottom:0}
+.hero-dots{position:absolute; inset:0; z-index:0; pointer-events:none; contain:paint}
+.hero-dots-glow{
+  position:absolute; inset:-12%; background-color:var(--dot-veil);
+  background-image:
+    radial-gradient(ellipse 28% 24% at 32% 40%, var(--dot-blob-1), transparent 62%),
+    radial-gradient(ellipse 22% 28% at 68% 52%, var(--dot-blob-2), transparent 68%),
+    radial-gradient(ellipse 18% 18% at 50% 22%, var(--dot-blob-3), transparent 65%);
+  background-repeat:no-repeat; background-size:140% 140%,155% 150%,130% 130%;
+  filter:blur(10px); transform:translateZ(0);
+  animation:hero-dots-drift 2.5s ease-in-out infinite alternate;
+}
+.hero-dots-mask{position:absolute; inset:0; background-size:10px 10px;
+  background-image:radial-gradient(circle at center, transparent 0, transparent 1.2px, var(--dot-veil) 1.35px);
+}
+.hero-dots-fade{position:absolute; inset:0;
+  background:linear-gradient(to bottom, transparent 42%, var(--dot-veil) 90%)}
+@keyframes hero-dots-drift{
+  0%{background-position:0% 12%,82% 18%,42% 78%}
+  100%{background-position:58% 72%,8% 78%,68% 8%}
+}
+@media (max-width:639px){
+  .hero-dots-mask{background-size:12px 12px}
+  .hero-dots-glow{filter:blur(12px)}
+}
+.kicker{
+  display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:.4em;
+  margin:15px 0 0; font-size:13.5px; font-weight:500; line-height:20px;
+  letter-spacing:-.09px; color:var(--ink-2);
+}
+.kicker .kdot{width:4px; height:4px; border-radius:50%; background:var(--muted); flex:none}
+.hero-ctas{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:24px}
+.cta{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  border-radius:32px; font-family:inherit; font-weight:500; font-size:15px;
+  line-height:1; letter-spacing:-.09px; text-decoration:none;
+  padding:0 20px; height:44px; border:1px solid transparent; cursor:pointer;
+  transition:background-color 100ms ease, border-color .15s ease, color .15s ease;
+}
+.cta--fill{background:var(--ink); color:var(--ground)}
+.cta--fill:hover{background:var(--ink-2)}
+.cta--ghost{background:var(--surface); color:var(--ink); border-color:var(--rule-2)}
+.cta--ghost:hover{border-color:var(--muted)}
 .bname{
   font-family:var(--rounded); font-size:19px; font-weight:600;
   letter-spacing:.26em; text-transform:uppercase; color:var(--ink); text-indent:.26em;
 }
 h1{
-  margin:0; font-family:var(--sans); font-weight:600;
-  font-size:clamp(24px,4.1vw,38px); line-height:1.18; letter-spacing:-.005em;
-  text-transform:uppercase; text-wrap:balance; color:var(--ink); max-width:24ch;
+  margin:15px auto 0; font-family:var(--sans); font-weight:400;
+  font-size:clamp(2.1rem,1.1rem + 3.4vw,3.9rem); line-height:1.08; letter-spacing:-.03em;
+  text-wrap:balance; overflow-wrap:break-word; color:var(--ink); max-width:15ch;
 }
-.lede{margin:0; max-width:56ch; color:var(--ink-2); font-size:14.5px; line-height:1.7}
+@media (min-width:1280px){ h1{font-size:60px; letter-spacing:-.022em; max-width:16ch} }
+@media (max-width:579px){
+  h1{max-width:11em; font-size:clamp(2rem,8.4vw,2.4rem); line-height:1.12; letter-spacing:-.035em}
+}
+.lede{margin:16px auto 0; max-width:460px; padding:0 8px; font-size:16.5px;
+  line-height:26px; letter-spacing:-.22px; color:var(--ink-2); font-weight:400}
 
 
 /* ---------- stat row ---------- */
@@ -226,7 +286,8 @@ footer .src{max-width:74ch}
 
 @media (max-width:640px){
   .wrap{padding:0 16px 64px}
-  .mast{padding-top:38px; gap:16px}
+  .hero{padding-top:34px}
+  .hero-ctas{margin-top:20px}
   .stats{margin-top:38px}
   .stat{border-left:0; border-top:1px solid var(--rule); padding:16px 0}
   .stat:first-child{border-top:0}
@@ -275,11 +336,27 @@ body.has-reveal .page{
 <body>
 <div class="page">
 <div class="wrap">
-  <header class="mast">
-    <div class="bname">SarawakSeats</div>
-    <h1>Syor Persempadanan Sarawak</h1>
-    <p class="lede">Kesemua 99 bahagian pilihan raya negeri (DUN) yang dicadangkan bagi Negeri Sarawak, dengan setiap daerah mengundi dan bilangan pemilihnya. Cari nama kampung, taman atau DUN anda di bawah.</p>
-  </header>
+</div>
+
+  <section class="hero">
+    <div class="hero-dots" aria-hidden="true">
+      <div class="hero-dots-glow"></div>
+      <div class="hero-dots-mask"></div>
+      <div class="hero-dots-fade"></div>
+    </div>
+    <div class="wrap hero-inner">
+      <div class="bname">SarawakSeats</div>
+      <p class="kicker">Syor dicadangkan<span class="kdot" aria-hidden="true"></span>Pameran awam 1&ndash;30 September 2026</p>
+      <h1>Syor Persempadanan Sarawak</h1>
+      <p class="lede">Kesemua 99 bahagian pilihan raya negeri (DUN) yang dicadangkan bagi Negeri Sarawak, dengan setiap daerah mengundi dan bilangan pemilihnya.</p>
+      <div class="hero-ctas">
+        <button class="cta cta--fill" type="button" id="ctaSearch">Cari daerah mengundi</button>
+        <a class="cta cta--ghost" href="https://myst.spr.gov.my/pameran-syor" target="_blank" rel="noopener">Portal rasmi SPR</a>
+      </div>
+    </div>
+  </section>
+
+<div class="wrap">
 
   <section class="stats" aria-label="Ringkasan">
     <div class="stat"><span class="k">Bahagian Negeri</span><span class="v">99</span><span class="s">DUN dicadangkan &middot; tambah 17</span></div>
@@ -464,6 +541,12 @@ body.has-reveal .page{
     var term = qEl.value.trim().toLowerCase();
     shown.forEach(function(c){ setOpen(c.el, c.panel, c.head, c.d, open, term); });
     toggleEl.textContent = open ? "Tutup semua" : "Buka semua";
+  });
+
+  var ctaSearch = document.getElementById("ctaSearch");
+  if (ctaSearch) ctaSearch.addEventListener("click", function(){
+    qEl.scrollIntoView({block:"center", behavior:"smooth"});
+    qEl.focus({preventScroll:true});
   });
 
   qEl.addEventListener("input", render);
