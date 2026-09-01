@@ -80,16 +80,6 @@ h1{
 }
 .lede{margin:0; max-width:56ch; color:var(--ink-2); font-size:14.5px; line-height:1.7}
 
-.notice{
-  width:100%; max-width:64ch; margin-top:6px;
-  border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
-  padding:15px 0; display:flex; flex-direction:column; gap:7px; text-align:left;
-}
-.notice .nlabel{
-  font-family:Inter,sans-serif; font-size:10px; font-weight:600;
-  letter-spacing:.18em; text-transform:uppercase; color:var(--ink);
-}
-.notice p{margin:0; font-size:13px; line-height:1.65; color:var(--ink-2)}
 
 /* ---------- stat row ---------- */
 .stats{
@@ -172,19 +162,6 @@ select{appearance:none; padding-right:30px; cursor:pointer;
 }
 .dmeta .pcode{letter-spacing:.1em}
 .dright{display:flex; align-items:center; gap:18px}
-.dnum{text-align:right}
-.dnum .n{
-  display:block; font-family:Inter,sans-serif; font-size:16px; font-weight:400;
-  font-variant-numeric:lining-nums tabular-nums; letter-spacing:-.01em;
-  line-height:1.2; color:var(--ink);
-}
-.dnum .l{
-  font-family:Inter,sans-serif; font-size:9.5px; font-weight:500;
-  letter-spacing:.15em; text-transform:uppercase; color:var(--muted);
-}
-.dtrack{width:80px; height:1px; background:var(--rule-2); position:relative; flex:none}
-.dfill{position:absolute; left:0; top:-1px; height:3px; background:var(--bar-strong)}
-.dtick{position:absolute; top:-4px; height:9px; width:1px; background:var(--tick); opacity:.5}
 .chev{flex:none; width:13px; height:13px; color:var(--muted); transition:transform .18s ease}
 .dun.open .chev{transform:rotate(90deg); color:var(--ink)}
 
@@ -253,8 +230,6 @@ footer .src{max-width:74ch}
   .stat:first-child{border-top:0}
   .dhead{grid-template-columns:54px 1fr auto; gap:12px; padding:17px 2px}
   .dname{font-size:20px}
-  .dnum .n{font-size:18px}
-  .dtrack{display:none}
   .pdbar{display:none}
   .pdtable th:nth-child(4){display:none}
   .pdtable td,.pdtable th{padding-left:0; padding-right:0}
@@ -269,10 +244,6 @@ footer .src{max-width:74ch}
     <div class="bname">SarawakSeats</div>
     <h1>Syor Persempadanan Sarawak</h1>
     <p class="lede">Kesemua 99 bahagian pilihan raya negeri (DUN) yang dicadangkan bagi Negeri Sarawak, dengan setiap daerah mengundi dan bilangan pemilihnya. Cari nama kampung, taman atau DUN anda di bawah.</p>
-    <div class="notice">
-      <span class="nlabel">Notis &mdash; Syor Dicadangkan</span>
-      <p>Ini syor yang dicadangkan, bukan persempadanan muktamad. Notis disiarkan untuk pameran awam dari 1 hingga 30 September 2026. Representasi membantah boleh dibuat kepada SPR dalam tempoh satu bulan, dan syor ini masih boleh berubah selepas siasatan tempatan. Paparan tidak rasmi bagi data SPR.</p>
-    </div>
   </header>
 
   <section class="stats" aria-label="Ringkasan">
@@ -316,8 +287,6 @@ footer .src{max-width:74ch}
   var esc = function(s){ return s.replace(/[&<>"]/g, function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]; }); };
 
-  var AVG = Math.round(DATA.total / DATA.dun.length);
-  var MAXDUN = DATA.dun.reduce(function(m,d){ return Math.max(m,d.t); }, 0);
 
   var listEl = document.getElementById("list");
   var qEl = document.getElementById("q");
@@ -346,10 +315,6 @@ footer .src{max-width:74ch}
           '<span class="dmeta"><span class="pcode">'+esc(par[0])+'</span> '+esc(par[1])+
           ' &middot; '+d.d.length+' daerah mengundi</span></span>'+
         '<span class="dright">'+
-          '<span class="dnum"><span class="n">'+fmt(d.t)+'</span><span class="l">pemilih</span></span>'+
-          '<span class="dtrack" role="img" aria-label="'+fmt(d.t)+' pemilih berbanding DUN terbesar '+fmt(MAXDUN)+'">'+
-            '<span class="dfill" style="width:'+(d.t/MAXDUN*100).toFixed(2)+'%"></span>'+
-            '<span class="dtick" style="left:'+(AVG/MAXDUN*100).toFixed(2)+'%"></span></span>'+
           '<svg class="chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true">'+
             '<path d="m6 3 5 5-5 5" stroke-linecap="round" stroke-linejoin="round"></path></svg>'+
         '</span>'+
