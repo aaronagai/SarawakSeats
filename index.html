@@ -13,7 +13,7 @@
 <meta property="og:image" content="https://aaronagai.com/SarawakSeats/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Terokai Cadangan Persempadanan Sarawak, berdasarkan sumber rasmi dari SPR Malaysia">
+<meta property="og:image:alt" content="Terokai Cadangan Persempadanan Sarawak, berdasarkan sumber rasmi SPR Malaysia">
 <link rel="canonical" href="https://aaronagai.com/SarawakSeats/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://aaronagai.com/SarawakSeats/og-image.png">
@@ -147,7 +147,6 @@ h1{
 .h1-mark{
   display:inline-block; height:1.5em; width:auto;
   vertical-align:-.38em; margin:0 .02em 0 .06em;
-  transform:rotate(11deg); transform-origin:50% 92%;
 }
 /* the mark and the word after it are one unit — Chrome will otherwise break
    between them and strand the building at the end of a line */
@@ -162,22 +161,27 @@ h1{
 
 /* ---------- stat row ---------- */
 .stats{
-  display:grid; grid-template-columns:repeat(4, minmax(0,1fr));
-  border-top:1px solid var(--rule); border-bottom:1px solid var(--rule);
-  margin-top:28px;
+  display:grid; grid-template-columns:repeat(3, minmax(0,1fr));
+  margin-top:36px; padding:36px 0 32px;
 }
-.stat{padding:18px 20px 17px; display:flex; flex-direction:column; gap:5px; min-width:0; border-left:1px solid var(--rule)}
-.stat:first-child{border-left:0}
-.stat .k{
-  font-family:var(--sans); font-size:10px; font-weight:500;
-  letter-spacing:.16em; text-transform:uppercase; color:var(--muted);
+.stat{
+  margin:0; min-width:0; padding:0 10px;
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  text-align:center;
 }
-.stat .v{
-  font-family:var(--sans); font-size:27px; font-weight:400;
-  font-variant-numeric:lining-nums tabular-nums; letter-spacing:-.018em;
-  line-height:1.15; color:var(--ink);
+.stat-val{
+  margin:0; font-family:var(--sans); font-weight:600;
+  font-size:clamp(1.55rem, 1.05rem + 2.4vw, 2.7rem);
+  font-variant-numeric:lining-nums tabular-nums;
+  letter-spacing:-.03em; line-height:1.05; color:var(--ink);
+  white-space:nowrap;
 }
-.stat .s{font-size:11.5px; color:var(--muted); line-height:1.45; overflow-wrap:break-word}
+.stat-val span{color:var(--muted); font-weight:500; font-size:.55em; letter-spacing:-.01em}
+.stat figcaption{
+  font-family:var(--sans); font-weight:400;
+  font-size:clamp(12px, .68rem + .28vw, 15px);
+  line-height:1.35; letter-spacing:-.015em; color:var(--ink-2);
+}
 
 /* ---------- controls ---------- */
 .controls{
@@ -186,21 +190,27 @@ h1{
   border-bottom:1px solid var(--rule);
   display:flex; flex-wrap:wrap; gap:8px; align-items:center;
 }
-.search{position:relative; flex:1 1 250px; min-width:210px}
+.search{
+  position:relative; flex:1 1 0%; min-width:0;
+}
+.search::after{
+  content:""; position:absolute; left:0; right:0; bottom:0;
+  height:1px; background:var(--rule); pointer-events:none;
+}
 .search svg{
   position:absolute; left:0; top:50%; transform:translateY(-50%);
   width:16px; height:16px; color:var(--muted); pointer-events:none;
 }
 input[type=search]{
-  width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
-  background:none; border:0; border-bottom:1px solid var(--rule);
-  border-radius:0; padding:8px 0 8px 26px; height:38px;
-  appearance:none; outline:none; text-overflow:ellipsis;
+  width:100%; min-width:0; font-family:var(--sans); font-size:15px; line-height:1.2; color:var(--ink);
+  background:none; border:0; border-radius:0; box-shadow:none;
+  padding:10px 0 10px 26px; height:40px;
+  appearance:none; -webkit-appearance:none; outline:none; text-overflow:ellipsis;
 }
 input[type=search]::placeholder{color:var(--muted)}
 input[type=search]::-webkit-search-cancel-button,
 input[type=search]::-webkit-search-decoration{appearance:none}
-.search:focus-within input[type=search]{border-bottom-color:var(--ink)}
+.search:focus-within::after{background:var(--ink)}
 select{
   font-family:var(--sans); font-size:10.5px; font-weight:500;
   letter-spacing:.13em; text-transform:uppercase; color:var(--ink);
@@ -306,12 +316,6 @@ footer{
 .foot-copy a{color:var(--ink-2); text-decoration:underline; text-underline-offset:3px}
 .foot-copy a:hover{color:var(--ink)}
 
-@media (max-width:879px){
-  .stats{grid-template-columns:repeat(2, minmax(0,1fr))}
-  .stat{border-left:1px solid var(--rule)}
-  .stat:nth-child(odd){border-left:0}
-  .stat:nth-child(n+3){border-top:1px solid var(--rule)}
-}
 @media (max-width:640px){
   .wrap{
     padding-left:max(16px, env(safe-area-inset-left, 0px));
@@ -322,11 +326,9 @@ footer{
   .hero-ctas{margin-top:18px; flex-direction:column; align-items:stretch; width:min(100%, 22rem)}
   .cta{width:100%}
   .kicker{font-size:13px}
-  .stats{margin-top:20px}
-  .stat{padding:14px 16px 13px 0}
-  .stat:nth-child(even){padding-left:16px; padding-right:0}
-  .stat .v{font-size:24px}
-  .dun{scroll-margin-top:calc(56px + env(safe-area-inset-top, 0px))}
+  .stats{margin-top:20px; padding:22px 0 18px}
+  .stat{padding:0 4px; gap:6px}
+  .dun{scroll-margin-top:calc(72px + env(safe-area-inset-top, 0px))}
   .dhead{grid-template-columns:54px minmax(0,1fr) auto; gap:12px; padding:16px 2px; min-height:52px}
   .dname{font-size:18px}
   .pdbar{display:none}
@@ -337,11 +339,11 @@ footer{
   /* Sticky toolbar: underline search is always visible; parlimen/sort stay icons */
   .controls{
     flex-wrap:nowrap; gap:2px; justify-content:flex-start;
-    padding:8px 0 10px; min-height:52px;
+    padding:8px 0 14px;
   }
   .search{
-    flex:1 1 auto; min-width:0; width:auto; height:auto;
-    margin-right:6px;
+    flex:1 1 0%; min-width:0; width:auto; height:auto;
+    margin-right:8px;
   }
   .search svg{
     left:0; width:16px; height:16px; color:var(--muted);
@@ -349,14 +351,13 @@ footer{
   }
   .search input{
     position:static; z-index:auto;
-    width:100%; height:38px; padding:8px 0 8px 26px;
-    border:0; border-bottom:1px solid var(--rule);
-    font-size:16px; cursor:text;
-    color:var(--ink); caret-color:auto; background:transparent;
+    width:100%; min-width:0; height:40px; padding:10px 0 10px 26px;
+    border:0; font-size:16px; line-height:1.2; cursor:text;
+    color:var(--ink); caret-color:auto; background-color:transparent;
   }
   .search input::placeholder{color:var(--muted)}
   .ctrl-select{
-    flex:0 0 48px; width:48px; height:44px;
+    flex:0 0 40px; width:40px; min-width:40px; max-width:40px; height:40px;
     align-items:center; justify-content:center;
   }
   .ctrl-face{
@@ -380,10 +381,6 @@ footer{
   .ctrl-select select:hover{border:0}
 }
 @media (max-width:359px){
-  .stats{grid-template-columns:1fr}
-  .stat{border-left:0; border-top:1px solid var(--rule); padding:14px 0}
-  .stat:first-child{border-top:0}
-  .stat:nth-child(even){padding-left:0}
   .kicker{white-space:normal; flex-wrap:wrap; row-gap:6px}
 }
 /* ---------- Sticky reveal sign-off ----------
@@ -455,10 +452,18 @@ body.has-reveal .page{
 <div class="wrap">
 
   <section class="stats" aria-label="Ringkasan">
-    <div class="stat"><span class="k">Bahagian Negeri</span><span class="v">99</span><span class="s">DUN dicadangkan &middot; tambah 17</span></div>
-    <div class="stat"><span class="k">Daerah Mengundi</span><span class="v">1,141</span><span class="s">dalam 31 bahagian parlimen</span></div>
-    <div class="stat"><span class="k">Jumlah Pemilih</span><span class="v">2,037,648</span><span class="s">Daftar Pemilih 29 Jan 2026</span></div>
-    <div class="stat"><span class="k">Purata Satu DUN</span><span class="v">20,582</span><span class="s">terkecil 10,372 &middot; terbesar 34,546</span></div>
+    <figure class="stat">
+      <p class="stat-val">99 <span>(+17)</span></p>
+      <figcaption>Jumlah DUN</figcaption>
+    </figure>
+    <figure class="stat">
+      <p class="stat-val">1,141</p>
+      <figcaption>Daerah Mengundi</figcaption>
+    </figure>
+    <figure class="stat">
+      <p class="stat-val">~2.03M</p>
+      <figcaption>Jumlah Pengundi</figcaption>
+    </figure>
   </section>
 
   <div class="controls">
