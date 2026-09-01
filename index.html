@@ -22,7 +22,7 @@ img{max-width:100%}
 <title>SarawakSeats</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600&family=Inter:wght@400;500;600&display=swap">
 <style>
 /* SIGMA-derived system: uppercase display serif, wide-tracked micro-labels,
    strict monochrome, hairline rules. No accent hue anywhere. */
@@ -56,14 +56,14 @@ img{max-width:100%}
 *{box-sizing:border-box}
 body{
   background:var(--ground); color:var(--ink);
-  font-family:Archivo,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   font-size:14px; line-height:1.6; -webkit-font-smoothing:antialiased;
 }
 .wrap{max-width:1000px; margin:0 auto; padding:0 24px 96px}
 
 /* ---- shared label idiom: 13px uppercase, wide tracking (SIGMA nav) ---- */
 .label{
-  font-family:Archivo,sans-serif; font-size:10.5px; font-weight:500;
+  font-family:Inter,sans-serif; font-size:10.5px; font-weight:500;
   letter-spacing:.16em; text-transform:uppercase; color:var(--muted);
 }
 
@@ -74,9 +74,9 @@ body{
   letter-spacing:.3em; text-transform:uppercase; color:var(--ink); text-indent:.3em;
 }
 h1{
-  margin:0; font-family:"Cormorant Garamond",Georgia,serif; font-weight:500;
-  font-size:clamp(30px,5.6vw,54px); line-height:1.1; letter-spacing:-.012em;
-  text-transform:uppercase; text-wrap:balance; color:var(--ink); max-width:21ch;
+  margin:0; font-family:Inter,sans-serif; font-weight:600;
+  font-size:clamp(24px,4.1vw,38px); line-height:1.18; letter-spacing:-.005em;
+  text-transform:uppercase; text-wrap:balance; color:var(--ink); max-width:24ch;
 }
 .lede{margin:0; max-width:56ch; color:var(--ink-2); font-size:14.5px; line-height:1.7}
 
@@ -86,7 +86,7 @@ h1{
   padding:15px 0; display:flex; flex-direction:column; gap:7px; text-align:left;
 }
 .notice .nlabel{
-  font-family:Archivo,sans-serif; font-size:10px; font-weight:600;
+  font-family:Inter,sans-serif; font-size:10px; font-weight:600;
   letter-spacing:.18em; text-transform:uppercase; color:var(--ink);
 }
 .notice p{margin:0; font-size:13px; line-height:1.65; color:var(--ink-2)}
@@ -100,11 +100,11 @@ h1{
 .stat{padding:20px 22px 19px; display:flex; flex-direction:column; gap:5px; border-left:1px solid var(--rule)}
 .stat:first-child{border-left:0}
 .stat .k{
-  font-family:Archivo,sans-serif; font-size:10px; font-weight:500;
+  font-family:Inter,sans-serif; font-size:10px; font-weight:500;
   letter-spacing:.16em; text-transform:uppercase; color:var(--muted);
 }
 .stat .v{
-  font-family:Archivo,sans-serif; font-size:27px; font-weight:400;
+  font-family:Inter,sans-serif; font-size:27px; font-weight:400;
   font-variant-numeric:lining-nums tabular-nums; letter-spacing:-.018em;
   line-height:1.15; color:var(--ink);
 }
@@ -123,14 +123,14 @@ h1{
   width:14px; height:14px; color:var(--muted); pointer-events:none;
 }
 input[type=search]{
-  width:100%; font-family:Archivo,sans-serif; font-size:13px; color:var(--ink);
+  width:100%; font-family:Inter,sans-serif; font-size:13px; color:var(--ink);
   background:none; border:0; border-bottom:1px solid var(--rule-2);
   border-radius:0; padding:9px 0 9px 24px; height:38px; appearance:none;
 }
 input[type=search]::placeholder{color:var(--muted)}
 input[type=search]::-webkit-search-cancel-button{appearance:none}
 select, .btn{
-  font-family:Archivo,sans-serif; font-size:10.5px; font-weight:500;
+  font-family:Inter,sans-serif; font-size:10.5px; font-weight:500;
   letter-spacing:.13em; text-transform:uppercase; color:var(--ink);
   background:none; border:1px solid var(--rule-2); border-radius:0;
   padding:0 14px; height:38px;
@@ -144,7 +144,7 @@ select{appearance:none; padding-right:30px; cursor:pointer;
 .btn:hover, select:hover{border-color:var(--ink); color:var(--ink)}
 :is(input,select,button,a):focus-visible{outline:1px solid var(--focus); outline-offset:2px}
 .resultline{
-  margin:22px 0 0; font-family:Archivo,sans-serif; font-size:10px; font-weight:500;
+  margin:22px 0 0; font-family:Inter,sans-serif; font-size:10px; font-weight:500;
   letter-spacing:.16em; text-transform:uppercase; color:var(--muted); text-align:center;
 }
 
@@ -159,27 +159,27 @@ select{appearance:none; padding-right:30px; cursor:pointer;
 .dhead:hover{background:var(--surface-2)}
 .dhead:hover .dname{text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:1px}
 .code{
-  font-family:Archivo,sans-serif; font-size:11px; font-weight:500;
+  font-family:Inter,sans-serif; font-size:11px; font-weight:500;
   letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
 }
 .dname{
-  display:block; font-family:"Cormorant Garamond",Georgia,serif; font-size:25px;
-  font-weight:500; line-height:1.14; letter-spacing:.005em; text-transform:uppercase; color:var(--ink);
+  display:block; font-family:Inter,sans-serif; font-size:16px; font-weight:600;
+  line-height:1.25; letter-spacing:.02em; text-transform:uppercase; color:var(--ink);
 }
 .dmeta{
-  display:block; margin-top:5px; font-family:Archivo,sans-serif; font-size:10px;
+  display:block; margin-top:5px; font-family:Inter,sans-serif; font-size:10px;
   font-weight:500; letter-spacing:.13em; text-transform:uppercase; color:var(--muted);
 }
 .dmeta .pcode{letter-spacing:.1em}
 .dright{display:flex; align-items:center; gap:18px}
 .dnum{text-align:right}
 .dnum .n{
-  display:block; font-family:Archivo,sans-serif; font-size:16px; font-weight:400;
+  display:block; font-family:Inter,sans-serif; font-size:16px; font-weight:400;
   font-variant-numeric:lining-nums tabular-nums; letter-spacing:-.01em;
   line-height:1.2; color:var(--ink);
 }
 .dnum .l{
-  font-family:Archivo,sans-serif; font-size:9.5px; font-weight:500;
+  font-family:Inter,sans-serif; font-size:9.5px; font-weight:500;
   letter-spacing:.15em; text-transform:uppercase; color:var(--muted);
 }
 .dtrack{width:80px; height:1px; background:var(--rule-2); position:relative; flex:none}
@@ -192,7 +192,7 @@ select{appearance:none; padding-right:30px; cursor:pointer;
 .panel[hidden]{display:none}
 .pdtable{width:100%; border-collapse:collapse; font-size:13px}
 .pdtable th{
-  font-family:Archivo,sans-serif; font-size:9.5px; font-weight:600; letter-spacing:.16em;
+  font-family:Inter,sans-serif; font-size:9.5px; font-weight:600; letter-spacing:.16em;
   text-transform:uppercase; color:var(--muted); text-align:left;
   padding:14px 20px 11px; border-bottom:1px solid var(--rule);
 }
@@ -201,12 +201,12 @@ select{appearance:none; padding-right:30px; cursor:pointer;
 .pdtable tr:last-child td{border-bottom:0}
 .pdtable tr:hover td{background:var(--surface-3)}
 .idx{
-  font-family:Archivo,sans-serif; font-size:10px; color:var(--muted);
+  font-family:Inter,sans-serif; font-size:10px; color:var(--muted);
   font-variant-numeric:tabular-nums; width:44px; letter-spacing:.06em;
 }
 .pdname{color:var(--ink); letter-spacing:.005em}
 .pdnum{
-  font-family:Archivo,sans-serif; font-variant-numeric:lining-nums tabular-nums; font-size:13px;
+  font-family:Inter,sans-serif; font-variant-numeric:lining-nums tabular-nums; font-size:13px;
   text-align:right; color:var(--ink); width:84px;
 }
 .pdbar{width:80px; padding-right:20px}
@@ -217,7 +217,7 @@ select{appearance:none; padding-right:30px; cursor:pointer;
   font-weight:600;
 }
 .psum .lbl{
-  font-family:Archivo,sans-serif; font-size:9.5px; font-weight:600;
+  font-family:Inter,sans-serif; font-size:9.5px; font-weight:600;
   letter-spacing:.16em; text-transform:uppercase;
 }
 mark{
@@ -227,7 +227,7 @@ mark{
 
 .empty{
   padding:56px 20px; text-align:center; color:var(--muted);
-  font-family:Archivo,sans-serif; font-size:10.5px; font-weight:500;
+  font-family:Inter,sans-serif; font-size:10.5px; font-weight:500;
   letter-spacing:.16em; text-transform:uppercase;
 }
 
