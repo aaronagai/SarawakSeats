@@ -145,9 +145,9 @@ h1{
   text-wrap:balance; overflow-wrap:break-word; color:var(--ink); max-width:23ch;
 }
 .h1-mark{
-  display:inline-block; height:1.3em; width:auto;
-  vertical-align:-.3em; margin:0 .02em 0 .06em;
-  transform:rotate(356.171deg); transform-origin:50% 92%;
+  display:inline-block; height:1.5em; width:auto;
+  vertical-align:-.38em; margin:0 .02em 0 .06em;
+  transform:rotate(11deg); transform-origin:50% 92%;
 }
 /* the mark and the word after it are one unit — Chrome will otherwise break
    between them and strand the building at the end of a line */
@@ -189,15 +189,18 @@ h1{
 .search{position:relative; flex:1 1 250px; min-width:210px}
 .search svg{
   position:absolute; left:0; top:50%; transform:translateY(-50%);
-  width:14px; height:14px; color:var(--muted); pointer-events:none;
+  width:16px; height:16px; color:var(--muted); pointer-events:none;
 }
 input[type=search]{
-  width:100%; font-family:var(--sans); font-size:13px; color:var(--ink);
-  background:none; border:0; border-bottom:1px solid var(--rule-2);
-  border-radius:0; padding:9px 0 9px 24px; height:38px; appearance:none;
+  width:100%; font-family:var(--sans); font-size:15px; color:var(--ink);
+  background:none; border:0; border-bottom:1px solid var(--rule);
+  border-radius:0; padding:8px 0 8px 26px; height:38px;
+  appearance:none; outline:none; text-overflow:ellipsis;
 }
 input[type=search]::placeholder{color:var(--muted)}
-input[type=search]::-webkit-search-cancel-button{appearance:none}
+input[type=search]::-webkit-search-cancel-button,
+input[type=search]::-webkit-search-decoration{appearance:none}
+.search:focus-within input[type=search]{border-bottom-color:var(--ink)}
 select{
   font-family:var(--sans); font-size:10.5px; font-weight:500;
   letter-spacing:.13em; text-transform:uppercase; color:var(--ink);
@@ -210,7 +213,7 @@ select{appearance:none; padding-right:30px; cursor:pointer;
   background-size:4px 4px,4px 4px; background-repeat:no-repeat;
 }
 select:hover{border-color:var(--ink); color:var(--ink)}
-:is(input,select,button,a):focus-visible{outline:1px solid var(--focus); outline-offset:2px}
+:is(select,button,a):focus-visible{outline:1px solid var(--focus); outline-offset:2px}
 .ctrl-select{display:flex; position:relative}
 .ctrl-face{display:none}
 
@@ -296,22 +299,12 @@ footer{
 .foot-note strong{color:var(--ink-2); font-weight:600}
 .foot-note a{color:var(--ink-2); text-decoration:underline; text-underline-offset:3px}
 .foot-note a:hover{color:var(--ink)}
-.foot-row{
-  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
-  gap:12px 16px; padding-top:10px;
-}
 .foot-copy{
   margin:0; font-size:12px; line-height:18px; letter-spacing:-.1px;
-  color:var(--muted); flex:1 1 auto; min-width:0;
+  color:var(--muted);
 }
 .foot-copy a{color:var(--ink-2); text-decoration:underline; text-underline-offset:3px}
 .foot-copy a:hover{color:var(--ink)}
-.foot-links{display:flex; align-items:center; gap:16px; flex-shrink:0; margin-left:auto}
-.foot-links a{
-  font-size:12px; line-height:18px; letter-spacing:-.1px;
-  color:var(--muted); text-decoration:none;
-}
-.foot-links a:hover{color:var(--ink)}
 
 @media (max-width:879px){
   .stats{grid-template-columns:repeat(2, minmax(0,1fr))}
@@ -341,44 +334,27 @@ footer{
   .pdtable td,.pdtable th{padding-left:0; padding-right:0}
   .panel{padding:0 4px}
 
-  /* Compact sticky icon toolbar — search, parlimen, sort */
+  /* Sticky toolbar: underline search is always visible; parlimen/sort stay icons */
   .controls{
-    flex-wrap:nowrap; gap:2px; justify-content:flex-end;
-    padding:4px 0; min-height:52px;
+    flex-wrap:nowrap; gap:2px; justify-content:flex-start;
+    padding:8px 0 10px; min-height:52px;
   }
   .search{
-    flex:0 0 44px; min-width:44px; width:44px; height:44px;
-    margin-right:auto;
+    flex:1 1 auto; min-width:0; width:auto; height:auto;
+    margin-right:6px;
   }
   .search svg{
-    left:50%; width:20px; height:20px; color:var(--ink-2);
-    transform:translate(-50%,-50%);
-  }
-  .search input{
-    position:absolute; inset:0; z-index:1;
-    width:100%; height:100%; padding:0; border:0;
-    font-size:16px; cursor:pointer;
-    color:transparent; caret-color:transparent; background:transparent;
-  }
-  .search input::placeholder{color:transparent}
-  .search:focus-within,
-  .search.is-open{
-    flex:1 1 auto; width:auto; min-width:0; margin-right:4px;
-  }
-  .search:focus-within svg,
-  .search.is-open svg{
-    left:0; width:14px; height:14px; color:var(--muted);
+    left:0; width:16px; height:16px; color:var(--muted);
     transform:translateY(-50%);
   }
-  .search:focus-within input,
-  .search.is-open input{
-    position:static; cursor:text;
-    color:var(--ink); caret-color:auto;
-    padding:9px 0 9px 24px; height:38px;
-    border-bottom:1px solid var(--rule-2);
+  .search input{
+    position:static; z-index:auto;
+    width:100%; height:38px; padding:8px 0 8px 26px;
+    border:0; border-bottom:1px solid var(--rule);
+    font-size:16px; cursor:text;
+    color:var(--ink); caret-color:auto; background:transparent;
   }
-  .search:focus-within input::placeholder,
-  .search.is-open input::placeholder{color:var(--muted)}
+  .search input::placeholder{color:var(--muted)}
   .ctrl-select{
     flex:0 0 48px; width:48px; height:44px;
     align-items:center; justify-content:center;
@@ -448,6 +424,10 @@ body.has-reveal .page{
 .signoff p a{
   color:inherit; font-weight:inherit; text-decoration:none;
 }
+.signoff p a span{
+  text-decoration:underline dotted;
+  text-underline-offset:.12em;
+}
 .signoff p a:hover{color:var(--ink)}
 
 @media (prefers-reduced-motion:reduce){*{transition:none !important; animation:none !important}}
@@ -483,7 +463,7 @@ body.has-reveal .page{
 
   <div class="controls">
     <div class="search">
-      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
         <circle cx="9" cy="9" r="6"></circle><path d="M13.5 13.5 17 17" stroke-linecap="round"></path>
       </svg>
       <input type="search" id="q" placeholder="Cari daerah mengundi, DUN atau parlimen" aria-label="Cari">
@@ -523,20 +503,14 @@ body.has-reveal .page{
   <div class="list" id="list"></div>
 
   <footer>
-    <p class="foot-note"><strong>Sumber:</strong> Notis Syor SPR (Jadual Kedua) dan Daftar Pemilih 29 Januari 2026. Jumlah 2,037,648 pemilih.</p>
-    <div class="foot-row">
-      <p class="foot-copy">&copy; 2026 <a href="https://aaronagai.com" target="_blank" rel="noopener">aaronagai.com</a>. Directly sourced from SPR public data; unofficial &mdash; refer to SPR documents for official use.</p>
-      <div class="foot-links">
-        <a href="https://myst.spr.gov.my/pameran-syor" target="_blank" rel="noopener">Portal SPR</a>
-        <a href="https://github.com/aaronagai/SarawakSeats" target="_blank" rel="noopener">GitHub</a>
-      </div>
-    </div>
+    <p class="foot-note"><strong>Sumber:</strong> <a href="https://myst.spr.gov.my/pameran-syor-details/019917AC-0BF5-732D-B893-F808793717A7" target="_blank" rel="noopener">https://myst.spr.gov.my</a></p>
+    <p class="foot-copy">&copy; 2026 <a href="https://aaronagai.com" target="_blank" rel="noopener">aaronagai.com</a>. Directly sourced from SPR public data.</p>
   </footer>
     <div id="reveal-sentinel" aria-hidden="true"></div>
 </div>
 </div>
 
-<section class="signoff"><p><a href="https://aaronagai.com" target="_blank" rel="noopener">Designed by @aaronagai</a></p></section>
+<section class="signoff"><p><a href="https://aaronagai.com" target="_blank" rel="noopener">Designed by <span>@aaronagai</span></a></p></section>
 
 <script>const DATA={"par":[["P.192","Mas Gading",66796],["P.193","Santubong",79688],["P.194","Petra Jaya",92763],["P.195","Bandar Kuching",116679],["P.196","Stampin",120792],["P.197","Kota Samarahan",97140],["P.198","Puncak Borneo",72665],["P.199","Serian",62228],["P.200","Batang Sadong",53378],["P.201","Batang Lupar",46072],["P.202","Sri Aman",51472],["P.203","Lubok Antu",28458],["P.204","Betong",45606],["P.205","Saratok",46462],["P.206","Tanjong Manis",35117],["P.207","Batang Lassa",36964],["P.208","Sarikei",57292],["P.209","Julau",36342],["P.210","Kanowit",32165],["P.211","Lanang",87071],["P.212","Sibu",115270],["P.213","Mukah",40808],["P.214","Selangau",49266],["P.215","Kapit",50572],["P.216","Hulu Rajang",40063],["P.217","Bintulu",127740],["P.218","Sibuti",48450],["P.219","Miri",158411],["P.220","Baram",62846],["P.221","Limbang",43784],["P.222","Lawas",35288]],"dun":[{"c":"N.01","n":"Serayan","p":0,"t":16878,"d":[["Temaga",1032],["Sebako",1030],["Serayan",1335],["Sebiris",759],["Jangkar",1371],["Biawak",729],["Sedaing",172],["Rukam",864],["Sembawang",845],["Kandaie",563],["Pasir Tengah",413],["Sebandi",464],["Senibong",798],["Selampit",1438],["Bokah",730],["Raso",267],["Raso II",432],["Stungkor",1078],["Stom Muda",605],["Stenggang",1953]]},{"c":"N.02","n":"Jagoi","p":0,"t":17144,"d":[["Jugan",1132],["Opar",1628],["Skibang",843],["Stass",1156],["Sibobog",537],["Serikin",889],["Jagoi",1081],["Bogag",842],["Serasot",1214],["Tai Ton",904],["Suba Buan",619],["Suba Bau",834],["Bau",3619],["Jambusan",1846]]},{"c":"N.03","n":"Singai","p":0,"t":17017,"d":[["Skiat",756],["Sebuku",724],["Grogo",844],["Buso",1073],["Musi",320],["Sungai Pinang",841],["Tanjong Poting",1299],["Atas",997],["Sudoh",693],["Tondong",1324],["Sibuloh",1196],["Apar",1685],["Barieng",370],["Segong",1305],["Daun",1262],["Sajong",1521],["Bobak",807]]},{"c":"N.04","n":"Serembu","p":0,"t":15757,"d":[["Kandis",685],["Tanjung Durian",814],["Siniawan",1883],["Peninjau Baru",867],["Podam",826],["Paku",741],["Merembeh",525],["Kranji",620],["Kopit",989],["Sogo",899],["Segubang",473],["Seromah",603],["Krokong",1624],["Puak Krokong",342],["Blimbin",553],["Seropak",328],["Monggak",917],["Padang Pan",398],["Gumbang",523],["Pangkalan Tebang",429],["Rabak Rotan",718]]},{"c":"N.05","n":"Tanjong Datu","p":1,"t":16737,"d":[["Telok Melano",290],["Pueh",1037],["Sebat",1057],["Sematan",2109],["Perigi",303],["Bajo",820],["Sekambal",965],["Kampung Sebemban",622],["Seling",1637],["Lundu",3044],["Stunggang",1856],["Temelan",631],["Sampadi",1170],["Stoh",367],["Rambungan",829]]},{"c":"N.06","n":"Pasir Pandak","p":1,"t":19321,"d":[["Telaga Air",2613],["Jaya Bakti",451],["Temenggong",907],["Salak",636],["Bandar Baru Samariang",9926],["Rampangi",3515],["Sejinjang",1273]]},{"c":"N.07","n":"Pantai Damai","p":1,"t":21473,"d":[["Santubong",1685],["Buntal",3376],["Demak Baru",1597],["Astana",4870],["Semarang",3671],["Bintawa",6274]]},{"c":"N.08","n":"Samariang","p":1,"t":22157,"d":[["Samariang",5810],["Semerah Padi",8044],["Sukma",8303]]},{"c":"N.09","n":"Matang","p":2,"t":23156,"d":[["Kolong 1",306],["Malihah",8598],["Kolong 2",1141],["Sungai Tengah",1471],["Kampung Matang",2351],["Palma Indah",1640],["Batu Tujuh Matang",1841],["Taman Heng Guan",1102],["Paroh",1123],["Matang",3583]]},{"c":"N.10","n":"Semarak","p":2,"t":26075,"d":[["Gita",8394],["Sejoli",3229],["Taman Yen Yen",2979],["Matang Jaya",6199],["Taman Won",775],["Sri Wangi",2502],["Rahmat",1997]]},{"c":"N.11","n":"Tupong","p":2,"t":23248,"d":[["Tupong",3612],["Kampong Tunku",4430],["Lintang",2635],["Sinjan",1748],["Bedil",1756],["Astana Lot",2650],["Kandis",6417]]},{"c":"N.12","n":"Satok","p":2,"t":20284,"d":[["Segedup",2554],["Nanas",6361],["Satok",3490],["Patingan",1114],["Patinggi Ali",3916],["Masjid",1169],["Maderasah",101],["Reservoir",1579]]},{"c":"N.13","n":"Padungan","p":3,"t":29459,"d":[["Market",2252],["Bazaar",2314],["Padungan",1908],["Ban Hock",2339],["Abell",2030],["Petanak",1800],["Central",879],["Sekama",1235],["Lumba Kuda",1326],["Deshon",3673],["Ellis",1376],["Simpang Tiga",932],["Bukit Tuan",2328],["Kinyang",827],["Pisang",1552],["Nanas - Pisang",2688]]},{"c":"N.14","n":"Pending","p":3,"t":28812,"d":[["Bintawa Fishing Village",5231],["Sungai Apong",4305],["Pending",3546],["Peace Road",3427],["Foochow",4260],["Pecky Park",2575],["Chawan",1808],["Chong Kiun Kong",3660]]},{"c":"N.15","n":"Batu Lintang","p":3,"t":28797,"d":[["Maong",2279],["Star Garden",2547],["Poh Kwong Park",4758],["Sky Garden",1910],["RPR Batu Kawah",1259],["Batu Lintang",7503],["Bukit Kenny",1463],["Tabuan Dayak",2067],["Seledah",5011]]},{"c":"N.16","n":"Tabuan Jaya","p":3,"t":29611,"d":[["Kenyalang",6578],["Supreme",1845],["Tabuan Jaya",7835],["Tabuan Laru",6218],["Tabuan Height",6361],["Stutong",774]]},{"c":"N.17","n":"Batu Kitang","p":4,"t":29445,"d":[["Jalan Stakan",2478],["Batu Kitang",1343],["Haji Baki",3609],["Sudat",552],["Semeba",1207],["Tematu",840],["Pangkalan Baru",1058],["Kitang",868],["Rantau Panjang Batu Kawa",734],["Lidah Tanah",1283],["Bumbok",1503],["Kota Padawan",9115],["Rcbm",214],["Paya Mebi",1240],["Landeh",3401]]},{"c":"N.18","n":"Batu Kawah","p":4,"t":31315,"d":[["Sin San Tu",5771],["Kim Chu Shin",2385],["Kawah",2327],["Stephen Yong",4004],["Kampung Stapok",979],["Field Force",2759],["Stapok",6589],["Batu Kawah Low-Cost",6501]]},{"c":"N.19","n":"Maong","p":4,"t":29797,"d":[["Desa Wira",4173],["Skim Penempatan Batu Kawa",1944],["Sinar Budi",1111],["Arang",6989],["Pasar Maong",6164],["Batu Empat",2847],["Hui Sing",6569]]},{"c":"N.20","n":"Kota Sentosa","p":4,"t":30235,"d":[["Sungai Lubak",4961],["Batu Tujoh",4274],["Kem Tentera Batu Tujuh",2289],["Sungai Tapang",1238],["Kampung Sungai Tapang",886],["Airport Kuching",893],["Satria Jaya",7000],["Stampin",682],["Stutong Baru",8012]]},{"c":"N.21","n":"Demak Laut","p":5,"t":27160,"d":[["Bako",3985],["Muara Tebas",1936],["Geobilt",1069],["Senari",828],["Tanjong Embang",1413],["Sejingkat",3528],["Tanjong Bako",903],["Pinggan Jaya",1064],["Muara Tabuan",1644],["Tabuan Melayu",8141],["Tabuan Hulu",2649]]},{"c":"N.22","n":"Muara Tuang","p":5,"t":22543,"d":[["Endap",1104],["Meranek",1384],["Unimas",4915],["Tuang",1225],["Empila",7905],["Ladang Samarahan",3924],["Semaran",2086]]},{"c":"N.23","n":"Samarindah","p":5,"t":21537,"d":[["Tanju",147],["Batu Blat",3040],["Rembus",774],["Tanjung Bundong",3676],["Pinang",1303],["Melaban",2793],["Binyu",353],["Merdang",1813],["Samar Indah",5646],["Merdang Gayam",709],["Merdang Lumut",1283]]},{"c":"N.24","n":"Stakan","p":5,"t":25900,"d":[["Sungai Empit",439],["Stakan",2033],["Jalan Muara Tuang",11585],["Pengkalan Kuap",1991],["Quop",2616],["Sidanu",7236]]},{"c":"N.25","n":"Mambong","p":6,"t":23815,"d":[["Sepit",772],["Maras",232],["Pengkalan Ampat",419],["Kiding",531],["Semban",473],["Tebia",470],["Temurang",329],["Jambu",619],["Bengoh",546],["Danu",268],["Semadang",593],["Gerung",717],["Bayor",265],["Karu",858],["Staang",252],["Bunuk",2047],["Giam",604],["Nyiru",637],["Punau",1514],["Pulasar",1696],["Petag",514],["Sikog",1200],["Mambong",1303],["Seratau",2164],["Siburan",4792]]},{"c":"N.26","n":"Sungai Serin","p":6,"t":26694,"d":[["Siburan Village",5041],["Duras",847],["Masaan",1873],["Tijirak",1682],["Petung",1237],["Tabuan Rabak",428],["Mundai",712],["Sarig",358],["Simpuk",1941],["Braang",764],["Gayu",694],["Pesang",1054],["Subang",617],["Teng Bukap",511],["Peraya",565],["Stabut",409],["Sekuduk",895],["Maang",779],["Tapah",3224],["Beratok",2274],["Batu Gong",789]]},{"c":"N.27","n":"Bung Sadung","p":6,"t":22156,"d":[["Retoh",419],["Sungai Barie",1451],["Panchor",1037],["Taee",1762],["Plaman Nyabet",430],["Sira",693],["Lanchang",792],["Bentang",1587],["Munggu Lalang",1248],["Pekan Tarat",480],["Tarat Baru",1570],["Kakai",884],["Pasar Serian",5411],["Rayang",2030],["Baki",1205],["Sebemban",385],["Tanah Puteh",772]]},{"c":"N.28","n":"Tebedu","p":7,"t":20545,"d":[["Belimbing",567],["Semaru",324],["Annah Rais",691],["Sadir",473],["Simuti",544],["Bisira",229],["Dunuk",474],["Merakep",530],["Tubih",1105],["Sejijak",563],["Tepoi",503],["Temong",1672],["Sungan",449],["Tema",765],["Tebedu",1624],["Entubuh",632],["Tesu",670],["Kujang Mawang",415],["Kujang Sain",338],["Daha Kisau",564],["Daha Seroban",492],["Amo",209],["Gahat Mawang",534],["Lobang Batu",993],["Sebintin",453],["Payau",579],["Bidak",582],["Mawang Taup",534],["Reteh",578],["Pichin",1568],["Krusen",891]]},{"c":"N.29","n":"Kedup","p":7,"t":21531,"d":[["Sangai Meringu",747],["Prangkan",373],["Engkeroh",866],["Bugu",565],["Pridan",1025],["Sumpas Tampek",273],["Semukoi",871],["Pangkalan Bedup",736],["Triboh",869],["Antayan",753],["Junggu Mawang",903],["Sungai Engkabang",950],["Krait",500],["Mubok Berawan",577],["Mayang Mawang",494],["Mayang Kawan",668],["Mentong Merau",600],["Sungai Rimu",508],["Kerangan",936],["Tong Nibong",425],["Paon Gahat",517],["Mentu Tapu",1033],["Mentu Pundok",940],["Mongkos",919],["Mujat",1021],["Bunan Gega",1718],["Terbat",620],["Mapu",1124]]},{"c":"N.30","n":"Bukit Semuja","p":7,"t":20152,"d":[["Tangga",1680],["Riih Mawang",974],["Riih Daso",981],["Tebakang",1100],["Sedihan",1279],["Koran",1748],["Sorak Dayak",930],["Sorak Melayu",314],["Selabi",1059],["Merian",1557],["Kampung Rasau",850],["Seroban",613],["Ranchan",291],["Munggu Limo",1094],["Serian Hulu",1090],["Government Residential Area Serian",157],["Serian Hilir",1106],["Ampungan",1291],["Lebor Remun",1541],["Kuala",200],["Merakai",297]]},{"c":"N.31","n":"Gedong","p":8,"t":10481,"d":[["Sateman",541],["Ensengai",353],["Pangkor",1853],["Tegelam",293],["Gedong",4665],["Keniong",2286],["Kepayang",490]]},{"c":"N.32","n":"Simunjan","p":8,"t":12713,"d":[["Rangkang",677],["Putin",261],["Rangawan",795],["Terasi",516],["Senangeh",230],["Sungai Buloh",345],["Ensengei",367],["Tanjong Harapan",243],["Slangking",429],["Sungai Apin",528],["Simunjan",3036],["Sageng",2966],["Sekendu",659],["Temiang",1661]]},{"c":"N.33","n":"Sadong Jaya","p":8,"t":10854,"d":[["Sepayor",413],["Semera",3554],["Jemukan",1364],["Jemukan Ulu",588],["Jaie",1416],["Pelandok",726],["Iboi",835],["Sadong Jaya",1615],["Sadong Jaya Ulu",343]]},{"c":"N.34","n":"Asajaya","p":8,"t":19330,"d":[["Beliong",654],["Tanjung Apong",1008],["Tambirat",3159],["Tambey",867],["Sui",142],["Subi",137],["Sambir",1335],["Sebandi Matang",841],["Sebandi Ulu",1022],["Moyan Ledang",389],["Moyan",2060],["Moyan Ulu",298],["Serpan Ulu",321],["Serpan",1294],["Reba",856],["Asajaya Laut",1565],["Asajaya",2052],["Sampun",897],["Tebun",433]]},{"c":"N.35","n":"Sebuyau","p":9,"t":14298,"d":[["Seruyu",305],["Sebangan",3448],["Sebuyau",6045],["Tungkah",2462],["Entangor",281],["Senayang",1757]]},{"c":"N.36","n":"Lingga","p":9,"t":15711,"d":[["Meludam",4195],["Lingga",1759],["Seduku",1249],["Stumbin",1984],["Ladong",2925],["Lamanak",2443],["Tanjung Bijat",262],["Bakong",894]]},{"c":"N.37","n":"Beting Maro","p":9,"t":16063,"d":[["Beladin",7654],["Undai",3855],["Pusa",4554]]},{"c":"N.38","n":"Balai Ringin","p":10,"t":16687,"d":[["Balai Ringin",4405],["Ruan",1287],["Isu",3673],["Ubah",2639],["Pantu",1920],["Keranggas",579],["Kedumpai",2184]]},{"c":"N.39","n":"Bukit Begunan","p":10,"t":13252,"d":[["Bukit Balau",1164],["Bakong Ai",281],["Empalanjau",247],["Banting",1345],["Kara",3598],["Melugu",2577],["Klauh",4040]]},{"c":"N.40","n":"Simanggang","p":10,"t":21533,"d":[["Simanggang",9786],["Munggu Sabun",492],["Sabu",690],["Lamanak Seberang",5505],["Sengat",1384],["Bayai",1511],["Undup",2165]]},{"c":"N.41","n":"Engkilili","p":11,"t":13477,"d":[["Tawai",221],["Kasenduh",721],["Tabut",627],["Basi",560],["Geligau",368],["Sedarat",1178],["Engkilili",1055],["Marop",948],["Merbong",901],["Merio",506],["Merindun",570],["Semanju",1270],["SPLU",583],["Pentik",2028],["Mujan",367],["Marutih",329],["Kujoh",260],["Akup",229],["Entalau",165],["Seladong",144],["Jukat",447]]},{"c":"N.42","n":"Batang Ai","p":11,"t":14981,"d":[["Bilararap",347],["Patoh",336],["Sepaya",610],["Delok",458],["Gugu",829],["Engkari",189],["Kachong",451],["Kesit",1380],["Nenyang",129],["Ensawang",1191],["Lubok Antu",996],["Kutai",946],["Empit",842],["Krangan Mong",253],["Mepi",790],["Sekarok",576],["Bertik",289],["Sempang",357],["Jela",765],["Sebangki",920],["Kaong",766],["Sayat",914],["Klampu",346],["Kumpang",301]]},{"c":"N.43","n":"Saribas","p":12,"t":14357,"d":[["Belingan",434],["Sebemban",566],["Tanjong Assam",591],["Bungin",1453],["Serembang",625],["Jerai",233],["Debak Laut",1267],["Debak",678],["Likis",844],["Sabar",212],["Belasau",172],["Dit",509],["Budak",95],["Tui",1839],["Dit Hulu",329],["Serabang",753],["Engkaras",603],["Supa",1656],["Manggut",1016],["Buda",482]]},{"c":"N.44","n":"Layar","p":12,"t":15083,"d":[["Skrang",720],["Aur",688],["Enteban",727],["Penurin",203],["Saka",566],["Jugir",719],["Stambak",212],["Selulap",234],["Kampung Betong",1877],["Betong",2498],["Entanak",343],["Bebanggai",207],["Tanu",358],["Pasa",304],["Dabok",1091],["Padeh",638],["Balingam",156],["Plepok",118],["Kron",210],["Gawis",175],["Jelau",309],["Lubau",422],["Spak",389],["Penyalaneh",337],["Melanjan",174],["Tapeh",319],["Merunjau",152],["Teguyu",151],["Luing",353],["Krapa",209],["Perdu",224]]},{"c":"N.45","n":"Bukit Saban","p":12,"t":16166,"d":[["Bair",107],["Jambu",175],["Penebak",721],["Tiput",184],["Pelikoi",253],["Mutok",265],["Meroh",173],["Kubal",331],["Jaloh",286],["Penom",166],["Lingit",196],["Sepuna",170],["Bayor",133],["Rimbas",133],["Tot",413],["Ulu Teru",162],["Babu",214],["Rapong",253],["Delit",602],["Traie",250],["Bungei",2877],["Penunus",104],["Metong",168],["Samu",224],["Belabak",100],["Bukit Saban",180],["Suri",486],["Rembai",338],["Matop",170],["Serudit",339],["Teberu",359],["Bangkit",116],["Spaoh Hilir",1264],["Spaoh Hulu",3028],["Brutan",715],["Spaoh",511]]},{"c":"N.46","n":"Krian","p":13,"t":18905,"d":[["Mudong",1265],["Brayang",1784],["Batu Anam",2475],["Diso",2962],["Krangan",935],["Bajau",629],["Melupa",1906],["Awik",2090],["Kabo",2585],["Gerenjang",2274]]},{"c":"N.47","n":"Kalaka","p":13,"t":12445,"d":[["Perpat",1397],["Pelunga",2078],["Kaba",3916],["Saratok",4262],["Senyawan",309],["Tengalat",483]]},{"c":"N.48","n":"Kabong","p":13,"t":15112,"d":[["Kabong",6604],["Nyabor",5888],["Roban",2620]]},{"c":"N.49","n":"Kuala Rajang","p":14,"t":18816,"d":[["Belawai",3659],["Rajang",2971],["Selalang",1144],["Sari",2996],["Seberang",5704],["Masjid Baru",2152],["Muara Payang",190]]},{"c":"N.50","n":"Muara Lassa","p":14,"t":16301,"d":[["Paloh",1567],["Tekajong",4357],["Bruit",1384],["Saai",551],["Semop",2143],["Nanga Lepa",188],["Mupong",740],["Stubah",192],["Lebaan",581],["Selemas",283],["Bunut",1471],["Bintangor",2844]]},{"c":"N.51","n":"Daro","p":15,"t":14070,"d":[["Daro",5548],["Lemang Peh",2159],["Tebaang",2132],["Semah",394],["Kampung Sebena",275],["Kampung Penasu",636],["Sungai Lengan",587],["Nanga Singat",360],["Lassa",815],["Kampung Sawai",516],["Passin",648]]},{"c":"N.52","n":"Matu","p":15,"t":11916,"d":[["Kuala Matu",2808],["Tian",3255],["Sok",407],["Matu",248],["Sekaan Besar",1227],["Bawang",1702],["Jemoreng",1519],["Bekumah",750]]},{"c":"N.53","n":"Igan","p":15,"t":10978,"d":[["Igan",2465],["Ilas",285],["Senau",1104],["Oya",2631],["Terus",942],["Teh Oya",436],["Balan",712],["Tanam",1785],["Penat",618]]},{"c":"N.54","n":"Repok","p":16,"t":28148,"d":[["Sarikei",3081],["Nyelong Park",7599],["Repok",8161],["Merudu",2732],["Paoh",2764],["Peninjau",1370],["Pantak",2441]]},{"c":"N.55","n":"Meradong","p":16,"t":29144,"d":[["Bulat",4465],["Narasit",1025],["Tulai",905],["Kertong",1843],["Kelupu",3688],["Bandar",4936],["Meradong",763],["Kemantan",918],["Mador",1907],["Lemayong",4003],["Selidap",1245],["Nyelong",3343],["Sungai Pandan",103]]},{"c":"N.56","n":"Pakan","p":17,"t":17446,"d":[["Bayong",1574],["Sungai Rusa",891],["Babai",3080],["Wuak",2137],["Dayu",2172],["Lamujan",5083],["Balut",2509]]},{"c":"N.57","n":"Meluan","p":17,"t":18896,"d":[["Julau",3385],["Rayah",1979],["Meluan",3155],["Engkamup",2438],["Entabai",3105],["Beketan",4834]]},{"c":"N.58","n":"Machan","p":18,"t":16261,"d":[["Lukut",989],["Kanowit",4085],["Majau",3537],["Poi",1050],["Bukong",2302],["Latong",4298]]},{"c":"N.59","n":"Ngemah","p":18,"t":15904,"d":[["Peranan",1177],["Pidai",1779],["Bawan",2326],["Mapai",3343],["Sengayan",2621],["Bat",3477],["Kajah",1181]]},{"c":"N.60","n":"Dudong","p":19,"t":28584,"d":[["Maludan",4360],["Salim",3942],["Bukit Penyau",665],["Nanga Salim",483],["Sungai Salim",1126],["Dudong",921],["Sungai Nibong",655],["Durin",1037],["Bandar Baru Sibu Jaya",4424],["Sibu Jaya II",2500],["Sibu Jaya",4455],["Menyan",3330],["Tanggi",686]]},{"c":"N.61","n":"Tanah Mas","p":19,"t":29371,"d":[["Tanah Mas",397],["Lembangan",649],["Pulau Kerto",749],["Lanang",2203],["Aik Dee",3981],["Bukit Lima Timur",2833],["Mantis",4712],["Lada",5825],["Assan",1139],["Keladi",166],["Tanjung Latap",732],["Batu Wong",1340],["Naman",1957],["Sungai Durin",2025],["Sungai Telian",244],["Pak",419]]},{"c":"N.62","n":"Bukit Assek","p":19,"t":29116,"d":[["Hin Yu",3777],["Maling",670],["Layang - Layang",1508],["Hua Kiew",2936],["Manggis",558],["Lai Chee",1599],["Merlin",1268],["Tiong Hua",3312],["Hardin",2456],["Tong Sang",3131],["Uk Daik",4060],["Kapor Lima",3841]]},{"c":"N.63","n":"Pelawan","p":20,"t":27215,"d":[["Dung Sang",758],["Oya Lane",5221],["Camar",2489],["Cherry",2298],["Au Yong",2324],["Merdeka",4757],["Rajang Park",4611],["Pelawan",2906],["Nibong",1851]]},{"c":"N.64","n":"Sungai Merah","p":20,"t":25925,"d":[["Lotus",2209],["Kwong Ann",1663],["Gambir",3868],["Sungai Antu",4412],["Nang Sang",182],["Sungai Merah",7776],["Indah",4605],["Disa",1210]]},{"c":"N.65","n":"Nangka","p":20,"t":17493,"d":[["Rantau Panjang",1297],["Penasu",1305],["Sungai Teku",1244],["Wawasan",627],["Sungai Bidut (North)",259],["Bandong",957],["Ilir Nangka",3722],["Kampung Hilir",3851],["Race Course",2563],["Datu Nyabor",1668]]},{"c":"N.66","n":"Bukit Kemuyang","p":20,"t":24880,"d":[["Sentosa",4408],["Usaha Jaya",1088],["Bahagia Jaya",3420],["Kemuyang",2148],["Permai",5679],["Seduan",5344],["Rascom",2793]]},{"c":"N.67","n":"Rassau","p":20,"t":19757,"d":[["Passai",1476],["Bungan",1645],["Rassau",736],["Sebedil",373],["Nanga Tutus",556],["Sungai Pangai",70],["Sungai Aup",1585],["Bawang Assan",3240],["Engkilo",2736],["Lower Island",1702],["Upper Island",1569],["Dassan",1320],["Ensurai",198],["Lan",762],["Kunyit",356],["Ma'aw",1106],["Selalo",327]]},{"c":"N.68","n":"Dalat","p":21,"t":12609,"d":[["Sungai Dalam",463],["Ud",2766],["Dalat",1349],["Baru Dalat",545],["Kut",537],["Kut Muara",1270],["Kekan",874],["Medong",2546],["Klid",355],["Narub",204],["Baoh",694],["Ulu Baoh",1006]]},{"c":"N.69","n":"Tellian","p":21,"t":14475,"d":[["Dijih",822],["Engkerbai",390],["Ulu Sikat",466],["Nanga Sikat",641],["Sebakong",761],["Tellian",1622],["Tellian Laut",1893],["Penakop Permai",744],["Mukah",1389],["Kuala Lama",2773],["Petanak Mukah",2273],["Judan",701]]},{"c":"N.70","n":"Balingian","p":21,"t":13724,"d":[["Tutus",879],["Litong",2044],["Jebungan",1100],["Penakop",746],["Sesok",1959],["Kenyana",206],["Temesu",377],["Penipah",672],["Ulu Bedengan",446],["Bedengan",902],["Balingian",618],["Liok",637],["Suyong",1588],["Kuala Balingian",1550]]},{"c":"N.71","n":"Tamin","p":22,"t":25311,"d":[["Siong",2840],["Tamin",3100],["Sekuau",5815],["Selangau",8057],["Lemai",5499]]},{"c":"N.72","n":"Kakus","p":22,"t":23955,"d":[["Bawan",2437],["Arip",3508],["Annau",2670],["Tatau-Buan",1801],["Tatau",2168],["Bekiran",256],["Tekalit",721],["Lubok Kumpai",714],["Kelebu",335],["Rungan",619],["Nanga Empang",108],["Sangan",952],["Entajum",512],["Ulu Sangan",554],["Muput",665],["Kana",681],["Pasir Nangka",499],["Kakus",1013],["Giri",193],["Kulau Belungai",607],["Penyarai",841],["Tau",808],["Setusor",338],["Anap",613],["Takan",342]]},{"c":"N.73","n":"Katibas","p":23,"t":16527,"d":[["Tapang",1618],["Bangkit",2392],["Tekalit",1737],["Katibas",3132],["Song",1737],["Manap",2463],["Temelat",3448]]},{"c":"N.74","n":"Bukit Goram","p":23,"t":12674,"d":[["Entangai",1154],["Ibau",4440],["Menuan",1911],["Kapit",2248],["Kampung Baru",2386],["Sibau",535]]},{"c":"N.75","n":"Melekun","p":23,"t":10999,"d":[["Selirik",3677],["Sungai Kapit",2286],["Tembawai Sandong",719],["Lun Ili",363],["Entawau Ili",163],["Kebiaw",483],["Nanga Bena",328],["Merating",121],["Entawau Ulu",148],["Sut",127],["Antaroh",270],["Nanga Bawai",1108],["Sungai Amang",1206]]},{"c":"N.76","n":"Pelagus","p":23,"t":10372,"d":[["Nanga Sut",1190],["Nanga Banyau",326],["Teluk Gimang",525],["Pelagus",3376],["Nanga Peraran",1695],["Lubok Dabai",437],["Nanga Metah",464],["Nanga Pilla",725],["Nanga Ensawi",676],["Merit",538],["Ulu Metah",420]]},{"c":"N.77","n":"Baleh","p":24,"t":16300,"d":[["Gaat",1180],["Merirai",3207],["Baleh",3809],["Melinau",3208],["Mujong",4896]]},{"c":"N.78","n":"Belaga","p":24,"t":11571,"d":[["Long Busang",887],["Long Lidam",94],["Long Luar",618],["Long Tanyit",339],["Long Wat",936],["Belaga",3561],["Ba",2830],["Data Kakus",1228],["Long Bangan",395],["Long Semutut",683]]},{"c":"N.79","n":"Murum","p":24,"t":12192,"d":[["Long Peran",283],["Asap",9745],["Long Tebila",419],["Long Unan",357],["Jelalong",269],["Sungai Dusan",616],["Sungai Pesu",503]]},{"c":"N.80","n":"Jepak Jaya","p":25,"t":23815,"d":[["Kuala Tatau",2256],["Jepak Jaya",9242],["Segan",2817],["Sri Dagang",2194],["RPR Sebiew",3414],["Sungai Nyigu",3892]]},{"c":"N.81","n":"Tanjong Batu","p":25,"t":32057,"d":[["Bintulu Town",2980],["Tanjung Batu",7339],["Bukit Orang",4281],["Assyakirin",6079],["Desa Damai",4515],["Bandar Jaya",6863]]},{"c":"N.82","n":"Samalaju","p":25,"t":28144,"d":[["Li Hua",3963],["Mawar",3047],["Melor",2605],["RPR Kidurong",5303],["Tanjung Kidurong",7506],["Taman Permaisuri",1262],["Bintulu-Miri Road",4085],["Batu Lima",373]]},{"c":"N.83","n":"Kemena","p":25,"t":25541,"d":[["Tubau",2800],["Pandan",3208],["Sungai Sebauh",2462],["Sebauh",3205],["Sebungan",2536],["Labang",3233],["Sibiew Similajau",4307],["Sungai Tisang",3790]]},{"c":"N.84","n":"Batu Niah","p":25,"t":18183,"d":[["Hulu Suai",2898],["Goyang",1255],["Subis Satu",1846],["LKTS Suai",1493],["Suai",4007],["Skrat",257],["Sekaloh",2706],["Batu Niah",2096],["Kebora",211],["Sungai Tangap",479],["Ladang Dua",506],["Pakut",429]]},{"c":"N.85","n":"Bekenu","p":26,"t":20894,"d":[["Terahad",139],["Angus",216],["Menjelin",313],["Bungai",920],["Tiris",1578],["Kelulit",1301],["Tarikan",394],["Niah",1145],["Sepupok",1531],["Kampung Bukit Bom",279],["Tanjung Belipat",840],["Saeh",1036],["Saeh Merah",626],["Ladang Tiga",1890],["Essau",399],["Bekanu",2468],["Bakas",621],["Hulu Sibuti",319],["Sungai Kelintang",309],["Peninjau",2302],["Kabuloh",513],["Keluru",1006],["Subak",749]]},{"c":"N.86","n":"Pantai Beraya","p":26,"t":27556,"d":[["Selanyau",730],["Satap",1360],["Beraya",386],["Lambir",5117],["Bakam",2323],["Sungai Buluh Rait",886],["Sungai Lusut",830],["Tukau",404],["Taman Tunku",14325],["Lusut",1195]]},{"c":"N.87","n":"Piasau","p":27,"t":34546,"d":[["Airport",6812],["RAMD",675],["Luak",8357],["Tanjong",2547],["Kubu",414],["Bazaar",4668],["Kampung Lopeng",1129],["Canada Hill",718],["Bintang",2098],["Merbau",2492],["Merpati",287],["Jee Foh Utama",2961],["Desa Seri",1388]]},{"c":"N.88","n":"Pujut","p":27,"t":31520,"d":[["Pujut Tujuh",5508],["Pujut Empat",3048],["Pujut",5440],["Pujut - Lutong",2788],["Piasau Jaya",5196],["Boulevard",3449],["Krokop",2693],["Krokop Utama",3398]]},{"c":"N.89","n":"Permaisuri","p":27,"t":31283,"d":[["Permaisuri",3116],["Padang Belon",1407],["Lutong",7495],["Kampung Senadin",1916],["Kuala Baram",2459],["Asam Paya",710],["Pangkalan Lutong",2275],["Kampung Tudan",2000],["Fasa Empat Tudan",1558],["Prima Villa",674],["Pujut Adong",1985],["Pujut Corner",5688]]},{"c":"N.90","n":"Tudan","p":27,"t":32078,"d":[["Fasa Dua Tudan",3467],["RPR Permyjaya",7866],["Fasa Enam Tudan",4308],["Promin Jaya",1946],["Desa Senadin",9545],["Desa Murni",4946]]},{"c":"N.91","n":"Lopeng","p":27,"t":28984,"d":[["Desa Indah",9071],["Desa Pujut",5542],["Lopeng",2857],["Padang Kerbau",1901],["Riam",9220],["Sungai Teniku",393]]},{"c":"N.92","n":"Marudi","p":28,"t":23363,"d":[["Marudi",5102],["Pengalayan",2632],["Nabor",3530],["Beluru",4816],["Sungai Kuap",229],["Sungai Sengkabang",592],["Long Teru",2503],["Teruking",3959]]},{"c":"N.93","n":"Usun Apau","p":28,"t":14092,"d":[["Jegan",3690],["Pana",2550],["San",2556],["Liomatu",5296]]},{"c":"N.94","n":"Telang Usan","p":28,"t":13802,"d":[["Long Lama",3616],["Apoh",5256],["Long Miri",2356],["Akahpatah",2574]]},{"c":"N.95","n":"Mulu","p":28,"t":11589,"d":[["Lubok Nibong",985],["Puyut",4197],["Tutoh",3094],["Lellang",410],["Long Peluan",1151],["Remudu",211],["Dano",172],["Bario",988],["Pa'lungan",381]]},{"c":"N.96","n":"Bukit Kota","p":29,"t":22988,"d":[["Ranggau",450],["Sebukang",6749],["Tabahan",2752],["Poyan",2895],["Limbang",2237],["Bangkita",2198],["Bukit Kota",1950],["Pendam",1498],["Telahak",2259]]},{"c":"N.97","n":"Batu Danau","p":29,"t":20796,"d":[["Berawan",4965],["Danau",3757],["Lubai",3811],["Ukong",2952],["Medamit",2943],["Medihit",2368]]},{"c":"N.98","n":"Gunong Murud","p":30,"t":14584,"d":[["Ba`kelalan",970],["Semadoh",1297],["Lupeng",424],["Tengoa",482],["Sukang",1022],["Lapadan",390],["Beriwan",722],["Talis",517],["Suang",753],["Temarop",436],["Ranchangan",502],["Trusan",453],["Siang",1118],["Pangi",620],["Batu Tiga",209],["Tuma",1936],["Maligan",1270],["Pengaleh",537],["Lampaki",439],["Muncu",487]]},{"c":"N.99","n":"Bukit Sari","p":30,"t":20704,"d":[["Sibagol",707],["Merapok",1036],["Dato",909],["Pemukat",466],["Bukit Sari",590],["Melusok",2129],["Lawas",2579],["Mission",334],["Ladang Baru",1135],["Temangis",1131],["Belipat",953],["Punang",1316],["Sualai",585],["Gelapas",1125],["Silat",526],["Luagan",401],["Baru",804],["Aru",810],["Katong",742],["Sundar",202],["Pagar",882],["Awat",1342]]}],"total":2037648,"npd":1141};</script>
 <script>
