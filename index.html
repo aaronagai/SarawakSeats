@@ -127,18 +127,6 @@ body{
   background:#fff; box-shadow:0 0 0 1px var(--rule);
 }
 .kicker .kicon img{display:block; height:100%; width:auto; object-fit:contain}
-.hero-ctas{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:22px; max-width:100%}
-.cta{
-  display:inline-flex; align-items:center; justify-content:center; gap:8px;
-  border-radius:32px; font-family:inherit; font-weight:500; font-size:15px;
-  line-height:1; letter-spacing:-.09px; text-decoration:none;
-  padding:0 20px; height:44px; max-width:100%; border:1px solid transparent; cursor:pointer;
-  transition:background-color 100ms ease, border-color .15s ease, color .15s ease;
-}
-.cta--fill{background:var(--ink); color:var(--ground)}
-.cta--fill:hover{background:var(--ink-2)}
-.cta--ghost{background:var(--surface); color:var(--ink); border-color:var(--rule-2)}
-.cta--ghost:hover{border-color:var(--muted)}
 h1{
   margin:15px auto 0; font-family:var(--sans); font-weight:400;
   font-size:clamp(2.1rem,1.1rem + 3.4vw,3.9rem); line-height:1.08; letter-spacing:-.03em;
@@ -146,7 +134,8 @@ h1{
 }
 .h1-mark{
   display:inline-block; height:1.5em; width:auto;
-  vertical-align:-.38em; margin:0 .02em 0 .06em;
+  vertical-align:-.2em; position:relative; top:-.28em;
+  margin:0 -.28em 0 -.32em;
 }
 /* the mark and the word after it are one unit — Chrome will otherwise break
    between them and strand the building at the end of a line */
@@ -323,8 +312,6 @@ footer{
   }
   .page > .wrap{padding-bottom:56px}
   .hero{padding-top:calc(22px + env(safe-area-inset-top, 0px)); padding-bottom:4px}
-  .hero-ctas{margin-top:18px; flex-direction:column; align-items:stretch; width:min(100%, 22rem)}
-  .cta{width:100%}
   .kicker{font-size:13px}
   .stats{margin-top:20px; padding:22px 0 18px}
   .stat{padding:0 4px; gap:6px}
@@ -442,10 +429,6 @@ body.has-reveal .page{
       <p class="kicker"><span>Berdasarkan data</span><span class="kicon" aria-hidden="true"><img src="data:image/webp;base64,UklGRowFAABXRUJQVlA4IIAFAAAwHQCdASotADYAPjESh0KiIQwGqwAQAYJbADSKAieXvyJWesucBtgP5PugPQA/ZLrEf1m9gD9gPTa9ib9xvRVtgDzh76PbP18/dbLd/UPyI/Mj2ct1b/TvyK/Krj/Mj7h3+F/K7+tc4H0p/mHqT/jH9o/Jn+e84NQE/jf87/uX5M/3L4hf5v8s/XL83f5z82P7l9g38b/mf+I/uH7j/4D///937jvW1+sfsm/rK15rcTLY7/RP3z4NtRKQf7LKPBQA01a+X4NX4y095CKYHkLIjHzqxbGKqC2E5eQEYNKZaX4eHBPiZG9RW1ro21hADn0XgAD+//7OAVn+Np//0VSswXuLz4BPsg3qWxNMCLP4C5fgGdnje2aX+y4dfzOT/+s4tVoOhZVE3J5+JJQNzLXvv7/up45L3mJQxWF8WeuXd3uwMV3SOvJzIi3Y7vqrfnPRplUZamD/boaSEUVXQ+zZ9ZAySLU3hmxKb5aNpxrJV9Rsg9Aq55OtR4Rjj4OW0Rnx5Ce6g5rk5TvD0lek+PACpCp9/PaMSGd8ANa0EsklXZD3HrC+4ACaSaG8+QYAWwP4eGNvGcj9Utz/TI6Ypji2wx01kcJcGjF8OkIvVoCeoYJEP0pu03Z3Rvl3/8AYl/SsDke6x163RpZgfQRKs1CfQupdE8sVWu0LP0cdVZUcIEWW5dUdlEWx6Z/FGIk88Ka8i5K+89WrVLwDC7QSNQ2jZwWf/4m51vWTWtDf8eGUP6VgTHxxS954MJTlhaVExxn9Wyfkln1XaYXJzY1eoD1e3fBsP6Zd26Qgyxl/8/nOSFUDIpVO+fqCIQtL1d7G+0snWqRGa6Oe+IuQ+S1IxeKl5UI2yakL/xK98ZWYag6kzzSirHftEs+phdx9J9QFGwLOOp01ZcZeHzHXcNE2I12gfM6zLXOqG2PMtZY2PtUxm6ppVgMNAD0mz1Jp841cgbBnmRtk9BpjXhcMOMf/mCQypyG0NHGXT7CIwI0S1PkqhZDV3onc+YunnBohvPdK5V/iOWJZ6FxKsCCPdigL1YJzVgaizNbw+eGTNw+rQ3aMbmI3jdArt4hxfR3ERS5N8vqhbajO7hm4lOKaj5INCzdMoLMb0dcLszzWuSZGf21UWs2E46gJi+bpbJYvzpnbLxe+wioiE/yrPF+gBYfYeStIlWoAeEp+MVOUXUjgUSgp6c5Zx6f//eeQMhEvyVsTkWFIrQF/ogoMNdLIQfHmdlfh5vvCH7/x+v83ZQafea5Tnzk5/m9M7VOzfmNE1EmXYUpcbZ+10jj8bC0erLq3Yz7DPQLbmegbRQPSUtDTvKg2McHZN8TiuqOAEsn9u35//oobvhdXYMSQ75hbJgRO6R+YIp4tAxwSqwDX//hqIU108iAflIy/waMOOn4KPvhNsVVW/RHI/2f/erUZQQDp1O9SBtwm9sgb0xw8n99hGWmZCR6jXtpC8+N5iSQ0b01q9a+f9ZzLogssuvhRMONrm3OySRSgF5d9DoYNp42S3y7hA7dv4Jy1eSI4cdtLJROHzPfR38qtSr+h2xbO95ZGJ+HVg5TOx4XRaLXgGW9Wfp3+MIlxAppt/uH6Ow4Fa+ZuOsU8Uj6tyPOWky2PMfgtUAmeOTUN5uX8HFUL7NBE+Yn4hXf9/AZXEWu7w2UYjXXKrP6+SuSjNjIo+xpjvweDjbgKVrBkQEQbEHvTDG0m+XX/+Nv85AIs2Wd/+Nipj0w56tYMG/76dgY4DNh3tWLKdU911QOtpqSZsFNuPuBRNslrxukUiuMMng/lOvKiRaOP1PobAQ9TsPKELvjAHFPRKrHzr+P6teya2oQi87xLUcUjNNFSGUP5PEmSaCyIzo+oaFmV+fSZuwdwAN9iCVYa0uAA" alt="" width="45" height="54" decoding="async"></span><span>SPR Malaysia</span></p>
       <h1>Terokai Cadangan Persempadanan<span class="h1-unit"><img class="h1-mark" src="kuching.svg" alt="" width="483" height="425" decoding="async">Sarawak</span></h1>
       <p class="lede">Terokai cadangan persempadanan baharu Sarawak berdasarkan data yang diterbitkan oleh SPR, lengkap dengan maklumat kawasan dan bilangan pengundi.</p>
-      <div class="hero-ctas">
-        <button class="cta cta--fill" type="button" id="ctaSearch">Cari daerah mengundi</button>
-        <a class="cta cta--ghost" href="https://myst.spr.gov.my/pameran-syor" target="_blank" rel="noopener">Portal rasmi SPR</a>
-      </div>
     </div>
   </section>
 
@@ -646,12 +629,6 @@ body.has-reveal .page{
 
     qEl.parentElement.classList.toggle("is-open", qEl.value.trim() !== "");
   }
-
-  var ctaSearch = document.getElementById("ctaSearch");
-  if (ctaSearch) ctaSearch.addEventListener("click", function(){
-    qEl.scrollIntoView({block:"center", behavior:"smooth"});
-    qEl.focus({preventScroll:true});
-  });
 
   qEl.addEventListener("input", render);
   parEl.addEventListener("change", render);
