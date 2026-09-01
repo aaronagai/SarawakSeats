@@ -141,16 +141,16 @@ body{
 h1{
   margin:15px auto 0; font-family:var(--sans); font-weight:400;
   font-size:clamp(2.1rem,1.1rem + 3.4vw,3.9rem); line-height:1.08; letter-spacing:-.03em;
-  text-wrap:balance; overflow-wrap:break-word; color:var(--ink); max-width:20ch;
+  text-wrap:balance; overflow-wrap:break-word; color:var(--ink); max-width:23ch;
 }
 .h1-mark{
-  display:inline-block; height:.82em; width:auto;
-  vertical-align:-.1em; margin:0 .06em 0 .1em;
+  display:inline-block; height:1.3em; width:auto;
+  vertical-align:-.3em; margin:0 .02em 0 .06em;
 }
 /* the mark and the word after it are one unit — Chrome will otherwise break
    between them and strand the building at the end of a line */
 .h1-unit{white-space:nowrap}
-@media (min-width:1280px){ h1{font-size:58px; letter-spacing:-.022em; max-width:22ch} }
+@media (min-width:1280px){ h1{font-size:58px; letter-spacing:-.022em; max-width:25ch} }
 @media (max-width:579px){
   h1{max-width:13em; font-size:clamp(1.85rem,7.8vw,2.3rem); line-height:1.14; letter-spacing:-.035em}
 }
