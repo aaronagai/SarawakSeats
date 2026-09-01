@@ -132,10 +132,12 @@ h1{
   font-size:clamp(2.1rem,1.1rem + 3.4vw,3.9rem); line-height:1.08; letter-spacing:-.03em;
   text-wrap:balance; overflow-wrap:break-word; color:var(--ink); max-width:23ch;
 }
+/* keep the mark inside its own line box — anything taller than the cap height
+   climbs into the line above and collides with the text there */
 .h1-mark{
-  display:inline-block; height:1.5em; width:auto;
-  vertical-align:-.2em; position:relative; top:-.28em;
-  margin:0 -.28em 0 -.32em;
+  display:inline-block; height:1em; width:auto;
+  vertical-align:-.16em;
+  margin:0 -.06em;
 }
 /* the mark and the word after it are one unit — Chrome will otherwise break
    between them and strand the building at the end of a line */
