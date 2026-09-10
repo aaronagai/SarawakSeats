@@ -282,7 +282,20 @@ main{min-width:0; padding:0 0 60px}
   font-size:10.5px; color:var(--muted)}
 .skbd kbd{font:inherit; font-size:10px; border:1px solid var(--rule-2); border-radius:var(--r-ctl);
   padding:1px 4px; color:var(--ink-2)}
-@media (max-width:900px){ .sdrop{left:-4px; right:-4px} }
+@media (max-width:900px){
+  /* The field is squeezed between three buttons, but the results panel has no
+     reason to be: pin it to the viewport instead of to the field. */
+  .sdrop{position:fixed; left:10px; right:10px;
+    top:calc(var(--top-h,55px) + 6px); max-height:min(68vh,520px)}
+  /* the deviation pill is the widest thing competing with the name, and the
+     seat page states it anyway */
+  .sitem .dev{display:none}
+  .sitem-in{gap:10px}
+  .ssub{font-size:10.5px}
+  /* keyboard hints on a device with no keyboard */
+  .skbd{display:none}
+  .ssub-par{display:none}
+}
 
 /* ---------------- entity header ---------------- */
 .wrap{padding:0 20px}
@@ -339,8 +352,13 @@ main{min-width:0; padding:0 0 60px}
   vertical-align:1px}
 /* a place name is a proper noun, not a figure — it stays in the sans, and only
    the number beside it takes the mono */
-.fname{font-family:var(--sans); letter-spacing:0; font-weight:500}
-.facts .fv{white-space:nowrap}
+.facts .fk{flex:none}
+.facts .fv{display:flex; align-items:baseline; justify-content:flex-end;
+  flex:1 1 auto; min-width:0; white-space:nowrap}
+.fname{font-family:var(--sans); letter-spacing:0; font-weight:500;
+  overflow:hidden; text-overflow:ellipsis; min-width:0}
+.fsep{flex:none; padding:0 5px; color:var(--muted)}
+.fnum{flex:none}
 .facts .fv{font-size:12.5px; color:var(--ink); text-align:right;
   font-variant-numeric:tabular-nums; font-weight:500}
 .railnote{padding:11px 14px 13px; border-top:1px solid var(--rule); font-size:11px;
@@ -1062,7 +1080,8 @@ function drawFacts(a, rows){
     rowsHtml.push([t("devFromAvg"), (d>=0?"+":"−")+Math.abs(d*100).toFixed(1)+"%"]);
   }
   function named(name, value){
-    return '<span class="fname">'+esc(name)+'</span> · '+fmt(value);
+    return '<span class="fname">'+esc(name)+'</span>'+
+           '<span class="fsep">·</span><span class="fnum">'+fmt(value)+'</span>';
   }
   if (rows.length>1){
     rowsHtml.push([t("largest"),  named(sp.hi[1], sp.hi[V]), true]);
@@ -1086,13 +1105,16 @@ function drawFacts(a, rows){
     for (var i=1;i<a.eth.length;i++) if (a.eth[i]>a.eth[te]) te=i;
     rowsHtml.push([t("topEthnic"),
       '<span class="fdot" style="background:'+ETH[te].c+'"></span>'+
-      '<span class="fname">'+esc(ETH[te].n)+'</span> · '+pc(a.eth[te]/ethTot*100), true]);
+      '<span class="fname">'+esc(ETH[te].n)+'</span><span class="fsep">·</span>'+
+      '<span class="fnum">'+pc(a.eth[te]/ethTot*100)+'</span>', true]);
   }
   var ageTot=a.age.reduce(function(x,y){ return x+y }, 0);
   if (ageTot){
     var ta=0;
     for (var j=1;j<a.age.length;j++) if (a.age[j]>a.age[ta]) ta=j;
-    rowsHtml.push([t("topAge"), D.age[ta]+" · "+pc(a.age[ta]/ageTot*100)]);
+    rowsHtml.push([t("topAge"),
+      '<span class="fname">'+esc(D.age[ta])+'</span><span class="fsep">·</span>'+
+      '<span class="fnum">'+pc(a.age[ta]/ageTot*100)+'</span>', true]);
   }
   $("#facts").innerHTML = rowsHtml.map(function(r){
     return '<div class="fr"><span class="fk">'+r[0]+'</span><span class="fv">'+
@@ -1616,7 +1638,8 @@ function renderDrop(){
       html+='<button class="sitem" type="button" role="option" aria-selected="false" '+
         'id="sopt'+i+'" data-i="'+i+'"><span class="sitem-in">'+
         '<span><span class="sname">'+hl(x.pd[1])+'</span>'+
-        '<span class="ssub">'+esc(x.pd[0]+" · "+x.r[0]+" "+x.r[1]+" · "+P[x.r[2]][1])+'</span></span>'+
+        '<span class="ssub">'+esc(x.pd[0]+" · "+x.r[0]+" "+x.r[1])+
+          '<span class="ssub-par"> · '+esc(P[x.r[2]][1])+'</span></span></span>'+
         '<span class="smeta">'+fmt(x.pd[2])+'</span></span></button>';
     } else if (x.kind==="dun"){
       var dev=(x.r[V]-avg)/avg, over=dev>=0;
@@ -1699,9 +1722,9 @@ function applyURL(){
     });
   }
   var code=p.get("dun");
-  if (code){
-    var hit=seats().filter(function(r){ return r[0]===code })[0];
-    if (hit) openDrawer(hit);
+  if (code && seats().some(function(r){ return r[0]===code })){
+    state.dun=code; state.par=null;
+    drawParlist(); drawDunlist(); render();
   }
 }
 
