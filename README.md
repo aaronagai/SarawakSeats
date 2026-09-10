@@ -18,8 +18,11 @@ the demographics needed to actually reason about it.
   **3.33:1** proposed, against **7.11:1** under the current boundaries.
 - **Demographics per seat.** Ethnic composition, five age bands and sex, for all
   99 (and all 82) seats, filterable by parliamentary constituency.
-- **Polling districts.** All 1,141 daerah mengundi with elector counts, in the
-  per-seat drawer.
+- **Polling districts.** All 1,141 proposed daerah mengundi and all 887 current
+  ones, with DM codes and elector counts, searchable and filterable.
+- **What changed.** Per seat and per parliament: core retention, effective
+  predecessors, the shift in ethnic mix, and the polling districts that moved in
+  and out. Traced by district name, with coverage stated per seat.
 
 ## Status of the data
 
@@ -37,8 +40,8 @@ under Section 4, Part II of the Thirteenth Schedule to the Federal Constitution,
 Article 113(2). Elector counts are from the electoral roll gazetted 29 January
 2026 [P.U. (B) 35/2026]. Portal: https://myst.spr.gov.my/pameran-syor
 
-**Demographic breakdowns (ethnicity, age, sex) and the polling-district table
-(DM codes, names, elector counts) — ElectionData.MY**, via its Lukis
+**Demographic breakdowns (ethnicity, age, sex) and the polling-district tables
+for both sets (DM codes, names, elector counts) — ElectionData.MY**, via its Lukis
 redistricting tool (https://lukis.electiondata.my). These are **not** an SPR
 publication and are not part of the gazetted notice. The workbooks in `data/`
 carry their own source notes.
