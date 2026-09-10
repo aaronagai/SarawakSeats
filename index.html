@@ -526,9 +526,12 @@ table.pds .v{text-align:right; color:var(--ink); font-variant-numeric:tabular-nu
   .wrap{padding:0 14px}
   /* five tabs do not fit at 390px; without this the last two are clipped away
      by the page-level overflow and cannot be reached at all */
-  .tabs{overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch}
+  /* overflow-x:auto makes overflow-y compute to auto as well, so the row became
+     a 1px vertical scroller and jittered under a thumb. Lock the y axis; the
+     padding keeps the active tab's underline from being clipped by it. */
+  .tabs{overflow-x:auto; overflow-y:hidden; padding-bottom:1px;
+    overscroll-behavior-x:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch}
   .tabs::-webkit-scrollbar{display:none}
-  .tabs button{scroll-snap-align:start}
   .grid2{grid-template-columns:minmax(0,1fr)}
   .bignums{gap:24px}
   .hide-sm{display:none}
