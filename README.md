@@ -20,9 +20,12 @@ the demographics needed to actually reason about it.
   99 (and all 82) seats, filterable by parliamentary constituency.
 - **Polling districts.** All 1,141 proposed daerah mengundi and all 887 current
   ones, with DM codes and elector counts, searchable and filterable.
-- **What changed.** Per seat and per parliament: core retention, effective
-  predecessors, the shift in ethnic mix, and the polling districts that moved in
-  and out. Traced by district name, with coverage stated per seat.
+- **What changed.** Per seat and per parliament: which current seats every
+  proposed seat draws its electors from (and where every current seat's electors
+  go), core retention, effective predecessors, the shift in ethnic mix, and the
+  polling districts that moved in and out. Every one of the 2,037,648 electors is
+  accounted for; the 9.3% whose district was split and renamed are marked as
+  resolved rather than stated (see below).
 
 ## Status of the data
 
@@ -46,6 +49,16 @@ redistricting tool (https://lukis.electiondata.my). These are **not** an SPR
 publication and are not part of the gazetted notice. The workbooks in `data/`
 carry their own source notes.
 
+**Where each seat's electors come from — SPR's per-constituency exhibition
+files.** For each of the 31 federal constituencies SPR publishes a "Peta & DM
+(Asal + Syor)" PDF: the current seats with their polling districts, the proposed
+seats with theirs, and a colour code — districts moved out (green), districts
+moved in (purple), new seat or district names (red), renamed districts (blue).
+`data/spr-peta-dm-2026.json` is those tables, extracted with their colour coding
+from the 29 constituencies that change (P.205 Saratok and P.214 Selangau are
+status quo). Two constituencies' current-seat totals are also confirmed by the
+Master Indeks (the roll by current seat) and the Notis.
+
 ## Accuracy
 
 The SPR figures were extracted from the PDF by word coordinates (its text layer
@@ -59,21 +72,19 @@ The demographic workbooks are reconciled at build time before being embedded.
 Both sets agree with the SPR totals exactly, and in the 99-seat set every seat's
 ethnicity, age bands and sex each sum to its elector count.
 
-**A second discrepancy, and why the polling-district table changed source.**
-The site originally carried polling districts extracted from the SPR PDF (names
-and elector counts only). Adding DM codes meant joining to the workbook, and
-that join surfaced a conflict in exactly one seat, **N.55 Meradong**: both
-sources list the same thirteen daerah with the same thirteen elector counts and
-the same subtotal (29,144), but eight of them are paired to different names. A
-permutation inside one DUN preserves every subtotal, which is why no earlier
-reconciliation caught it.
+**N.55 Meradong, settled.** The workbook and the SPR notice list the same
+thirteen daerah with the same thirteen counts, but pair eight of them to
+different names (a permutation inside one seat preserves every subtotal, which is
+why reconciliation never caught it). SPR's own Peta & DM table for P.208 pairs
+them exactly as the notice does, and identically to the current N.46 Meradong
+list — so the notice is right and the workbook is scrambled. The site now carries
+SPR's pairing for N.55, with the workbook's codes and order.
 
-The workbook rows are in strict DM-code order and are internally consistent, and
-the README already noted that the PDF's text layer "scrambles reading order on
-some pages" — so the polling-district table is now taken wholly from the
-workbook rather than stapling its codes onto figures from the other source.
-**This one seat is worth checking against the SPR PDF directly**; the state
-total is unaffected either way.
+**Two misprints in SPR's Peta & DM tables**, both caught by the tables' own
+subtotals: N.58 Machan lists Latong as 4,281 where the notice, the seat total and
+the page total all say 4,298; and N.81 Ba'kelalan prints one count as "1,2897",
+which is 1,297 by the JUMLAH and the roll. Both are corrected in the extract and
+annotated there.
 
 **One known discrepancy.** In the **82-seat** workbook the ethnicity columns do
 not sum exactly to the elector count: 75 of 82 seats are out by a few electors,
@@ -83,8 +94,43 @@ the upstream source. Ethnic percentages are therefore computed against the sum
 of the ethnicity columns rather than the elector total, so the shares always add
 to 100%.
 
+## How the flows were established
+
+The question the Changes tab answers is: for every proposed seat, how many of its
+electors were in each current seat? SPR's tables state most of it directly, and
+the rest is forced by arithmetic. `data/dm-lineage.json` records, for each of the
+1,141 proposed polling districts, the current seat(s) its electors come from and
+which of these rules established it:
+
+| rule | electors | what it rests on |
+|---|---:|---|
+| unchanged district, same seat | 1,159,367 | name and count identical; not marked as moved |
+| district re-cut inside its own seat | 362,834 | not marked as moved in, so it stays with the seat of the same name |
+| whole district moved to another seat | 263,357 | marked moved out / moved in; name and count identical |
+| remnant keeping its old name | 62,049 | the name identifies the district it was cut from, and so the seat |
+| read from SPR's map | 72,721 | SPR's "Peta Asal" draws the new districts inside the old boundaries, labelled with the old seat's code |
+| by subtraction | 117,320 | the only assignment that makes every current seat's total balance exactly |
+
+The last two classes (9.3% of electors) are shown on the site with a ≈ mark. The
+subtraction is checked, not assumed: with the stated districts fixed, every
+current seat's remaining electors must be exactly accounted for by the renamed
+pieces nearby, and for every seat there is exactly one way to do it. One district
+(Tijirak, in the new Sungai Serin) is built from parts of two current seats; its
+split is by subtraction too. One district (Sungai Empit, 439 electors) is marked
+by SPR as moved into the new Stakan but is arithmetically the sliver of the old
+Stakan's Merdang that stayed behind, and is treated as such.
+
+The Peta Asal maps were read where the arithmetic alone left more than one
+answer — chiefly Miri, where old Pujut and old Senadin both feed the new
+Permaisuri. The labels are small; the readings are listed in
+`scripts/derive_lineage.py` and every one of them is consistent with the
+seat totals.
+
 ## Build
 
-None. `index.html` carries the data, styles and scripts inline; `kuching.png` is
-the only separate asset. The embedded dataset is generated from the two workbooks
-in `data/` and reconciled against the SPR figures before it is written in.
+`index.html` carries the data, styles and scripts inline; `kuching.png` is the
+only separate asset. The seat and polling-district tables were generated from the
+two workbooks in `data/` and reconciled against the SPR figures before being
+written in. `python3 scripts/build_changes.py` rebuilds the Changes block from
+`data/spr-peta-dm-2026.json` and `data/dm-lineage.json` and writes it back into
+the page.
