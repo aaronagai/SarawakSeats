@@ -1,0 +1,14 @@
+<!doctype html><html lang="ms"><head><meta charset="utf-8">
+<title>SarawakSeats</title>
+<meta name="robots" content="noindex">
+<script>
+// /n16, /N16, /n.16, /p219, /82/n16 ... -> the app, which reads the seat from the path
+(function(){
+  var parts=location.pathname.split("/").filter(Boolean), out=[];
+  if (parts[0]==="82"){ out.push("82"); parts.shift() }
+  var m=/^([np])\.?(\d{2,3})$/i.exec(parts[0]||"");
+  if (m){ var k=m[1].toUpperCase(); out.push(k+"."+(k==="N" ? ("0"+m[2]).slice(-2) : m[2])) }
+  var path="/"+out.join("/")+(out.length?"/":"");
+  location.replace("/?go="+encodeURIComponent(path)+location.hash);
+})();
+</script></head><body><p><a href="/">SarawakSeats</a></p></body></html>

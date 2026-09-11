@@ -27,6 +27,17 @@ the demographics needed to actually reason about it.
   accounted for; the 9.3% whose district was split and renamed are marked as
   resolved rather than stated (see below).
 
+## Addresses
+
+Every seat and parliament has its own address, so a link can be saved or pasted
+into a group: `sarawakseats.org/N.16/` is the proposed N.16, `/P.219/` a
+parliament, `/82/N.16/` the current N.16, with `#change` and the other tab names
+after it. Each of those is a real page on the server (`scripts/build_seat_pages.py`
+writes a stub per seat carrying that seat's own title and link preview) that opens
+the app on that seat; the app keeps the same path in the address bar as you move
+around, and the older `?dun=N.16` form still works. Near-misses such as `/n16`
+are caught by `404.html`.
+
 ## Status of the data
 
 These are **syor yang dicadangkan** — proposed recommendations, not gazetted

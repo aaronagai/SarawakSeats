@@ -482,6 +482,8 @@ mark{background:var(--mark-bg); color:var(--ink); border-radius:var(--r-mark); p
 .chgwarn{color:var(--over)}
 /* flows resolved from SPR's maps or by arithmetic rather than stated in its tables */
 .chg-res{color:var(--muted)}
+.newstar{color:var(--over); font-weight:700; margin-left:2px}
+.newtag{color:var(--muted); font-weight:500}
 .chgbadge{display:inline-block; margin-left:8px; padding:1px 7px; border-radius:var(--r-mark);
   background:var(--surface-2); border:1px solid var(--rule-2); color:var(--ink-2);
   font-size:10.5px; font-weight:600; letter-spacing:0; text-transform:none; vertical-align:1px}
@@ -1035,6 +1037,8 @@ var state={set:"99", q:"", qRaw:"", par:null, dun:null, sort:"code", pdsort:"cod
            sel:null, tab:"ringkasan", demoDim:"eth", demoMode:"pct"};
 
 function seats(){ return state.set==="99" ? D.d99 : D.d82 }
+function isNew(code){ return state.set==="99" && !!(D.chg.p[code] && D.chg.p[code]['new']) }
+function newTag(){ return LANG==="ms" ? "(Baharu)" : "(New)" }
 function pars(){  return state.set==="99" ? D.par  : D.par82 }
 function pdsOf(){ return state.set==="99" ? D.pd : D.pd82 }
 function eth7(r){
@@ -1318,7 +1322,7 @@ function drawTable(rows){
     var tr=document.createElement("tr");
     tr.innerHTML=
       '<td><div class="cell c-code">'+esc(r[0])+'</div></td>'+
-      '<td><div class="cell"><button class="rowname" type="button">'+hl(r[1])+'</button>'+
+      '<td><div class="cell"><button class="rowname" type="button">'+hl(r[1])+(isNew(r[0])?' <span class="newtag">'+esc(newTag())+'</span>':'')+'</button>'+
         '<div class="c-sub">'+hl(P[r[2]][0]+" "+P[r[2]][1])+' · '+r[3]+' '+t("pdCount")+'</div>'+
         (hits.length ? '<div class="c-hit"><b>'+t("daerahLabel")+'</b> '+hits.slice(0,3).map(function(x){
             return hl(x[1])+' ('+fmt(x[2])+')' }).join(", ")+
@@ -1757,12 +1761,12 @@ function openDrawer(r, from){
   drawer.classList.add("on"); scrim.classList.add("on");
   var closeBtn=drawer.querySelector(".dclose"); if (closeBtn) closeBtn.focus();
   returnFocus = from || null;
-  state.sel=r[0]; markSel(); syncURL();
+  state.sel=r[0]; markSel();
 }
 function closeDrawer(){
   if (drawer.hidden) return;
   drawer.classList.remove("on"); scrim.classList.remove("on");
-  state.sel=null; markSel(); syncURL();
+  state.sel=null; markSel();
   if (returnFocus && document.contains(returnFocus)) returnFocus.focus();
   returnFocus=null;
   setTimeout(function(){
@@ -1821,7 +1825,7 @@ function drawDunlist(){
       '<span class="pv">'+list.length+'</span></button>' +
     list.map(function(r){
       return '<button data-dun="'+esc(r[0])+'" class="'+(state.dun===r[0]?"on":"")+'">'+
-        '<span class="pc">'+esc(r[0])+'</span><span class="pn">'+esc(r[1])+'</span>'+
+        '<span class="pc">'+esc(r[0])+'</span><span class="pn">'+esc(r[1])+(isNew(r[0])?'<span class="newstar" title="'+esc(newTag())+'">*</span>':'')+'</span>'+
         '<span class="pv">'+fmt(r[V])+'</span></button>';
     }).join("");
   [].forEach.call(box.querySelectorAll("button"), function(b){
@@ -1852,7 +1856,7 @@ function render(){
   var title, crumb=setName;
 
   if (state.dun && rows.length===1){
-    title = rows[0][0]+" "+rows[0][1];
+    title = rows[0][0]+" "+rows[0][1]+(isNew(rows[0][0]) ? " "+newTag() : "");
     crumb = setName+" › "+rows[0][0];
   } else if (state.par!==null){
     title = P[state.par][0]+" "+P[state.par][1];
@@ -2000,30 +2004,57 @@ function choose(i){
 }
 
 /* A link to one seat is the thing people will paste into a WhatsApp group
-   during the objection period, so the seat and dataset live in the URL. */
+   during the objection period, so every scope has its own short address:
+     /            proposed map        /82/           current map
+     /N.16/       one proposed seat   /82/N.16/      one current seat
+     /P.219/      one parliament      /82/P.219/
+   plus #tab. Each of those paths is also a real page on the server (a stub with
+   the seat's own link preview that bounces here), so a saved or shared address
+   keeps working. The older ?set=82&dun=N.16 form is still read. */
+function urlFor(){
+  var path="/"+(state.set==="82" ? "82/" : "");
+  if (state.dun) path+=state.dun+"/";
+  else if (state.par!==null) path+=pars()[state.par][0]+"/";
+  return path+(state.tab && state.tab!=="ringkasan" ? "#"+state.tab : "");
+}
+var lastURL=null;
 function syncURL(){
-  if (!history.replaceState) return;
-  var u=new URL(location.href);
-  if (state.set==="82") u.searchParams.set("set","82"); else u.searchParams.delete("set");
-  if (state.sel) u.searchParams.set("dun", state.sel); else u.searchParams.delete("dun");
-  history.replaceState(null, "", u.pathname + u.search + u.hash);
+  if (!history.pushState) return;
+  var next=urlFor();
+  if (next===lastURL) return;
+  var cur=location.pathname+location.hash;
+  // first sync just tidies the address; later scope changes are history entries
+  if (lastURL===null || cur===next) history.replaceState(null, "", next);
+  else history.pushState(null, "", next);
+  lastURL=next;
+}
+function setDataset(set){
+  state.set=set;
+  [].forEach.call($("#ds").querySelectorAll("button"), function(x){
+    var on = x.dataset.set===set;
+    x.classList.toggle("on", on); x.setAttribute("aria-pressed", on?"true":"false");
+  });
 }
 function applyURL(){
-  var p;
-  try { p=new URL(location.href).searchParams } catch(e){ return }
-  if (p.get("set")==="82"){
-    state.set="82";
-    [].forEach.call($("#ds").querySelectorAll("button"), function(x){
-      var on = x.dataset.set==="82";
-      x.classList.toggle("on", on); x.setAttribute("aria-pressed", on?"true":"false");
-    });
+  var u;
+  try { u=new URL(location.href) } catch(e){ return }
+  var p=u.searchParams, parts=(p.get("go")||u.pathname).split("/").filter(Boolean);   // ?go= is how a stub page hands over its path
+  var set = (parts[0]==="82" || p.get("set")==="82") ? "82" : "99";
+  if (parts[0]==="82") parts.shift();
+  var code = (parts[0]||"").toUpperCase().replace(/^([NP])\.?(\d+)$/, function(m,a,b){ return a+"."+(a==="N" ? ("0"+b).slice(-2) : b) });
+  setDataset(set);
+  state.dun=null; state.par=null; closeDrawer();
+  var dun = code || p.get("dun"), par = code || p.get("par");
+  if (dun && seats().some(function(r){ return r[0]===dun })) state.dun=dun;
+  else if (par){
+    var i=pars().map(function(x){ return x[0] }).indexOf(par);
+    if (i>=0) state.par=i;
   }
-  var code=p.get("dun");
-  if (code && seats().some(function(r){ return r[0]===code })){
-    state.dun=code; state.par=null;
-    drawParlist(); drawDunlist(); render();
-  }
+  drawParlist(); drawDunlist(); render();
+  showTab((u.hash||"").replace("#",""));
+  lastURL=null; syncURL();   // tidy the address (the query form becomes the path form) without a new entry
 }
+addEventListener("popstate", applyURL);
 
 /* Sticky offsets are measured, never assumed: the CSS fallback is only there
    for the frame before this runs. */
@@ -2160,11 +2191,7 @@ $("#sort").addEventListener("change", function(){ state.sort=this.value; render(
 [].forEach.call($("#ds").querySelectorAll("button"), function(b){
   b.addEventListener("click", function(){
     if (state.set===b.dataset.set) return;
-    state.set=b.dataset.set; state.par=null; closeDrawer();
-    [].forEach.call($("#ds").querySelectorAll("button"), function(x){
-      x.classList.toggle("on", x===b);
-      x.setAttribute("aria-pressed", x===b ? "true" : "false");
-    });
+    setDataset(b.dataset.set); state.par=null; closeDrawer();
     drawParlist(); drawDunlist(); render(); syncURL();
   });
 });
@@ -2201,10 +2228,9 @@ function showTab(name, focusTab){
     if (on && focusTab) b.focus();
   });
   state.tab=name;
-  if (history.replaceState){
-    var u=new URL(location.href);
-    u.hash = name==="ringkasan" ? "" : name;
-    history.replaceState(null,"",u.pathname+u.search+u.hash);
+  if (history.replaceState && lastURL!==null){
+    lastURL=urlFor();
+    history.replaceState(null,"",lastURL);
   }
 }
 tabBtns.forEach(function(b){
@@ -2223,8 +2249,6 @@ tabBtns.forEach(function(b){
     else if (e.key==="End"){ e.preventDefault(); showTab(live[n-1].dataset.panel, true) }
   });
 });
-showTab((location.hash||"").replace("#",""));
-
 applyLang(LANG, false);
 applyURL();
 })();
