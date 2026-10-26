@@ -15,232 +15,214 @@
 <title>SarawakSeats</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&display=swap">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
+/* One type family at one weight (500 only for figures called out in a
+   sentence): hierarchy comes from size and from black against grey ink, not
+   from bold, capitals or a second face. A white sheet sits framed on a grey
+   ground; cards are drawn with a hairline, not a shadow. Shadows are kept for
+   the things that float: menus, the drawer, map controls. */
 :root{
-  --sans:"Geist",system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  --mono:"Geist Mono",ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --sans:"Inter","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --mono:var(--sans);
   color-scheme:light;
-  --ground:#F7F7F5; --surface:#FFFFFF; --surface-2:#FAFAF9; --surface-3:#F0F0EC;
-  --ink:#141414; --ink-2:#5A5A57; --muted:#72726D;
-  --rule:#E7E7E3; --rule-2:#D6D6D1;
-  --focus:#141414;
+  --ground:#F7F7F6; --surface:#FFFFFF; --surface-2:#F1F1F0; --surface-3:#ECEBE7;
+  --ink:#17181A; --ink-2:#5C5B56; --muted:#6F6E68; --faint:#85847E;
+  --rule:rgba(23,24,26,.09); --rule-2:rgba(23,24,26,.16);
+  --accent:#2231DD; --accent-soft:rgba(34,49,221,.08);
+  --focus:var(--accent);
 
-  /* Motion. Only transform/opacity/filter are animated anywhere in this file so
-     nothing re-enters the paint path. ease-out is the "fly, don't teleport"
-     curve; spring carries a small overshoot for things that should feel alive. */
-  --r-card:6px; --r-ctl:4px; --r-mark:2px;
+  /* Motion: three speeds, exits one tier faster than entrances. Only
+     transform/opacity/filter animate, so nothing re-enters the paint path. */
+  --r-sheet:14px; --r-card:12px; --r-ctl:8px; --r-mark:3px;
   --ease-out:cubic-bezier(.22,1,.36,1);
-  --ease-spring:cubic-bezier(.34,1.4,.64,1);
-  --dur-1:130ms; --dur-2:230ms; --dur-3:380ms;
-  --shadow-1:0 1px 2px rgba(20,20,20,.04), 0 1px 1px rgba(20,20,20,.03);
-  --shadow-2:0 4px 14px rgba(20,20,20,.07), 0 1px 3px rgba(20,20,20,.04);
-  --shadow-3:-24px 0 64px rgba(20,20,20,.10), -1px 0 0 rgba(20,20,20,.06);
+  --ease-spring:cubic-bezier(.34,1.36,.64,1);
+  --dur-1:80ms; --dur-2:160ms; --dur-3:240ms;
+  --x-1:60ms; --x-2:120ms; --x-3:160ms;
+  --lift:0 1px 2px rgba(23,24,26,.1);
+  --shadow-1:none;
+  --shadow-2:0 1px 2px rgba(23,24,26,.05), 0 10px 30px rgba(23,24,26,.07);
+  --shadow-3:-24px 0 64px rgba(23,24,26,.10), -1px 0 0 rgba(23,24,26,.06);
 
   /* Divergent pair for deviation from average. Deliberately not green/red:
      this is a live political process and good/bad colouring would editorialise.
-     Ochre = above average, teal = below. Both clear 4.5:1 as pill text on
-     their own tint (ochre 4.53, teal 5.10). */
-  --mark-bg:#FBF0D8; --scrim:rgba(20,20,20,.28);
-  --over:#A0600F; --over-bg:#FBF2E4;
-  --under:#256E80; --under-bg:#E9F2F4;
+     Ochre = above average, teal = below. */
+  --mark-bg:#FBF0D8; --scrim:rgba(23,24,26,.28);
+  --over:#A0600F; --over-bg:rgba(160,96,15,.09);
+  --under:#256E80; --under-bg:rgba(37,110,128,.09);
 
-  /* Categorical, fixed order by statewide share. Validated for the light
-     surface: worst adjacent CVD dE 9.1, normal-vision 19.6. Three slots sit
-     below 3:1, relieved by the always-on legend values and the table view. */
+  /* Categorical, fixed order by statewide share; colour follows the group in
+     both themes, so Iban stays blue. */
   --s1:#407AC4; --s2:#D87754; --s3:#32AD7C; --s4:#E2A648;
   --s5:#E37FA4; --s6:#377E33; --s7:#4A4294;
 }
-/* Dark theme. Same seven entity hues, stepped for the dark surface — colour
-   follows the entity, so Iban stays blue in both themes. Declared under both
-   scopes: the media query covers the OS setting, the attribute covers the
-   toggle, and the attribute must win in both directions. */
+/* Dark theme, under both scopes: the media query covers the OS setting, the
+   attribute covers the toggle, and the attribute must win in both directions. */
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     color-scheme:dark;
-    --ground:#0A0A0A; --surface:#121212; --surface-2:#161616; --surface-3:#1C1C1C;
-    --ink:#EDEDED; --ink-2:#9E9E9E; --muted:#8A8A85;
-    --rule:#1F1F1F; --rule-2:#2A2A2A; --focus:#8A8A8A;
+    --ground:#0F0F0F; --surface:#000000; --surface-2:#181818; --surface-3:#202020;
+    --ink:#FFFFFF; --ink-2:#B4B4B4; --muted:#9A9A9A; --faint:#828282;
+    --rule:rgba(255,255,255,.09); --rule-2:rgba(255,255,255,.16);
+    --accent:#6B78FF; --accent-soft:rgba(107,120,255,.14);
+    --lift:0 1px 2px rgba(0,0,0,.6);
+    --shadow-2:0 1px 2px rgba(0,0,0,.5), 0 10px 30px rgba(0,0,0,.5);
+    --shadow-3:-24px 0 64px rgba(0,0,0,.6), -1px 0 0 rgba(255,255,255,.06);
     --mark-bg:#3B3218; --scrim:rgba(0,0,0,.55);
-    --shadow-1:0 1px 2px rgba(0,0,0,.5);
-    --shadow-2:0 4px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
-    --shadow-3:-24px 0 64px rgba(0,0,0,.6), -1px 0 0 rgba(255,255,255,.05);
-    --over:#E0A94F; --over-bg:#2A2114; --under:#6FB6C9; --under-bg:#12262B;
+    --over:#E0A94F; --over-bg:rgba(224,169,79,.12); --under:#6FB6C9; --under-bg:rgba(111,182,201,.12);
     --s1:#4D88D3; --s2:#C76846; --s3:#149E70; --s4:#C28523;
     --s5:#C56282; --s6:#377E33; --s7:#8E85DE;
   }
 }
 :root[data-theme="dark"]{
   color-scheme:dark;
-  --ground:#0A0A0A; --surface:#121212; --surface-2:#161616; --surface-3:#1C1C1C;
-  --ink:#EDEDED; --ink-2:#9E9E9E; --muted:#8A8A85;
-  --rule:#1F1F1F; --rule-2:#2A2A2A; --focus:#8A8A8A;
+  --ground:#0F0F0F; --surface:#000000; --surface-2:#181818; --surface-3:#202020;
+  --ink:#FFFFFF; --ink-2:#B4B4B4; --muted:#9A9A9A; --faint:#828282;
+  --rule:rgba(255,255,255,.09); --rule-2:rgba(255,255,255,.16);
+  --accent:#6B78FF; --accent-soft:rgba(107,120,255,.14);
+  --lift:0 1px 2px rgba(0,0,0,.6);
+  --shadow-2:0 1px 2px rgba(0,0,0,.5), 0 10px 30px rgba(0,0,0,.5);
+  --shadow-3:-24px 0 64px rgba(0,0,0,.6), -1px 0 0 rgba(255,255,255,.06);
   --mark-bg:#3B3218; --scrim:rgba(0,0,0,.55);
-  --shadow-1:0 1px 2px rgba(0,0,0,.5);
-  --shadow-2:0 4px 14px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
-  --shadow-3:-24px 0 64px rgba(0,0,0,.6), -1px 0 0 rgba(255,255,255,.05);
-  --over:#E0A94F; --over-bg:#2A2114; --under:#6FB6C9; --under-bg:#12262B;
+  --over:#E0A94F; --over-bg:rgba(224,169,79,.12); --under:#6FB6C9; --under-bg:rgba(111,182,201,.12);
   --s1:#4D88D3; --s2:#C76846; --s3:#149E70; --s4:#C28523;
   --s5:#C56282; --s6:#377E33; --s7:#8E85DE;
 }
 
 *{box-sizing:border-box}
-/* clip, not hidden: overflow-x:hidden makes body a scroll container and breaks
-   every position:sticky inside it. clip contains the same overflow without one. */
-html,body{margin:0; width:100%; overflow-x:hidden; overflow-x:clip}
-body{background:var(--ground); color:var(--ink); font-family:var(--sans); font-size:13px;
-  line-height:1.5; -webkit-font-smoothing:antialiased}
+html,body{margin:0; width:100%}
+body{background:var(--ground); color:var(--ink); font-family:var(--sans); font-size:14px;
+  line-height:1.5; -webkit-font-smoothing:antialiased; font-feature-settings:"cv11","ss01"}
 a{color:inherit}
-:is(a,button,select,input):focus-visible{outline:1.5px solid var(--focus); outline-offset:2px}
+b,strong,h1,h2,h3,th{font-weight:400}
+:is(a,button,select,input):focus-visible{outline:2px solid var(--focus); outline-offset:2px; border-radius:6px}
 h1,h2,h3,p,figure,table{margin:0}
 button{font:inherit; color:inherit; background:none; border:0; cursor:pointer}
-.tnum{font-variant-numeric:tabular-nums}
-.bn .bv, .c-num, .c-code, .dev, .facts .fv, .demotable .num .cell,
+.tnum,
+.stat .v, .c-num, .c-code, .dev, .facts .fv, .demotable .num .cell,
 .brow .bl, .brow .bv, .legend em, .acclist .pc, .acclist .pv, .maj em,
 .dstat .v, table.eth .nu, table.eth .pc, table.pds .v, table.pds .i,
-.smeta, .langcode, .ssub{
-  font-family:var(--mono); font-variant-numeric:tabular-nums; letter-spacing:-.01em;
-}
+.smeta, .ssub, .chgm .v{font-variant-numeric:tabular-nums}
 /* Reicon outline geometry: 24 grid, no fill, hairline stroke, round terminals. */
 .ic{flex:none; display:block}
 .ic-fill path{fill:currentColor; stroke:none}
 .ic:not(.ic-fill) path,.ic circle,.ic rect,.ic line{
-  fill:none; stroke:currentColor; stroke-width:1.35;
+  fill:none; stroke:currentColor; stroke-width:1.5;
   stroke-linecap:round; stroke-linejoin:round; vector-effect:non-scaling-stroke;
 }
 
-/* ---------------- shell ---------------- */
-.app{display:grid; grid-template-columns:214px minmax(0,1fr); min-height:100vh}
-.side{
-  position:sticky; top:0; align-self:start; height:100vh; overflow:hidden;
-  background:var(--surface); border-right:1px solid var(--rule);
-  padding:14px 10px 12px; display:flex; flex-direction:column; gap:16px;
+/* ---------------- shell ----------------
+   On a laptop the sheet is its own scroller, so the frame around it never
+   moves; on a phone the page scrolls as normal and the sheet goes edge to edge. */
+.app{display:grid; grid-template-columns:252px minmax(0,1fr); height:100vh; height:100dvh}
+.side{display:flex; flex-direction:column; gap:4px; min-height:0; overflow:hidden;
+  padding:14px 10px 10px}
+main{position:relative; min-width:0; min-height:0; margin:8px 8px 8px 0; overflow-y:auto;
+  overscroll-behavior:contain; background:var(--surface); border:1px solid var(--rule);
+  border-radius:var(--r-sheet)}
+@media (min-width:901px){
+  .app{transition:grid-template-columns var(--dur-2) var(--ease-out)}
+  .side{transition:opacity var(--dur-2) var(--ease-out)}
+  .side > *{width:232px; flex-shrink:0}
+  .side > .sgroup.grow{flex-shrink:1}
+  main{transition:margin var(--dur-2) var(--ease-out)}
+  .app.side-off{grid-template-columns:0 minmax(0,1fr); transition-duration:var(--x-2)}
+  .app.side-off .side{opacity:0; visibility:hidden;
+    transition:opacity var(--x-1) linear, visibility 0s var(--x-2)}
+  .app.side-off main{margin-left:8px; transition-duration:var(--x-2)}
 }
-.brand{display:flex; align-items:center; gap:9px; padding:2px 6px 0}
-.brand b{display:block; font-size:13.5px; font-weight:600; letter-spacing:-.02em}
-.brand i{display:block; font-style:normal; font-size:10.5px; color:var(--muted); margin-top:1px}
-.sideclose{display:none; margin-left:auto; width:28px; height:28px; border-radius:var(--r-ctl);
-  border:1px solid var(--rule); align-items:center; justify-content:center;
-  color:var(--ink-2); flex:none; transition:color var(--dur-1) var(--ease-out),
-  border-color var(--dur-1) var(--ease-out)}
-.sideclose:hover{color:var(--ink); border-color:var(--rule-2)}
 
-.sgroup h3{font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--muted); padding:0 6px 7px}
-.ds{display:flex; gap:3px; background:var(--surface-3); padding:3px; border-radius:var(--r-card)}
-.ds button{flex:1; padding:6px 4px; border-radius:var(--r-ctl); font-size:11.5px; font-weight:500;
-  color:var(--ink-2); text-align:center; line-height:1.25}
-.ds button small{display:block; font-size:9.5px; color:var(--muted); margin-top:1px}
-.ds button{transition:color var(--dur-1) var(--ease-out)}
-.ds button.on{background:var(--surface); color:var(--ink); box-shadow:var(--shadow-1),
-  0 0 0 1px rgba(20,20,20,.05)}
+.brand{display:flex; align-items:center; gap:10px; padding:4px 10px 12px}
+.brand .mark{width:24px; height:24px; flex:none; display:grid; grid-template-columns:1fr 1fr; gap:2px}
+.brand .mark i{border-radius:3px; background:var(--ink)}
+.brand .mark i:nth-child(2){opacity:.45}
+.brand .mark i:nth-child(3){opacity:.7}
+.brand .mark i:nth-child(4){opacity:.25}
+.brand b{display:block; font-size:17px; letter-spacing:-.02em; line-height:1.15}
+.brand i{display:block; font-style:normal; font-size:12px; color:var(--faint); margin-top:1px}
+.sideclose{display:none; margin-left:auto; width:32px; height:32px; border-radius:var(--r-ctl);
+  align-items:center; justify-content:center; color:var(--muted); flex:none;
+  transition:background-color var(--dur-1) linear, color var(--dur-1) linear}
+.sideclose:hover{color:var(--ink); background:var(--surface-2)}
 
-.nav{display:flex; flex-direction:column; gap:1px}
-.nav a{display:flex; align-items:center; gap:9px; padding:7px 8px; border-radius:var(--r-ctl);
-  font-size:12.5px; color:var(--ink-2); text-decoration:none}
-.nav a svg{width:15px; height:15px; flex:none; color:var(--muted)}
-.nav a:hover{background:var(--surface-2); color:var(--ink)}
-.nav a.on{background:var(--surface-3); color:var(--ink); font-weight:500}
-.nav a.on svg{color:var(--ink)}
+.sgroup h3{font-size:12px; color:var(--faint); padding:14px 10px 6px}
+.ds{display:flex; gap:2px; padding:2px; border-radius:999px; background:var(--surface);
+  border:1px solid var(--rule)}
+.ds button{flex:1; padding:5px 4px; border-radius:999px; font-size:12.5px; color:var(--faint);
+  text-align:center; line-height:1.25; transition:color var(--dur-1) linear}
+.ds button small{display:block; font-size:11px; color:var(--faint)}
+.ds button.on{background:var(--surface-3); color:var(--ink)}
 
 .sgroup.grow{flex:1 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain;
-  margin:0 -4px; padding:0 4px}
-.acc + .acc{margin-top:10px}
-.acchead{
-  position:sticky; top:0; z-index:2; background:var(--surface);
-  display:flex; align-items:center; gap:7px; width:100%; padding:6px;
-  font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--muted); border-radius:var(--r-ctl);
-  transition:color var(--dur-1) var(--ease-out);
-}
-.acchead:hover{color:var(--ink-2); background:var(--surface-2)}
-.accchev{transition:transform var(--dur-2) var(--ease-spring); color:var(--muted)}
+  scrollbar-width:thin; margin:0 -2px; padding:0 2px}
+.acc + .acc{margin-top:6px}
+.acchead{position:sticky; top:0; z-index:2; background:var(--ground);
+  display:flex; align-items:center; gap:6px; width:100%; padding:10px 10px 6px;
+  font-size:12px; color:var(--faint); border-radius:var(--r-ctl);
+  transition:color var(--dur-1) linear}
+.acchead:hover{color:var(--ink)}
+.accchev{transition:transform var(--dur-2) var(--ease-out); color:var(--faint)}
 .acchead[aria-expanded="true"] .accchev{transform:rotate(90deg)}
-.accn{margin-left:auto; font-size:10px; letter-spacing:0; color:var(--muted)}
+.accn{margin-left:auto; font-size:12px; color:var(--faint); font-variant-numeric:tabular-nums}
 .acclist{display:flex; flex-direction:column; gap:1px}
 .acclist[hidden]{display:none}
-.acclist button{display:grid; grid-template-columns:36px minmax(0,1fr) auto; gap:7px;
-  align-items:center; width:100%; padding:5px 8px; border-radius:var(--r-ctl); text-align:left;
-  color:var(--ink-2)}
-.acclist button{position:relative;
-  transition:background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out)}
-.acclist button::before{
-  content:""; position:absolute; left:1px; top:5px; bottom:5px; width:2.5px; border-radius:var(--r-mark);
-  background:var(--ink); transform:scaleY(0);
-  transition:transform var(--dur-2) var(--ease-spring);
-}
-.acclist button:hover{background:var(--surface-2); color:var(--ink)}
-.acclist button.on{background:var(--surface-3); color:var(--ink); font-weight:500}
-.acclist button.on::before{transform:scaleY(1)}
-@keyframes pick{from{transform:translateX(4px)} to{transform:none}}
-.acclist button.just{animation:pick var(--dur-2) var(--ease-spring)}
-.acclist .pc{font-size:10px; color:var(--muted); letter-spacing:-.01em}
-.acclist .pn{font-size:11.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
-.acclist .pv{font-size:10px; color:var(--muted)}
+.acclist button{display:grid; grid-template-columns:42px minmax(0,1fr) auto; gap:8px;
+  align-items:center; width:100%; height:34px; padding:0 10px; border-radius:var(--r-ctl);
+  text-align:left; color:var(--ink-2); font-size:13.5px;
+  transition:background-color var(--dur-1) linear, color var(--dur-1) linear}
+@keyframes pick{from{transform:translateX(3px)} to{transform:none}}
+.acclist button.just{animation:pick var(--dur-2) var(--ease-out)}
+@media (hover:hover){ .acclist button:hover{background:var(--surface-2); color:var(--ink)} }
+.acclist button.on{background:var(--surface-3); color:var(--ink)}
+.acclist .pc{font-size:12px; color:var(--faint)}
+.acclist .pn{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.acclist .pv{font-size:12px; color:var(--faint)}
+.acclist button.on .pc,.acclist button.on .pv{color:var(--ink-2)}
 
-.side-foot{flex:none; margin-top:4px; padding:11px 6px 0; border-top:1px solid var(--rule);
-  font-size:10.5px; line-height:1.5; color:var(--muted)}
-.side-foot a{color:var(--ink-2); text-decoration:underline; text-underline-offset:2px;
-  text-decoration-thickness:1px; text-decoration-color:var(--rule-2);
-  transition:color var(--dur-1) var(--ease-out)}
-.side-foot a:hover{color:var(--ink); text-decoration-color:var(--ink-2)}
+.side-foot{flex:none; margin-top:6px; padding:10px 10px 4px; border-top:1px solid var(--rule);
+  font-size:12px; line-height:1.45; color:var(--faint)}
+.side-foot a{color:var(--ink-2); text-decoration:none; transition:color var(--dur-1) linear}
+.side-foot a:hover{color:var(--ink)}
 .side-foot p{margin:0 0 6px}
-.side-foot b{color:var(--ink-2); font-weight:600}
-.byline{color:var(--ink-2); text-decoration:none;
-  transition:color var(--dur-1) var(--ease-out)}
-.byline span:last-child{text-decoration:underline; text-underline-offset:2px;
-  text-decoration-thickness:1px; text-decoration-color:var(--rule-2)}
-.byline:hover{color:var(--ink)}
-.byline:hover span:last-child{text-decoration-color:var(--ink-2)}
+.byline{color:var(--ink-2); text-decoration:none}
 
 /* ---------------- top bar ---------------- */
-main{min-width:0; padding:0 0 60px}
-.top{position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:10px;
-  padding:8px 20px; background:var(--surface); border-bottom:1px solid var(--rule)}
-.burger{display:none; width:32px; height:32px; border:1px solid var(--rule); border-radius:var(--r-ctl);
-  align-items:center; justify-content:center; flex:none}
-.crumb{font-size:12.5px; color:var(--muted); white-space:nowrap}
-.crumb b{color:var(--ink); font-weight:500}
-.crumb span{margin:0 6px; color:var(--rule-2)}
-.search{position:relative; flex:0 1 400px; min-width:0; margin:0 auto;
-  background:var(--surface-2); border:1px solid var(--rule); border-radius:var(--r-card)}
+.top{position:sticky; top:0; z-index:30; display:flex; align-items:center; gap:12px;
+  min-height:56px; padding:10px 18px; background:var(--surface); border-bottom:1px solid var(--rule)}
+.burger,.sidebtn{display:flex; width:32px; height:32px; flex:none; align-items:center;
+  justify-content:center; border-radius:var(--r-ctl); color:var(--muted);
+  transition:background-color var(--dur-1) linear, color var(--dur-1) linear}
+.sidebtn{margin-left:-6px}
+.burger:hover,.sidebtn:hover{background:var(--surface-2); color:var(--ink)}
+.burger{display:none}
+.crumb{font-size:15px; color:var(--ink); white-space:nowrap; min-width:0; overflow:hidden;
+  text-overflow:ellipsis}
+.crumb b{color:var(--faint)}
+.crumb .sep{margin:0 8px; color:var(--faint)}
+.search{position:relative; flex:0 1 340px; min-width:0; margin-left:auto;
+  background:var(--ground); border:1px solid var(--rule); border-radius:999px;
+  transition:border-color var(--dur-1) linear, background-color var(--dur-1) linear}
 .search:focus-within{border-color:var(--rule-2); background:var(--surface)}
-.search svg{position:absolute; left:10px; top:50%; transform:translateY(-50%);
-  width:14px; height:14px; color:var(--muted); pointer-events:none}
-.search input{width:100%; height:32px; padding:0 11px 0 31px; font:inherit; font-size:12.5px;
-  color:var(--ink); background:none; border:0; outline:none; border-radius:var(--r-card)}
-.search input::placeholder{color:var(--muted)}
+.search svg{position:absolute; left:12px; top:50%; transform:translateY(-50%);
+  width:15px; height:15px; color:var(--faint); pointer-events:none}
+.search input{width:100%; height:34px; padding:0 14px 0 34px; font:inherit; font-size:13px;
+  color:var(--ink); background:none; border:0; outline:none; border-radius:999px}
+.search input::placeholder{color:var(--faint)}
 .search input::-webkit-search-cancel-button{appearance:none}
-.themebtn{
-  width:34px; height:34px; flex:none; border:1px solid var(--rule); border-radius:var(--r-card);
-  display:flex; align-items:center; justify-content:center; color:var(--ink-2);
-  background:var(--surface);
-  transition:color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out);
-}
-.themebtn:hover{color:var(--ink); border-color:var(--rule-2)}
-.langwrap{position:relative; flex:none}
-.langbtn{width:auto; gap:6px; padding:0 10px}
-.langcode{font-size:11px; font-weight:600; letter-spacing:.06em; color:var(--muted);
-  transition:color var(--dur-1) var(--ease-out)}
-.langbtn:hover .langcode{color:var(--ink-2)}
-.langmenu{
-  position:absolute; top:calc(100% + 6px); right:0; z-index:50; min-width:168px;
-  background:var(--surface); border:1px solid var(--rule); border-radius:var(--r-card);
-  box-shadow:var(--shadow-2); padding:5px; animation:dropIn var(--dur-2) var(--ease-out);
-}
-.langmenu[hidden]{display:none}
-.langmenu button{
-  display:flex; align-items:center; justify-content:space-between; gap:10px; width:100%;
-  padding:8px 9px; border-radius:var(--r-ctl); font-size:12.5px; color:var(--ink-2); text-align:left;
-  transition:background var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
-}
-.langmenu button:hover{background:var(--surface-2); color:var(--ink)}
-.langmenu button[aria-selected="true"]{color:var(--ink); font-weight:500}
-.langmenu button[aria-selected="true"]::after{content:"✓"; font-size:11px; color:var(--ink-2)}
+.themebtn{width:32px; height:32px; flex:none; border:1px solid var(--rule); border-radius:999px;
+  display:flex; align-items:center; justify-content:center; color:var(--muted);
+  background:var(--ground); transition:color var(--dur-1) linear, background-color var(--dur-1) linear}
+.themebtn:hover{color:var(--ink); background:var(--surface-2)}
+/* language: a two-way pill, as on KL in Numbers */
+.lang{display:flex; flex:none; padding:2px; border-radius:999px; background:var(--ground);
+  border:1px solid var(--rule)}
+.lang button{padding:4px 10px; border-radius:999px; font-size:12px; color:var(--faint);
+  transition:color var(--dur-1) linear, background-color var(--dur-1) linear}
+.lang button:hover{color:var(--ink)}
+.lang button[aria-pressed="true"]{color:var(--ink); background:var(--surface); box-shadow:var(--lift)}
 #theme{position:relative}
-#theme .ic{position:absolute; transition:transform var(--dur-2) var(--ease-spring),
+#theme .ic{position:absolute; transition:transform var(--dur-3) var(--ease-spring),
   opacity var(--dur-1) var(--ease-out)}
 #theme .i-moon{opacity:1; transform:none}
 #theme .i-sun{opacity:0; transform:rotate(-70deg) scale(.7)}
@@ -248,186 +230,141 @@ main{min-width:0; padding:0 0 60px}
 #theme[data-mode="dark"] .i-sun{opacity:1; transform:none}
 
 /* Search results panel, anchored under the field. */
-.sdrop{
-  position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:50;
+.sdrop{position:absolute; top:calc(100% + 6px); left:0; right:0; z-index:50;
   background:var(--surface); border:1px solid var(--rule); border-radius:var(--r-card);
-  box-shadow:var(--shadow-2); padding:5px; max-height:min(62vh,470px); overflow-y:auto;
-  overscroll-behavior:contain;
-  animation:dropIn var(--dur-2) var(--ease-out);
-}
-@keyframes dropIn{from{opacity:0; transform:translateY(-5px)} to{opacity:1; transform:none}}
+  box-shadow:var(--shadow-2); padding:6px; max-height:min(62vh,470px); overflow-y:auto;
+  overscroll-behavior:contain; animation:dropIn var(--dur-2) var(--ease-out)}
+@keyframes dropIn{from{opacity:0; transform:translateY(-4px)} to{opacity:1; transform:none}}
 .sdrop[hidden]{display:none}
-.sgrouphead{
-  padding:8px 9px 5px; font-size:9.5px; font-weight:600; letter-spacing:.11em;
-  text-transform:uppercase; color:var(--muted);
-}
-.sitem{display:block; width:100%; padding:7px 9px; border-radius:var(--r-ctl);
-  text-align:left; color:inherit}
-.sitem-in{
-  display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:center;
-}
+.sgrouphead{padding:8px 10px 4px; font-size:12px; color:var(--faint)}
+.sitem{display:block; width:100%; padding:7px 10px; border-radius:var(--r-ctl); text-align:left; color:inherit}
+.sitem-in{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:12px; align-items:center}
 .sitem:hover,.sitem.active{background:var(--surface-2)}
-.sitem.active{box-shadow:inset 0 0 0 1px var(--rule)}
 .sitem-in > span:first-child{min-width:0}
-.sname{display:block; font-size:12.5px; font-weight:500; color:var(--ink); overflow:hidden;
+.sname{display:block; font-size:14px; color:var(--ink); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.ssub{display:block; font-size:12px; color:var(--faint); margin-top:1px; overflow:hidden;
   text-overflow:ellipsis; white-space:nowrap}
-.ssub{display:block; font-size:11px; color:var(--muted); margin-top:1px; overflow:hidden;
-  text-overflow:ellipsis; white-space:nowrap}
-.smeta{display:flex; align-items:center; gap:7px; justify-content:flex-end;
-  font-size:11.5px; color:var(--ink-2); white-space:nowrap; font-variant-numeric:tabular-nums}
+.smeta{display:flex; align-items:center; gap:8px; justify-content:flex-end; font-size:13px;
+  color:var(--ink-2); white-space:nowrap}
 .smeta .dev{min-width:0}
-.smore{padding:6px 9px 8px; font-size:11px; color:var(--muted)}
-.snone{padding:16px 10px 18px; text-align:center; font-size:12px; color:var(--muted)}
-.skbd{display:flex; gap:12px; align-items:center; justify-content:flex-end;
-  padding:7px 9px 4px; margin-top:3px; border-top:1px solid var(--rule);
-  font-size:10.5px; color:var(--muted)}
-.skbd kbd{font:inherit; font-size:10px; border:1px solid var(--rule-2); border-radius:var(--r-ctl);
-  padding:1px 4px; color:var(--ink-2)}
-@media (max-width:900px){
-  /* The field is squeezed between three buttons, but the results panel has no
-     reason to be: pin it to the viewport instead of to the field. */
-  .sdrop{position:fixed; left:10px; right:10px;
-    top:calc(var(--top-h,55px) + 6px); max-height:min(68vh,520px)}
-  /* the deviation pill is the widest thing competing with the name, and the
-     seat page states it anyway */
-  .sitem .dev{display:none}
-  .sitem-in{gap:10px}
-  .ssub{font-size:10.5px}
-  /* keyboard hints on a device with no keyboard */
-  .skbd{display:none}
-  .ssub-par{display:none}
-  /* the change table is four columns on a phone; drop the sentence lead-in and
-     tighten the numeric columns so the seat name gets the room */
-  .chg-pre{display:none}
-  #change th:nth-child(1),#change td:nth-child(1){width:42px}
-  #change th:nth-child(3),#change td:nth-child(3){width:70px}
-  #change th:nth-child(4),#change td:nth-child(4){width:46px}
-  #change .cell{padding:7px 6px}
-  #change .c-sub{white-space:nowrap}
-}
+.smore{padding:6px 10px 8px; font-size:12px; color:var(--faint)}
+.snone{padding:18px 10px 20px; text-align:center; font-size:13px; color:var(--faint)}
+.skbd{display:flex; gap:12px; align-items:center; justify-content:flex-end; padding:8px 10px 4px;
+  margin-top:4px; border-top:1px solid var(--rule); font-size:11.5px; color:var(--faint)}
+.skbd kbd{font:inherit; font-size:11px; border:1px solid var(--rule-2); border-radius:5px;
+  padding:0 5px; color:var(--ink-2)}
 
-/* ---------------- entity header ---------------- */
-.wrap{padding:0 20px}
-.ehead{display:flex; align-items:center; gap:12px; padding:16px 0 0}
-.ehead h1{font-size:18px; font-weight:600; letter-spacing:-.024em}
+/* ---------------- page header ---------------- */
+.wrap{max-width:1040px; margin:0 auto; padding:28px 28px 56px}
+.ehead{display:block}
+.eyebrow{display:flex; align-items:center; gap:8px; font-size:11px; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--faint)}
+.eyebrow .ic{color:var(--faint)}
+.ehead h1{margin-top:8px; font-size:clamp(30px,4vw,44px); line-height:1.02; letter-spacing:-.035em;
+  color:var(--ink); text-wrap:balance}
+.ehead .q{margin-top:8px; font-size:15px; color:var(--ink-2)}
+.summary{max-width:62ch; margin:18px 0 20px; font-size:17px; line-height:1.55; color:var(--ink-2);
+  text-wrap:pretty}
+.summary strong{color:var(--ink); font-weight:500}
+.summary:empty{display:none}
 
-.ehead .espacer{flex:1 1 auto}
+/* the headline figures: one bordered row, hairlines between */
+.stats{display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr);
+  border:1px solid var(--rule); border-radius:var(--r-card)}
+.stat{display:grid; gap:2px; align-content:start; min-width:0; padding:14px 16px}
+.stat + .stat{border-left:1px solid var(--rule)}
+.stat .k{font-size:12px; color:var(--muted)}
+.stat .v{font-size:30px; line-height:1.15; letter-spacing:-.025em; color:var(--ink); white-space:nowrap}
+.stat .v .up{color:var(--over)}
+.stat .v .down{color:var(--under)}
+.stat .s{font-size:12px; color:var(--faint)}
 
-.tabs{display:flex; gap:18px; border-bottom:1px solid var(--rule); margin-top:12px}
-.tabs button{display:flex; align-items:center; gap:7px; padding:9px 1px 10px; font-size:12.5px;
-  color:var(--ink-2); text-decoration:none; border-bottom:1.5px solid transparent;
-  margin-bottom:-1px; white-space:nowrap;
-  transition:color var(--dur-1) var(--ease-out)}
-.tabs button .ic{color:var(--muted); transition:color var(--dur-1) var(--ease-out),
-  transform var(--dur-2) var(--ease-spring)}
+/* tabs: a contained pill bar, the chosen tab lifted onto the sheet */
+.tabs{display:flex; gap:2px; width:fit-content; max-width:100%; margin-top:20px; padding:3px;
+  background:var(--ground); border:1px solid var(--rule); border-radius:var(--r-card)}
+.tabs button{display:flex; align-items:center; gap:7px; padding:6px 12px; border-radius:9px;
+  font-size:13.5px; color:var(--ink-2); white-space:nowrap;
+  transition:color var(--dur-1) linear, background-color var(--dur-1) linear}
+.tabs button .ic{color:var(--faint); transition:color var(--dur-1) linear}
 .tabs button:hover{color:var(--ink)}
-.tabs button:hover .ic{color:var(--ink-2); transform:translateY(-1px)}
-.tabs button.on{color:var(--ink); font-weight:500; border-bottom-color:var(--ink)}
+.tabs button.on{color:var(--ink); background:var(--surface); box-shadow:var(--lift)}
 .tabs button.on .ic{color:var(--ink)}
 .tabs button[hidden]{display:none !important}
 
-/* ---------------- headline figures ---------------- */
-.bignums{display:flex; flex-wrap:wrap; gap:26px; padding:14px 0 16px}
-.bn .bv{font-size:22px; font-weight:600; letter-spacing:-.03em; line-height:1.1;
-  font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:8px}
-.bn .bk{font-size:11px; color:var(--muted); margin-top:4px}
-.delta{font-size:12.5px; font-weight:500; letter-spacing:-.01em; padding:2px 7px;
-  border-radius:var(--r-ctl); font-variant-numeric:tabular-nums}
-.delta.up{color:var(--over); background:var(--over-bg)}
-.delta.down{color:var(--under); background:var(--under-bg)}
-
 /* ---------------- layout ---------------- */
-.cols{display:grid; grid-template-columns:minmax(0,1fr) 268px; gap:14px; align-items:start}
-.sect{padding-top:18px; scroll-margin-top:calc(var(--top-h,55px) + 14px)}
-.sect > h2{font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--muted); padding-bottom:9px}
-.card{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r-card);
-  box-shadow:var(--shadow-1)}
-.grid2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
-.ctitle{display:flex; align-items:baseline; justify-content:space-between; gap:10px;
-  padding:11px 13px 0}
-.ctitle h3{font-size:12.5px; font-weight:600; letter-spacing:-.01em}
-.ctitle span{font-size:11px; color:var(--muted); overflow:hidden; text-overflow:ellipsis;
-  white-space:nowrap}
-.cbody{padding:10px 13px 12px}
+.cols{display:grid; grid-template-columns:minmax(0,1fr) 300px; gap:14px; align-items:start}
+.sect{padding-top:18px; scroll-margin-top:calc(var(--top-h,57px) + 14px)}
+.sect > h2{font-size:18px; letter-spacing:-.015em; color:var(--ink); padding-bottom:12px}
+.card{background:var(--surface); border:1px solid var(--rule); border-radius:var(--r-card)}
+.grid2{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px}
+.ctitle{display:flex; align-items:baseline; justify-content:space-between; gap:10px; padding:16px 16px 0}
+.ctitle h3{font-size:14px; color:var(--ink)}
+.ctitle span{font-size:12px; color:var(--faint); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.cbody{padding:12px 16px 16px}
 
-/* the Perplexity signature: hairline label/value rows */
-.facts{padding:2px 13px 5px}
+/* label/value rows */
+.facts{padding:4px 16px 6px}
 .facts .fr{display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding:6.5px 0; border-bottom:1px solid var(--rule)}
+  padding:9px 0; border-bottom:1px solid var(--rule)}
 .facts .fr:last-child{border-bottom:0}
-.facts .fk{font-size:12px; color:var(--muted); white-space:nowrap}
-.fdot{display:inline-block; width:7px; height:7px; border-radius:var(--r-mark); margin-right:6px;
-  vertical-align:1px}
-/* a place name is a proper noun, not a figure — it stays in the sans, and only
-   the number beside it takes the mono */
-.facts .fk{flex:none}
-.facts .fv{display:flex; align-items:baseline; justify-content:flex-end;
-  flex:1 1 auto; min-width:0; white-space:nowrap}
-.fname{font-family:var(--sans); letter-spacing:0; font-weight:500;
-  overflow:hidden; text-overflow:ellipsis; min-width:0}
-.fsep{flex:none; padding:0 5px; color:var(--muted)}
+.facts .fk{flex:none; font-size:13px; color:var(--muted); white-space:nowrap}
+.fdot{display:inline-block; width:7px; height:7px; border-radius:2px; margin-right:6px; vertical-align:1px}
+.facts .fv{display:flex; align-items:baseline; justify-content:flex-end; flex:1 1 auto; min-width:0;
+  white-space:nowrap; font-size:13.5px; color:var(--ink); text-align:right}
+.fname{overflow:hidden; text-overflow:ellipsis; min-width:0}
+.fsep{flex:none; padding:0 6px; color:var(--faint)}
 .fnum{flex:none}
-.facts .fv{font-size:12.5px; color:var(--ink); text-align:right;
-  font-variant-numeric:tabular-nums; font-weight:500}
-.railnote{padding:11px 14px 13px; border-top:1px solid var(--rule); font-size:11px;
-  line-height:1.5; color:var(--muted)}
-.railnote b{color:var(--ink-2); font-weight:600}
+.railnote{padding:12px 16px 14px; border-top:1px solid var(--rule); font-size:12px; line-height:1.5; color:var(--faint)}
+.railnote b{color:var(--ink-2)}
 .railnote a{color:var(--ink-2)}
 
-.stack{display:flex; gap:2px; height:26px; border-radius:var(--r-mark); overflow:hidden}
+.stack{display:flex; gap:2px; height:24px; border-radius:4px; overflow:hidden}
 .stack i{display:block; height:100%; min-width:1px}
-.legend{display:flex; flex-wrap:wrap; gap:4px 14px; margin-top:10px}
-.legend div{display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--ink-2)}
-.legend b{width:8px; height:8px; border-radius:var(--r-mark); flex:none}
-.legend em{font-style:normal; font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums}
+.legend{display:flex; flex-wrap:wrap; gap:6px 16px; margin-top:12px}
+.legend div{display:flex; align-items:center; gap:6px; font-size:13px; color:var(--ink-2)}
+.legend b{width:8px; height:8px; border-radius:2px; flex:none}
+.legend em{font-style:normal; font-size:12px; color:var(--faint)}
 
-.rows{display:flex; flex-direction:column; gap:6px}
-.brow{display:grid; grid-template-columns:80px minmax(0,1fr) 48px; gap:10px; align-items:center}
-.brow .bl{font-size:11px; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums}
-.brow .bt{height:9px; background:var(--surface-3); border-radius:var(--r-ctl); overflow:hidden}
-.brow .bf{display:block; height:100%; border-radius:var(--r-ctl); background:var(--s1)}
-.brow .bv{font-size:11.5px; color:var(--ink-2); text-align:right; font-variant-numeric:tabular-nums}
+.rows{display:flex; flex-direction:column; gap:8px}
+.brow{display:grid; grid-template-columns:80px minmax(0,1fr) 50px; gap:12px; align-items:center}
+.brow .bl{font-size:12px; color:var(--muted); white-space:nowrap}
+.brow .bt{position:relative; height:8px; background:var(--surface-2); border-radius:999px; overflow:hidden}
+.brow .bf{position:absolute; inset:0; width:100%; display:block; border-radius:999px;
+  background:var(--accent); transform-origin:left center;
+  animation:barGrow var(--dur-3) var(--ease-out) backwards}
+.brow .bv{font-size:12.5px; color:var(--ink); text-align:right}
 .brow.over .bf{background:var(--over)}
 .brow.under .bf{background:var(--under)}
-.note{font-size:11px; color:var(--muted); line-height:1.5}
-.godaerah{width:100%; padding:9px 12px; border:1px solid var(--rule-2); border-radius:var(--r-card);
-  font-size:12.5px; font-weight:500; color:var(--ink); background:var(--surface);
-  transition:background var(--dur-1) var(--ease-out)}
+.note{font-size:12px; color:var(--faint); line-height:1.5}
+.godaerah{width:100%; padding:9px 14px; border:1px solid var(--rule); border-radius:999px;
+  font-size:13.5px; color:var(--ink); background:var(--ground);
+  transition:background-color var(--dur-1) linear}
 .godaerah:hover{background:var(--surface-2)}
 
 /* ---------------- map ---------------- */
-.mapcard{margin-bottom:10px; overflow:hidden}
-.mapcard .ctitle{align-items:center; padding-bottom:10px}
-.mapbox{position:relative; height:clamp(320px,56vh,560px); border-top:1px solid var(--rule);
-  background:var(--surface-3)}
-#map{position:absolute; inset:0; background:var(--surface-3); font:inherit}
+.mapcard{margin-top:0; margin-bottom:14px; overflow:hidden}
+.mapcard .ctitle{align-items:center; padding-bottom:12px}
+/* isolate: Leaflet's panes carry z-indexes in the hundreds, which would
+   otherwise paint over the sticky top bar as the sheet scrolls */
+.mapbox{position:relative; isolation:isolate; height:clamp(340px,58vh,580px); border-top:1px solid var(--rule);
+  background:var(--surface-2)}
+#map{position:absolute; inset:0; background:var(--surface-2); font:inherit}
 .mapfoot{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
-  gap:6px 16px; padding:9px 13px 10px; border-top:1px solid var(--rule)}
+  gap:6px 16px; padding:10px 16px 12px; border-top:1px solid var(--rule)}
 .mapfoot .legend{margin:0}
 .mapfoot .note{white-space:nowrap}
-.legend .ramp{width:42px; height:8px; border-radius:var(--r-mark)}
-.mapreset{position:absolute; top:10px; right:10px; z-index:500; display:flex; align-items:center;
-  gap:6px; height:30px; padding:0 11px; border-radius:var(--r-ctl); font-size:11.5px;
-  font-weight:500; color:var(--ink); background:var(--surface); border:1px solid var(--rule-2);
-  box-shadow:var(--shadow-2); animation:dropIn var(--dur-2) var(--ease-out)}
+.legend .ramp{width:42px; height:8px; border-radius:999px}
+.mapreset{position:absolute; top:12px; right:12px; z-index:500; display:flex; align-items:center;
+  gap:6px; height:32px; padding:0 12px; border-radius:999px; font-size:13px; color:var(--ink);
+  background:var(--surface); border:1px solid var(--rule); box-shadow:var(--shadow-2);
+  animation:dropIn var(--dur-2) var(--ease-out); transition:background-color var(--dur-1) linear}
 .mapreset:hover{background:var(--surface-2)}
 .mapreset[hidden]{display:none}
 .mapmsg{position:absolute; inset:0; z-index:600; display:flex; align-items:center;
-  justify-content:center; padding:20px; text-align:center; font-size:12px; color:var(--muted)}
+  justify-content:center; padding:20px; text-align:center; font-size:13px; color:var(--faint)}
 .mapmsg[hidden]{display:none}
-.mapbase{position:absolute; left:10px; bottom:10px; z-index:500; box-shadow:var(--shadow-2);
-  border:1px solid var(--rule-2)}
-/* Over streets and satellite the seat is read by its border, so the line takes
-   over from the fill: white with a dark edge on imagery, ink on streets. */
-#map.bm-sat .seat{stroke:#fff; stroke-opacity:.95; stroke-width:1.4}
-#map.bm-sat .seat.out{stroke-opacity:.5}
-#map.bm-sat .seat.pick{stroke:#fff; stroke-width:3.2}
-#map.bm-sat .parline{stroke:#000; stroke-opacity:.35}
-#map.bm-sat .parsel{stroke:#fff}
-#map.bm-sat .seatlab span{color:#fff; text-shadow:0 0 2px #000,0 0 3px #000,0 0 5px #000}
-#map.bm-street .seat{stroke-opacity:.7; stroke-width:1.3}
-#map.bm-street .seat.pick{stroke-width:3}
+.mapbase{position:absolute; left:12px; bottom:12px; z-index:500; background:var(--surface);
+  box-shadow:var(--shadow-2)}
 /* Seat fills are classes, not attributes: an SVG fill attribute cannot read a
    custom property, and a class lets the colour follow the theme on its own. */
 .seat{stroke:var(--ink); stroke-opacity:.5; stroke-width:1; transition:fill-opacity var(--dur-2) var(--ease-out)}
@@ -440,259 +377,260 @@ main{min-width:0; padding:0 0 60px}
    its own: on this map it is the grouping, the seat is the unit */
 .parsel{fill:none; stroke:var(--ink); stroke-width:2; stroke-opacity:.8; stroke-dasharray:6 4; pointer-events:none}
 .parline{fill:none; stroke:var(--ink); stroke-width:3.5; stroke-opacity:.14; pointer-events:none}
+/* Over streets and satellite the seat is read by its border, so the line takes
+   over from the fill: white with a dark edge on imagery, ink on streets. */
+#map.bm-sat .seat{stroke:#fff; stroke-opacity:.95; stroke-width:1.4}
+#map.bm-sat .seat.out{stroke-opacity:.5}
+#map.bm-sat .seat.pick{stroke:#fff; stroke-width:3.2}
+#map.bm-sat .parline{stroke:#000; stroke-opacity:.35}
+#map.bm-sat .parsel{stroke:#fff}
+#map.bm-sat .seatlab span{color:#fff; text-shadow:0 0 2px #000,0 0 3px #000,0 0 5px #000}
+#map.bm-street .seat{stroke-opacity:.7; stroke-width:1.3}
+#map.bm-street .seat.pick{stroke-width:3}
 /* seat codes, shown wherever the seat is big enough on screen to hold one */
 .seatlab{background:none; border:0}
 .seatlab span{position:absolute; left:0; top:0; transform:translate(-50%,-50%); white-space:nowrap;
-  font:600 10.5px/1.15 var(--mono); letter-spacing:-.01em; color:var(--ink); text-align:center;
+  font:500 11px/1.15 var(--sans); font-variant-numeric:tabular-nums; color:var(--ink); text-align:center;
   text-shadow:0 0 2px var(--surface),0 0 2px var(--surface),0 0 3px var(--surface),0 0 5px var(--surface);
   transition:opacity var(--dur-1) var(--ease-out)}
-.seatlab span i{display:block; font:500 10.5px/1.15 var(--sans); font-style:normal}
+.seatlab span i{display:block; font:400 11px/1.15 var(--sans); font-style:normal}
 .seatlab.off span{opacity:0}
 .seatlab.dim span{color:var(--muted)}
-.seatlab.pick span{font-size:12px}
-.seatlab.pick span i{font-size:12px; font-weight:600}
-/* Leaflet's own chrome, brought into this page's materials */
-.leaflet-container{font-family:var(--sans); background:var(--surface-3)}
-.leaflet-bar{border:1px solid var(--rule-2) !important; border-radius:var(--r-ctl) !important;
-  box-shadow:var(--shadow-2) !important; overflow:hidden}
-.leaflet-bar a{background:var(--surface) !important; color:var(--ink) !important;
-  border-bottom-color:var(--rule) !important; width:30px !important; height:30px !important;
-  line-height:30px !important}
+.seatlab.pick span{font-size:12.5px}
+.seatlab.pick span i{font-size:12.5px; font-weight:500}
+/* Leaflet's chrome in this page's materials: round floating buttons */
+.leaflet-container{font-family:var(--sans); background:var(--surface-2)}
+.leaflet-bar,.leaflet-touch .leaflet-bar{border:0 !important; border-radius:0 !important;
+  box-shadow:none !important; background:none; display:grid; gap:6px}
+.leaflet-bar a,.leaflet-touch .leaflet-bar a{width:34px !important; height:34px !important;
+  line-height:32px !important; border-radius:50% !important; border:1px solid var(--rule) !important;
+  background:var(--surface) !important; color:var(--ink) !important; box-shadow:var(--shadow-2);
+  font:400 18px/32px var(--sans) !important}
 .leaflet-bar a:hover{background:var(--surface-2) !important}
 .leaflet-control-attribution{background:color-mix(in srgb, var(--surface) 82%, transparent) !important;
-  color:var(--muted) !important; font-size:9.5px !important}
+  color:var(--faint) !important; font-size:10px !important; border-radius:6px 0 0 0}
 .leaflet-control-attribution a{color:var(--ink-2) !important}
 .leaflet-tile-pane{transition:opacity var(--dur-2) var(--ease-out)}
-@media (max-width:900px){
-  .mapbox{height:clamp(300px,58vh,460px)}
-  .mapfoot .note{white-space:normal}
-}
 
-/* ---------------- seat table ---------------- */
-/* No overflow container here: it would become the sticky header's scrollport
-   and stop it sticking to the viewport. The table is built to fit instead —
-   two columns drop below 900px. */
+/* ---------------- tables ---------------- */
+/* No overflow container: it would become the sticky header's scrollport. The
+   table is built to fit instead, and two columns drop below 900px. */
 .tablewrap{min-width:0}
-table.seats{width:100%; border-collapse:collapse; font-size:12.5px}
-table.seats th{position:sticky; top:var(--top-h,55px); z-index:5; background:var(--surface);
-  font-size:9.5px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--muted); text-align:left; padding:9px 12px 8px;
+table.seats{width:100%; border-collapse:collapse; font-size:13.5px}
+table.seats th{position:sticky; top:var(--top-h,57px); z-index:5; background:var(--surface);
+  font-size:12px; color:var(--faint); text-align:left; padding:10px 12px 9px;
   border-bottom:1px solid var(--rule); white-space:nowrap}
 table.seats th.r{text-align:right}
 table.seats td{padding:0; border-bottom:1px solid var(--rule)}
 table.seats tr:last-child td{border-bottom:0}
 table.seats tbody tr{cursor:pointer}
-table.seats tbody td{transition:background var(--dur-1) var(--ease-out)}
-table.seats tbody tr:hover td{background:var(--surface-2)}
+table.seats tbody td{transition:background-color var(--dur-1) linear}
+@media (hover:hover){ table.seats tbody tr:hover td{background:var(--surface-2)} }
 table.seats tbody tr.on td{background:var(--surface-3)}
 .c-go{width:26px}
-.c-go .ic{color:var(--muted); opacity:0; transform:translateX(-4px);
-  transition:opacity var(--dur-1) var(--ease-out), transform var(--dur-2) var(--ease-spring)}
-tbody tr:hover .c-go .ic, tbody tr:focus-within .c-go .ic, tbody tr.on .c-go .ic{
-  opacity:1; transform:none}
-.cell{padding:7px 12px}
-.c-code{font-size:11px; color:var(--muted); white-space:nowrap; font-variant-numeric:tabular-nums}
-.c-name{font-weight:500; color:var(--ink)}
-.c-sub{font-size:11px; color:var(--muted); margin-top:1px}
-.c-num{text-align:right; color:var(--ink); white-space:nowrap; font-variant-numeric:tabular-nums}
-.dev{display:inline-block; font-size:11.5px; font-variant-numeric:tabular-nums;
-  padding:2.5px 7px; border-radius:var(--r-ctl); min-width:60px; text-align:right; font-weight:500}
+.c-go .ic{color:var(--faint); opacity:0; transform:translateX(-4px);
+  transition:opacity var(--dur-1) var(--ease-out), transform var(--dur-2) var(--ease-out)}
+tbody tr:hover .c-go .ic, tbody tr:focus-within .c-go .ic, tbody tr.on .c-go .ic{opacity:1; transform:none}
+.cell{padding:9px 12px}
+.c-code{font-size:12px; color:var(--faint); white-space:nowrap}
+.c-name{color:var(--ink)}
+.c-sub{font-size:12px; color:var(--faint); margin-top:1px}
+.c-num{text-align:right; color:var(--ink); white-space:nowrap}
+.dev{display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; min-width:60px; text-align:right}
 .dev.over{color:var(--over); background:var(--over-bg)}
 .dev.under{color:var(--under); background:var(--under-bg)}
-.ministack{display:flex; gap:1px; height:7px; border-radius:var(--r-mark); overflow:hidden; min-width:110px}
+.ministack{display:flex; gap:1px; height:6px; border-radius:999px; overflow:hidden; min-width:110px}
 .ministack i{height:100%; min-width:1px}
 .maj{display:flex; align-items:center; gap:6px; white-space:nowrap}
-.maj b{width:7px; height:7px; border-radius:var(--r-mark); flex:none}
-.maj span{font-size:11.5px; color:var(--ink-2)}
-.maj em{font-style:normal; font-size:11px; color:var(--muted); font-variant-numeric:tabular-nums}
-.empty{padding:44px 16px; text-align:center; color:var(--muted); font-size:12px}
+.maj b{width:7px; height:7px; border-radius:2px; flex:none}
+.maj span{font-size:13px; color:var(--ink-2)}
+.maj em{font-style:normal; font-size:12px; color:var(--faint)}
+.empty{padding:44px 16px; text-align:center; color:var(--faint); font-size:13px}
 .empty p{margin:0}
-.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0);
-  white-space:nowrap}
-.empty .hint{margin-top:9px; color:var(--ink-2); font-size:12px}
-.empty button{margin-top:10px; font-size:12px; font-weight:500; color:var(--ink);
-  border:1px solid var(--rule-2); border-radius:var(--r-ctl); padding:6px 12px; background:var(--surface)}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.empty .hint{margin-top:9px; color:var(--ink-2)}
+.empty button{margin-top:10px; font-size:13px; color:var(--ink); border:1px solid var(--rule);
+  border-radius:999px; padding:6px 14px; background:var(--ground)}
 .empty button:hover{background:var(--surface-2)}
-mark{background:var(--mark-bg); color:var(--ink); border-radius:var(--r-mark); padding:0 1px}
-.rowname{font-size:12.5px; font-weight:500; color:var(--ink); text-align:left; padding:0;
-  border-radius:var(--r-ctl); display:block}
-.rowname:hover{text-decoration:underline; text-underline-offset:2px}
-.c-hit{font-size:11px; color:var(--ink-2); margin-top:3px}
-.c-hit b{font-weight:500; color:var(--muted)}
-.secthead{display:flex; align-items:center; justify-content:space-between; gap:12px;
-  padding-bottom:9px}
-.secthead h2{padding:0}
+mark{background:var(--mark-bg); color:var(--ink); border-radius:2px; padding:0 1px}
+.rowname{font-size:13.5px; color:var(--ink); text-align:left; padding:0; border-radius:4px; display:block}
+.rowname:hover{text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--rule-2)}
+.c-hit{font-size:12px; color:var(--ink-2); margin-top:3px}
+.c-hit b{color:var(--faint)}
+.secthead{display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:12px}
+.secthead h2{font-size:18px; letter-spacing:-.015em; color:var(--ink)}
+/* segmented controls: the same pill as the language switch */
 .segs{display:flex; gap:8px; flex-wrap:wrap}
-.seg{display:flex; gap:2px; background:var(--surface-3); padding:2px; border-radius:var(--r-card)}
-.seg button{padding:5px 11px; border-radius:var(--r-ctl); font-size:11.5px; color:var(--muted);
-  transition:color var(--dur-1) var(--ease-out), background var(--dur-1) var(--ease-out)}
-.seg button:hover{color:var(--ink-2)}
-.seg button.on{background:var(--surface); color:var(--ink); font-weight:500; box-shadow:var(--shadow-1)}
+.seg{display:flex; gap:2px; padding:2px; border-radius:999px; background:var(--ground); border:1px solid var(--rule)}
+.seg button{padding:4px 11px; border-radius:999px; font-size:12.5px; color:var(--faint);
+  transition:color var(--dur-1) linear, background-color var(--dur-1) linear}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:var(--surface); color:var(--ink); box-shadow:var(--lift)}
 .demotable th, .demotable td{white-space:nowrap}
-.demotable .num{text-align:right; font-variant-numeric:tabular-nums}
-.demotable tfoot td{background:var(--surface-2); font-weight:600; color:var(--ink);
-  border-top:1px solid var(--rule-2)}
-.demotable .peak{color:var(--ink); font-weight:600}
-/* only narrow screens scroll: an overflow container would stop the header
-   sticking to the viewport, and at desktop widths the table already fits */
+.demotable .num{text-align:right}
+.demotable tfoot td{background:var(--ground); color:var(--ink); border-top:1px solid var(--rule-2)}
+.demotable .peak{color:var(--ink); font-weight:500}
 @media (max-width:900px){
   .demoscroll{overflow:auto; max-height:72vh; overscroll-behavior:contain}
-  /* must out-specify `table.seats th`, which sets the viewport offset */
   table.seats.demotable th{top:0}
 }
-.chgmetrics{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; margin-bottom:12px}
+.chgmetrics{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-bottom:12px}
 .chgmetrics.wide{grid-template-columns:repeat(4,minmax(0,1fr))}
-.chgm{background:var(--surface-2); border:1px solid var(--rule); border-radius:var(--r-ctl);
-  padding:10px 12px}
-.chgm .v{font-family:var(--mono); font-size:16px; font-weight:600; letter-spacing:-.02em;
-  font-variant-numeric:tabular-nums}
-.chgm .k{font-size:10.5px; color:var(--muted); margin-top:4px; line-height:1.3}
-.mixrow{display:grid; grid-template-columns:52px minmax(0,1fr); gap:10px; align-items:center;
-  margin-bottom:6px}
-.mixrow .lb{font-size:10.5px; color:var(--muted)}
+.chgm{border:1px solid var(--rule); border-radius:10px; padding:12px 14px}
+.chgm .v{font-size:20px; letter-spacing:-.02em}
+.chgm .k{font-size:12px; color:var(--muted); margin-top:4px; line-height:1.3}
+.mixrow{display:grid; grid-template-columns:52px minmax(0,1fr); gap:10px; align-items:center; margin-bottom:6px}
+.mixrow .lb{font-size:12px; color:var(--muted)}
 @media (max-width:900px){ .chgmetrics, .chgmetrics.wide{grid-template-columns:repeat(2,minmax(0,1fr))} }
-.chgnote{font-size:11.5px; color:var(--muted); line-height:1.5; padding:0 0 10px}
+.chgnote{font-size:12.5px; color:var(--faint); line-height:1.5; padding:0 0 10px}
 .chgwarn{color:var(--over)}
-/* flows resolved from SPR's maps or by arithmetic rather than stated in its tables */
-.chg-res{color:var(--muted)}
-.newstar{color:var(--over); font-weight:700; margin-left:2px}
-.newtag{color:var(--muted); font-weight:500}
-.chgbadge{display:inline-block; margin-left:8px; padding:1px 7px; border-radius:var(--r-mark);
-  background:var(--surface-2); border:1px solid var(--rule-2); color:var(--ink-2);
-  font-size:10.5px; font-weight:600; letter-spacing:0; text-transform:none; vertical-align:1px}
+.chg-res{color:var(--faint)}
+.newstar{color:var(--over); margin-left:2px}
+.newtag{color:var(--faint)}
+.chgbadge{display:inline-block; margin-left:8px; padding:1px 8px; border-radius:999px;
+  background:var(--surface-2); color:var(--ink-2); font-size:11.5px; vertical-align:1px}
 .chgup{color:var(--over)}
 .chgdown{color:var(--under)}
-.chgbar{display:flex; gap:2px; height:8px; border-radius:var(--r-mark); overflow:hidden;
-  margin:2px 0 12px}
+.chgbar{display:flex; gap:2px; height:8px; border-radius:999px; overflow:hidden; margin:2px 0 12px}
 .chgbar i{height:100%; min-width:1px}
 @keyframes chgIn{from{opacity:0; transform:translateY(6px)} to{opacity:1; transform:none}}
 .chgm.animIn{animation:chgIn var(--dur-2) var(--ease-out) both}
 .chgbar i.un{background:var(--rule-2)}
-.counthint{margin-left:7px; font-size:10px; font-weight:500; letter-spacing:0;
-  text-transform:none; color:var(--muted)}
-.sortsel{font:inherit; font-size:11.5px; color:var(--ink-2); background:var(--surface);
-  border:1px solid var(--rule); border-radius:var(--r-ctl); height:30px; padding:0 26px 0 10px;
+.counthint{margin-left:7px; font-size:11px; color:var(--faint)}
+.sortsel{font:inherit; font-size:13px; color:var(--ink); background:var(--ground);
+  border:1px solid var(--rule); border-radius:999px; height:32px; padding:0 28px 0 12px;
   appearance:none; cursor:pointer;
   background-image:linear-gradient(45deg,transparent 50%,currentColor 50%),linear-gradient(135deg,currentColor 50%,transparent 50%);
-  background-position:calc(100% - 14px) 13px, calc(100% - 10px) 13px;
+  background-position:calc(100% - 15px) 14px, calc(100% - 11px) 14px;
   background-size:4px 4px,4px 4px; background-repeat:no-repeat}
-.sortsel:hover{border-color:var(--rule-2); color:var(--ink)}
+.sortsel:hover{border-color:var(--rule-2)}
 .sortwrap{position:relative; display:inline-flex; align-items:center}
-.sortwrap > .ic{position:absolute; left:10px; color:var(--muted); pointer-events:none}
-.sortwrap .sortsel{padding-left:30px}
+.sortwrap > .ic{position:absolute; left:11px; color:var(--faint); pointer-events:none}
+.sortwrap .sortsel{padding-left:31px}
 
 /* ---------------- seat drawer ---------------- */
-.sidescrim{position:fixed; inset:0; background:var(--scrim); z-index:69;
-  opacity:0; transition:opacity var(--dur-2) var(--ease-out)}
+.sidescrim{position:fixed; inset:0; background:var(--scrim); z-index:69; opacity:0;
+  transition:opacity var(--dur-2) var(--ease-out)}
 .sidescrim.on{opacity:1}
 .sidescrim[hidden],.scrim[hidden]{display:none !important}
 .scrim{position:fixed; inset:0; background:var(--scrim); z-index:60; opacity:0;
   transition:opacity var(--dur-2) var(--ease-out)}
-/* No backdrop-filter here: under overflow-x:clip Chrome mirrors the backdrop
-   into the scrim. The effect was not worth a visible artifact. */
 .scrim.on{opacity:1}
-.drawer{position:fixed; top:0; right:0; bottom:0; width:min(432px,100%); z-index:61;
-  background:var(--surface); border-left:1px solid var(--rule); overflow-y:auto;
-  transform:translateX(100%); transition:transform var(--dur-3) var(--ease-out);
-  box-shadow:var(--shadow-3)}
-.drawer.on{transform:none}
+.drawer{position:fixed; top:8px; right:8px; bottom:8px; width:min(440px,calc(100% - 16px)); z-index:61;
+  background:var(--surface); border:1px solid var(--rule); border-radius:var(--r-sheet);
+  overflow-y:auto; box-shadow:var(--shadow-3);
+  transform:translateX(calc(100% + 16px)); transition:transform var(--x-3) var(--ease-out)}
+.drawer.on{transform:none; transition-duration:var(--dur-3)}
 .dhead{position:sticky; top:0; background:var(--surface); border-bottom:1px solid var(--rule);
-  padding:15px 17px; display:flex; align-items:flex-start; gap:12px; z-index:2}
-.dhead h2{font-size:17px; font-weight:600; letter-spacing:-.02em}
-.dhead .sub{font-size:11.5px; color:var(--muted); margin-top:3px}
-.dclose{margin-left:auto; width:28px; height:28px; border-radius:var(--r-ctl); border:1px solid var(--rule);
-  display:flex; align-items:center; justify-content:center; flex:none; color:var(--ink-2)}
-.dclose:hover{color:var(--ink); border-color:var(--rule-2)}
-.dsec{padding:15px 17px; border-bottom:1px solid var(--rule)}
-.dsec > h3{font-size:10px; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--muted); padding-bottom:11px}
-.dstats{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px}
-.dstat{background:var(--surface-2); border:1px solid var(--rule); border-radius:var(--r-card); padding:10px 12px}
-.dstat .v{font-size:16px; font-weight:600; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
-.dstat .k{font-size:10.5px; color:var(--muted); margin-top:4px}
-table.eth{width:100%; border-collapse:collapse; font-size:12px}
-table.eth td{padding:6px 0; border-bottom:1px solid var(--rule)}
+  padding:18px 20px 16px; display:flex; align-items:flex-start; gap:12px; z-index:2}
+.dhead h2{font-size:24px; letter-spacing:-.025em; line-height:1.1}
+.dhead .sub{font-size:13px; color:var(--faint); margin-top:4px}
+.dclose{margin-left:auto; width:32px; height:32px; border-radius:999px; border:1px solid var(--rule);
+  display:flex; align-items:center; justify-content:center; flex:none; color:var(--muted);
+  background:var(--ground)}
+.dclose:hover{color:var(--ink); background:var(--surface-2)}
+.dsec{padding:18px 20px; border-bottom:1px solid var(--rule)}
+.dsec:last-child{border-bottom:0}
+.dsec > h3{font-size:12px; color:var(--faint); padding-bottom:12px}
+.dstats{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); border:1px solid var(--rule); border-radius:var(--r-card)}
+.dstat{padding:12px 14px}
+.dstat:nth-child(even){border-left:1px solid var(--rule)}
+.dstat:nth-child(n+3){border-top:1px solid var(--rule)}
+.dstat .v{font-size:22px; letter-spacing:-.02em; line-height:1.2}
+.dstat .k{font-size:12px; color:var(--muted); margin-top:2px}
+table.eth{width:100%; border-collapse:collapse; font-size:13px}
+table.eth td{padding:7px 0; border-bottom:1px solid var(--rule)}
 table.eth tr:last-child td{border-bottom:0}
-table.eth .sw{width:14px}
-table.eth .sw b{display:block; width:8px; height:8px; border-radius:var(--r-mark)}
+table.eth .sw{width:16px}
+table.eth .sw b{display:block; width:8px; height:8px; border-radius:2px}
 table.eth .nm{color:var(--ink-2)}
-table.eth .nu{text-align:right; font-variant-numeric:tabular-nums; color:var(--ink); font-weight:500}
-table.eth .pc{text-align:right; font-variant-numeric:tabular-nums; color:var(--muted); width:52px}
-table.pds{width:100%; border-collapse:collapse; font-size:12px}
-table.pds th{font-size:10px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
-  color:var(--muted); text-align:left; padding:0 0 8px}
+table.eth .nu{text-align:right; color:var(--ink)}
+table.eth .pc{text-align:right; color:var(--faint); width:56px}
+table.pds{width:100%; border-collapse:collapse; font-size:13px}
+table.pds th{font-size:12px; color:var(--faint); text-align:left; padding:0 0 8px}
 table.pds th.r{text-align:right}
-table.pds td{padding:6px 0; border-bottom:1px solid var(--rule); color:var(--ink-2)}
+table.pds td{padding:7px 0; border-bottom:1px solid var(--rule); color:var(--ink-2)}
 table.pds tr:last-child td{border-bottom:0}
-table.pds .i{font-size:10.5px; color:var(--muted); width:26px; font-variant-numeric:tabular-nums}
-table.pds .v{text-align:right; color:var(--ink); font-variant-numeric:tabular-nums; width:66px;
-  font-weight:500}
+table.pds .i{font-size:12px; color:var(--faint); width:26px}
+table.pds .v{text-align:right; color:var(--ink); width:66px}
 
 /* ---------------- tooltip ---------------- */
-#tip{position:fixed; z-index:90; pointer-events:none; opacity:0; transition:opacity .1s;
-  background:var(--surface); border:1px solid var(--rule-2); border-radius:var(--r-ctl);
-  padding:7px 9px; font-size:11.5px; white-space:nowrap; left:0; top:0;
-  box-shadow:0 6px 20px rgba(20,20,20,.12)}
-#tip.on{opacity:1}
-#tip b{display:flex; align-items:center; gap:6px; font-weight:500}
-#tip i{width:8px; height:8px; border-radius:var(--r-mark); flex:none}
-#tip em{font-style:normal; color:var(--ink-2); display:block; margin-top:3px;
-  font-variant-numeric:tabular-nums}
+#tip{position:fixed; z-index:90; pointer-events:none; left:0; top:0; opacity:0;
+  transition:opacity var(--x-1) linear;
+  background:var(--surface); border:1px solid var(--rule); border-radius:var(--r-ctl);
+  box-shadow:var(--shadow-2); padding:8px 10px; font-size:12px; white-space:nowrap}
+#tip.on{opacity:1; transition-duration:var(--dur-1)}
+#tip b{display:flex; align-items:center; gap:6px; font-size:13px; color:var(--ink)}
+#tip i{width:8px; height:8px; border-radius:2px; flex:none}
+#tip em{font-style:normal; color:var(--muted); display:block; margin-top:2px; font-variant-numeric:tabular-nums}
 
 /* ---------------- responsive ---------------- */
 @media (max-width:1150px){ .cols{grid-template-columns:minmax(0,1fr)} }
 @media (max-width:900px){
-  .app{grid-template-columns:minmax(0,1fr)}
-  .side{position:fixed; top:0; left:0; bottom:0; width:258px; height:100dvh; z-index:70;
-    transform:translateX(-100%); transition:transform .22s ease;
-    box-shadow:16px 0 40px rgba(20,20,20,.10)}
-  .side.on{transform:none}
+  /* the frame is for a laptop; a phone gives the sheet the whole screen */
+  html,body{overflow-x:hidden; overflow-x:clip}
+  .app{display:block; height:auto}
+  main{margin:0; border:0; border-radius:0; overflow:visible; min-height:100vh; min-height:100dvh}
+  .side{position:fixed; top:0; left:0; bottom:0; width:280px; height:100dvh; z-index:70;
+    background:var(--ground); border-right:1px solid var(--rule);
+    transform:translateX(-100%); transition:transform var(--x-2) var(--ease-out)}
+  /* the shadow only while open: off-screen it would still bleed onto the page edge */
+  .side.on{transform:none; transition-duration:var(--dur-3); box-shadow:16px 0 40px rgba(23,24,26,.10)}
   .sideclose{display:flex}
   .burger{display:flex}
+  .sidebtn{display:none}
   .crumb{display:none}
-  .top{padding:10px 14px}
-  .wrap{padding:0 14px}
-  /* five tabs do not fit at 390px; without this the last two are clipped away
-     by the page-level overflow and cannot be reached at all */
-  /* overflow-x:auto makes overflow-y compute to auto as well, so the row became
-     a 1px vertical scroller and jittered under a thumb. Lock the y axis; the
-     padding keeps the active tab's underline from being clipped by it. */
-  .tabs{overflow-x:auto; overflow-y:hidden; padding-bottom:1px;
-    overscroll-behavior-x:contain; scrollbar-width:none; -webkit-overflow-scrolling:touch}
+  .top{padding:10px 14px; gap:8px}
+  .search{flex:1 1 auto}
+  .wrap{padding:22px 16px 48px}
+  .summary{font-size:16px}
+  /* the tab bar scrolls sideways rather than clipping the last tabs */
+  .tabs{width:100%; overflow-x:auto; overflow-y:hidden; overscroll-behavior-x:contain;
+    scrollbar-width:none; -webkit-overflow-scrolling:touch}
   .tabs::-webkit-scrollbar{display:none}
   .grid2{grid-template-columns:minmax(0,1fr)}
-  .bignums{gap:24px}
   .hide-sm{display:none}
+  .mapbox{height:clamp(300px,58vh,460px)}
+  .mapfoot .note{white-space:normal}
+  /* the results panel has no reason to be as narrow as the squeezed field */
+  .sdrop{position:fixed; left:10px; right:10px; top:calc(var(--top-h,57px) + 6px); max-height:min(68vh,520px)}
+  .sitem .dev{display:none}
+  .sitem-in{gap:10px}
+  .skbd{display:none}
+  .ssub-par{display:none}
+  .chg-pre{display:none}
+  #change th:nth-child(1),#change td:nth-child(1){width:42px}
+  #change th:nth-child(3),#change td:nth-child(3){width:70px}
+  #change th:nth-child(4),#change td:nth-child(4){width:46px}
+  #change .cell{padding:7px 6px}
+  #change .c-sub{white-space:nowrap}
+  .drawer{top:auto; left:0; right:0; bottom:0; width:100%; max-height:88dvh;
+    border-radius:var(--r-sheet) var(--r-sheet) 0 0; transform:translateY(100%)}
 }
-@media (max-width:520px){
-  .bn .bv{font-size:21px}
-  .search{flex:1 1 auto}
+@media (max-width:600px){
+  .stats{grid-auto-flow:row; grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stat + .stat{border-left:0}
+  .stat:nth-child(even){border-left:1px solid var(--rule)}
+  .stat:nth-child(n+3){border-top:1px solid var(--rule)}
+  .stat .v{font-size:26px}
+  .lang button{padding:4px 8px}
 }
-/* Entrances. Every one animates transform/opacity/filter only, so none of them
-   re-enters the paint path; stagger is capped so a 99-row table never crawls. */
-@keyframes rowIn{from{opacity:0; transform:translateY(5px)} to{opacity:1; transform:none}}
-@keyframes segIn{from{opacity:0; transform:scaleY(.35)} to{opacity:1; transform:none}}
-@keyframes secIn{from{opacity:0; transform:translateY(9px)} to{opacity:1; transform:none}}
-@keyframes numIn{from{opacity:0; transform:translateY(7px); filter:blur(5px)}
-                 to{opacity:1; transform:none; filter:blur(0)}}
 
+/* Entrances: transform/opacity/filter only; stagger capped so a long table never crawls. */
+@keyframes rowIn{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
+@keyframes segIn{from{opacity:0; transform:scaleY(.35)} to{opacity:1; transform:none}}
+@keyframes secIn{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+@keyframes numIn{from{opacity:0; transform:translateY(6px); filter:blur(4px)} to{opacity:1; transform:none; filter:blur(0)}}
+@keyframes barGrow{from{transform:scaleX(0)}}
 tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
 .stack i{transform-origin:center bottom}
 .stack.anim i{animation:segIn var(--dur-2) var(--ease-out) both}
 .drawer.on .dsec{animation:secIn var(--dur-2) var(--ease-out) both}
 .drawer.on .dsec:nth-child(2){animation-delay:20ms}
-.drawer.on .dsec:nth-child(3){animation-delay:55ms}
-.drawer.on .dsec:nth-child(4){animation-delay:90ms}
-.drawer.on .dsec:nth-child(5){animation-delay:125ms}
-.bn .bv.anim{animation:numIn var(--dur-3) var(--ease-out) both}
-
-/* Bars grow by transform, never by width, so growth stays off the paint path.
-   The real length is an inline transform; the keyframe only supplies the frame
-   to grow FROM, so a bar with no animation is drawn correct, not empty. */
-@keyframes barGrow{from{transform:scaleX(0)}}
-.brow .bt{position:relative}
-.brow .bf{position:absolute; inset:0; width:100%; transform-origin:left center;
-  animation:barGrow var(--dur-3) var(--ease-out) backwards}
+.drawer.on .dsec:nth-child(3){animation-delay:50ms}
+.drawer.on .dsec:nth-child(4){animation-delay:80ms}
+.drawer.on .dsec:nth-child(5){animation-delay:110ms}
+.stat .v.anim{animation:numIn var(--dur-3) var(--ease-out) both}
 
 @media (prefers-reduced-motion:reduce){
   *{transition:none !important; animation:none !important}
@@ -702,6 +640,7 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
 <div class="app">
   <aside class="side" id="side">
     <div class="brand">
+      <span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
       <span><b>SarawakSeats</b><i data-i18n="brandsub">PRN Sarawak · 82 DUN</i></span>
       <button class="sideclose" id="sideclose" type="button" aria-label="Tutup menu">
         <svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="m6.5 6.5 11 11M17.5 6.5l-11 11"/></svg>
@@ -748,7 +687,10 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
       <button class="burger" id="burger" aria-label="Menu">
         <svg class="ic" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 7h17M3.5 12h17M3.5 17h17"/></svg>
       </button>
-      <div class="crumb"><b>SarawakSeats</b><span>&rsaquo;</span><span id="crumbNow">82 DUN</span></div>
+      <button class="sidebtn" id="sidebtn" type="button" aria-label="Sembunyikan bar sisi" aria-pressed="false">
+        <svg class="ic" width="17" height="17" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5"/><path d="M9.5 4.5v15"/></svg>
+      </button>
+      <div class="crumb"><b>SarawakSeats</b><span class="sep">/</span><span id="crumbNow">82 DUN</span></div>
       <div class="search">
         <svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.2-4.2"/></svg>
         <input type="search" id="q" placeholder="Cari DUN, daerah mengundi, kod DM atau parlimen"
@@ -756,18 +698,9 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
                aria-autocomplete="list" autocomplete="off">
         <div class="sdrop" id="sdrop" role="listbox" aria-label="Keputusan carian" hidden></div>
       </div>
-      <div class="langwrap">
-        <button class="themebtn langbtn" id="lang" type="button" aria-haspopup="listbox"
-                aria-expanded="false" aria-controls="langmenu">
-          <svg class="ic ic-fill" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M8 2.25C8.41421 2.25 8.75 2.58579 8.75 3V4.25H11.9829C11.9939 4.24976 12.0049 4.24976 12.016 4.25H14C14.4142 4.25 14.75 4.58579 14.75 5C14.75 5.41421 14.4142 5.75 14 5.75H12.5951C12.0785 7.83556 11.3151 9.58586 10.0899 11.1452C9.79327 11.5227 9.47146 11.8866 9.12228 12.2396C10.0146 12.9532 11.0796 13.6436 12.3591 14.3416C12.7228 14.54 12.8568 14.9955 12.6584 15.3592C12.4601 15.7228 12.0045 15.8568 11.6409 15.6584C10.2166 14.8816 9.015 14.0962 8.00008 13.2606C6.98357 14.0975 5.7815 14.8827 4.35931 15.6584C3.99568 15.8567 3.5401 15.7228 3.34175 15.3591C3.1434 14.9955 3.2774 14.5399 3.64103 14.3416C4.9224 13.6426 5.98696 12.952 6.8778 12.2396C6.00565 11.358 5.30575 10.4096 4.74209 9.35303C4.54713 8.98757 4.68535 8.53325 5.05082 8.33829C5.41628 8.14334 5.8706 8.28156 6.06555 8.64702C6.5644 9.58214 7.19121 10.4335 8.00008 11.2408C8.33344 10.9081 8.63557 10.5682 8.91043 10.2184C9.90599 8.95135 10.5718 7.51782 11.0461 5.75H2C1.58579 5.75 1.25 5.41421 1.25 5C1.25 4.58579 1.58579 4.25 2 4.25H7.25V3C7.25 2.58579 7.58579 2.25 8 2.25Z"/><path d="M17.5 10.25C17.7951 10.25 18.0628 10.4231 18.1839 10.6922L21.3273 17.6774C21.3321 17.6874 21.3366 17.6976 21.341 17.7078L22.6839 20.6922C22.8539 21.07 22.6855 21.514 22.3078 21.6839C21.93 21.8539 21.486 21.6855 21.3161 21.3078L20.1651 18.75H14.8349L13.6839 21.3078C13.514 21.6855 13.07 21.8539 12.6922 21.6839C12.3145 21.514 12.1461 21.07 12.3161 20.6922L13.6591 17.7078C13.6634 17.6976 13.6679 17.6874 13.6727 17.6775L16.8161 10.6922C16.9372 10.4231 17.2049 10.25 17.5 10.25ZM19.4901 17.25L17.5 12.8276L15.5099 17.25H19.4901Z"/>
-          </svg>
-          <span class="langcode" id="langcode">MS</span>
-        </button>
-        <div class="langmenu" id="langmenu" role="listbox" hidden>
-          <button role="option" type="button" data-lang="ms"><span>Bahasa Melayu</span></button>
-          <button role="option" type="button" data-lang="en"><span>English</span></button>
-        </div>
+      <div class="lang" id="lang" role="group" aria-label="Bahasa">
+        <button type="button" data-lang="ms" aria-pressed="true">BM</button>
+        <button type="button" data-lang="en" aria-pressed="false">EN</button>
       </div>
       <button class="themebtn" id="theme" type="button" aria-label="Tukar tema terang atau gelap">
         <svg class="ic i-sun" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
@@ -782,12 +715,12 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
 
     <div class="wrap">
       <div class="ehead">
-        <div>
-          <h1 id="ptitle">82 DUN Sarawak</h1>
-        </div>
+        <div class="eyebrow"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10.5" r="2.5"/></svg><span id="peyebrow">Sarawak</span></div>
+        <h1 id="ptitle">82 DUN Sarawak</h1>
+        <p class="q" id="psub"></p>
       </div>
-
-      <div class="bignums" id="bignums"></div>
+      <p class="summary" id="plead"></p>
+      <div class="stats" id="bignums"></div>
 
       <nav class="tabs" id="tabs" role="tablist" aria-label="Bahagian">
         <button type="button" role="tab" id="tab-ringkasan" data-panel="ringkasan" aria-controls="ringkasan" aria-selected="true" class="on"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12h8.5"/></svg><span data-i18n="tabSummary">Ringkasan</span></button>
@@ -1006,6 +939,21 @@ var I18N={
     mapLoading:"Memuatkan peta…", mapFail:"Peta tidak dapat dimuatkan. Semua angka di bawah masih tepat.",
     mapNoteMaj:"Lebih pekat, majoriti lebih besar.", mapNoteDev:"Lebih pekat, lebih jauh daripada purata.",
     mapOver:"Melebihi purata", mapUnder:"Di bawah purata", bordersLabel:"Sempadan:",
+    eyeState:"Sarawak", eyePar:"Parlimen", eyeSearch:"Carian",
+    subState:"Kerusi Dewan Undangan Negeri bagi Pilihan Raya Negeri Sarawak",
+    subSeat:function(n){ return "Kerusi DUN · "+n+" daerah mengundi" },
+    subPar:function(n){ return n+" kerusi DUN dalam kawasan parlimen ini" },
+    leadState:function(v,n,hi,hv,lo,lv,r){ return "<strong>"+v+" pengundi</strong> memilih <strong>"+n+" ADUN</strong>. "+
+      "Kerusi terbesar, "+hi+", mempunyai "+hv+" pengundi, <strong>"+r+" kali</strong> kerusi terkecil, "+lo+" ("+lv+")." },
+    leadSeat:function(name,v,d,more,avg,eth,ep,par){ return name+" mempunyai <strong>"+v+" pengundi</strong>, <strong>"+d+
+      (more ? " lebih" : " kurang")+"</strong> daripada purata negeri ("+avg+"). Kumpulan etnik terbesar ialah <strong>"+eth+
+      " ("+ep+")</strong>, dan kerusi ini terletak dalam "+par+"." },
+    leadPar:function(name,n,v,hi,hv,lo,lv,r){ return name+" merangkumi <strong>"+n+" DUN</strong> dengan <strong>"+v+
+      " pengundi</strong>."+(hi ? " Kerusi terbesarnya, "+hi+" ("+hv+"), mempunyai "+r+" kali pengundi "+lo+" ("+lv+")." : "") },
+    leadSearch:function(n,q,v){ return "<strong>"+n+" DUN</strong> sepadan dengan “"+q+"”, dengan <strong>"+v+" pengundi</strong>." },
+    rollSub:"Daftar pemilih 29 Jan 2026", ofState:"daripada jumlah negeri",
+    avgPer:function(a){ return "Purata "+a+" setiap kerusi" }, gapSub:"Terbesar berbanding terkecil",
+    vsAvg:function(a){ return "Berbanding purata "+a }, sideHide:"Sembunyikan bar sisi", sideShow:"Tunjukkan bar sisi",
     mapAria:"Peta sempadan 82 DUN Sarawak", bmGrey:"Ringkas", bmStreet:"Jalan", bmSat:"Satelit",
     parliament:"Parlimen", dun:"DUN", name:"Nama", voters:"Pengundi", open:"Buka",
     tabSummary:"Ringkasan", tabDeviation:"Sisihan", tabDemo:"Demografi", tabSeats:"Kerusi DUN",
@@ -1068,6 +1016,21 @@ var I18N={
     mapLoading:"Loading the map…", mapFail:"The map could not be loaded. Every figure below is still correct.",
     mapNoteMaj:"Darker means a larger majority.", mapNoteDev:"Darker means further from the average.",
     mapOver:"Above average", mapUnder:"Below average", bordersLabel:"Borders:",
+    eyeState:"Sarawak", eyePar:"Parliament", eyeSearch:"Search",
+    subState:"State assembly seats for the Sarawak state election",
+    subSeat:function(n){ return "State seat · "+n+" polling districts" },
+    subPar:function(n){ return n+" state seats in this parliamentary constituency" },
+    leadState:function(v,n,hi,hv,lo,lv,r){ return "<strong>"+v+" electors</strong> choose <strong>"+n+" assembly members</strong>. "+
+      "The largest seat, "+hi+", has "+hv+" electors, <strong>"+r+" times</strong> the smallest, "+lo+" ("+lv+")." },
+    leadSeat:function(name,v,d,more,avg,eth,ep,par){ return name+" has <strong>"+v+" electors</strong>, <strong>"+d+
+      (more ? " more" : " fewer")+"</strong> than the state average ("+avg+"). Its largest ethnic group is <strong>"+eth+
+      " ("+ep+")</strong>, and it sits in "+par+"." },
+    leadPar:function(name,n,v,hi,hv,lo,lv,r){ return name+" covers <strong>"+n+" state seats</strong> with <strong>"+v+
+      " electors</strong>."+(hi ? " Its largest, "+hi+" ("+hv+"), has "+r+" times the electors of "+lo+" ("+lv+")." : "") },
+    leadSearch:function(n,q,v){ return "<strong>"+n+" state seats</strong> match “"+q+"”, with <strong>"+v+" electors</strong>." },
+    rollSub:"Electoral roll of 29 Jan 2026", ofState:"of the state total",
+    avgPer:function(a){ return "Average "+a+" per seat" }, gapSub:"Largest against smallest",
+    vsAvg:function(a){ return "Against the average of "+a }, sideHide:"Hide sidebar", sideShow:"Show sidebar",
     mapAria:"Map of Sarawak's 82 state seat borders", bmGrey:"Simple", bmStreet:"Streets", bmSat:"Satellite",
     parliament:"Parliament", dun:"State seat", name:"Name", voters:"Electors", open:"Open",
     tabSummary:"Summary", tabDeviation:"Deviation", tabDemo:"Demographics", tabSeats:"State seats",
@@ -1241,39 +1204,70 @@ function bindTip(el, swatch, label, value){
 
 /* ---------- headline figures ---------- */
 var lastBig=[];
+/* The headline figures, as one bordered row: label, figure, and a line that
+   says what the figure is measured against. */
 function drawBig(a, rows){
   var sp=spread(rows), total=seats().length, filtered=a.n!==total;
-  var single=rows.length===1;
-  var items=[['<span>'+fmt(a.v)+'</span>', t("voters")]];
-  // "1 of 99" says nothing once the scope is one seat
-  if (!single){
-    items.push(['<span>'+a.n+'</span>'+
-      (filtered ? '<span class="delta">'+t("ofTotal")+' '+total+'</span>'
-                : (state.set==="99" ? '<span class="delta up">+17</span>' : '')),
-      t("seats")]);
-  }
-  items.push(['<span>'+fmt(a.pd)+'</span>', t("pdCount")]);
+  var single=rows.length===1, avg=AVG();
+  var items=[[t("voters"), fmt(a.v), filtered ? pc(a.v/TOTAL*100)+" "+t("ofState") : t("rollSub")]];
+  // "1 of 82" says nothing once the scope is one seat
+  if (!single) items.push([t("seats"), String(a.n), filtered ? t("ofTotal")+" "+total : t("avgPer")(fmt(Math.round(avg)))]);
+  items.push([t("pdCount"), fmt(a.pd), ""]);
   if (single){
-    var d1=(rows[0][V]-AVG())/AVG();
-    items.push(['<span class="'+(d1>=0?"up":"down")+'">'+(d1>=0?"+":"−")+
-      Math.abs(d1*100).toFixed(1)+'%</span>', t("devFromAvg")]);
+    var d1=(rows[0][V]-avg)/avg, et=a.eth, tot=et.reduce(function(x,y){ return x+y },0)||1, top=0;
+    for (var i=1;i<et.length;i++) if (et[i]>et[top]) top=i;
+    items.push([t("devFromAvg"), '<span class="'+(d1>=0?"up":"down")+'">'+(d1>=0?"+":"\u2212")+
+      Math.abs(d1*100).toFixed(1)+'%</span>', t("vsAvg")(fmt(Math.round(avg)))]);
+    items.push([t("topEthnic"), pc(et[top]/tot*100), ETH[top].n]);
   } else if (sp){
-    items.push(['<span>'+sp.r.toFixed(2)+':1</span>', t("gap")]);
+    items.push([t("gap"), sp.r.toFixed(2)+':1', t("gapSub")]);
   }
   var host=$("#bignums");
-  var next=items.map(function(t){ return t[0] });
+  var next=items.map(function(x){ return x[1] });
   var changed=next.some(function(v,i){ return v!==lastBig[i] });
-  host.innerHTML = items.map(function(t){
-    return '<div class="bn"><div class="bv">'+t[0]+'</div><div class="bk">'+t[1]+'</div></div>';
+  host.innerHTML = items.map(function(x){
+    return '<div class="stat"><div class="k">'+esc(x[0])+'</div><div class="v">'+x[1]+'</div>'+
+      (x[2] ? '<div class="s">'+esc(x[2])+'</div>' : '')+'</div>';
   }).join("");
   // a figure that did not move should not draw the eye
   if (changed && lastBig.length){
-    [].forEach.call(host.querySelectorAll(".bv"), function(el,i){
+    [].forEach.call(host.querySelectorAll(".v"), function(el,i){
       if (next[i]===lastBig[i]) return;
       el.classList.add("anim"); el.style.animationDelay=(i*45)+"ms";
     });
   }
   lastBig=next;
+}
+/* Eyebrow, subtitle and one sentence that says what the scope is before any
+   figure does. */
+function drawLead(a, rows){
+  var P=pars(), avg=AVG(), eye, sub="", lead="", sp=spread(rows);
+  function nm(r){ return r[0]+" "+r[1] }
+  if (state.dun && rows.length===1){
+    var r=rows[0], d=(r[V]-avg)/avg, et=a.eth, tot=et.reduce(function(x,y){ return x+y },0)||1, top=0;
+    for (var i=1;i<et.length;i++) if (et[i]>et[top]) top=i;
+    eye=P[r[2]][0]+" "+P[r[2]][1];
+    sub=t("subSeat")(r[3]);
+    lead=t("leadSeat")(esc(nm(r)), fmt(r[V]), Math.abs(d*100).toFixed(1)+"%", d>=0, fmt(Math.round(avg)),
+      esc(ETH[top].n), pc(et[top]/tot*100), esc(P[r[2]][0]+" "+P[r[2]][1]));
+  } else if (state.par!==null){
+    eye=t("eyePar");
+    sub=t("subPar")(rows.length);
+    lead=t("leadPar")(esc(P[state.par][0]+" "+P[state.par][1]), rows.length, fmt(a.v),
+      sp ? esc(nm(sp.hi)) : "", sp ? fmt(sp.hi[V]) : "", sp ? esc(nm(sp.lo)) : "", sp ? fmt(sp.lo[V]) : "",
+      sp ? sp.r.toFixed(1) : "");
+  } else if (state.qRaw){
+    eye=t("eyeSearch");
+    lead=rows.length ? t("leadSearch")(rows.length, esc(state.qRaw), fmt(a.v)) : "";
+  } else {
+    eye=t("eyeState");
+    sub=t("subState");
+    lead=sp ? t("leadState")(fmt(a.v), rows.length, esc(nm(sp.hi)), fmt(sp.hi[V]), esc(nm(sp.lo)),
+      fmt(sp.lo[V]), sp.r.toFixed(1)) : "";
+  }
+  $("#peyebrow").textContent=eye;
+  $("#psub").textContent=sub; $("#psub").hidden=!sub;
+  $("#plead").innerHTML=lead;
 }
 
 /* ---------- key facts rail ---------- */
@@ -2244,7 +2238,7 @@ $("#mapreset").addEventListener("click", function(){
 /* ---------- render ---------- */
 function render(){
   var rows=shown(), a=agg(rows), P=pars();
-  drawBig(a,rows); drawFacts(a,rows);
+  drawBig(a,rows); drawLead(a,rows); drawFacts(a,rows);
   drawEth(a); drawAge(a); drawSex(a); drawDev(rows); drawTable(rows); drawDemo(); drawPd(); drawChange();
   // The header names the scope and nothing else: every figure that used to sit
   // in a subtitle here is already in the headline row directly below it.
@@ -2253,13 +2247,13 @@ function render(){
 
   if (state.dun && rows.length===1){
     title = rows[0][0]+" "+rows[0][1]+(isNew(rows[0][0]) ? " "+newTag() : "");
-    crumb = setName+" › "+rows[0][0];
+    crumb = setName+" / "+rows[0][0];
   } else if (state.par!==null){
     title = P[state.par][0]+" "+P[state.par][1];
-    crumb = setName+" › "+P[state.par][0];
+    crumb = setName+" / "+P[state.par][0];
   } else if (state.qRaw){
     title = "“"+state.qRaw+"”";
-    crumb = setName+" › "+t("crumbSearch");
+    crumb = setName+" / "+t("crumbSearch");
   } else {
     title = state.set==="99" ? t("titleProposed") : t("titleCurrent");
   }
@@ -2478,10 +2472,10 @@ function applyLang(lang, persist){
     var v=I18N[LANG][el.dataset.i18n];
     if (typeof v === "string") el.textContent=v;
   });
-  $("#langcode").textContent = lang.toUpperCase();
-  [].forEach.call(langMenu.querySelectorAll("[data-lang]"), function(b){
-    b.setAttribute("aria-selected", b.dataset.lang===lang ? "true" : "false");
+  [].forEach.call($("#lang").querySelectorAll("[data-lang]"), function(b){
+    b.setAttribute("aria-pressed", b.dataset.lang===lang ? "true" : "false");
   });
+  syncSideBtn();
   $("#q").setAttribute("aria-label", t("searchPh"));
   $("#sort").setAttribute("aria-label", t("sortCode"));
   $("#pdsort").setAttribute("aria-label", t("sortByDun"));
@@ -2490,21 +2484,27 @@ function applyLang(lang, persist){
   applyTheme(document.documentElement.getAttribute("data-theme"), false);
   drawParlist(); drawDunlist(); render();
 }
-var langMenu=$("#langmenu");
-function closeLang(){ langMenu.hidden=true; $("#lang").setAttribute("aria-expanded","false") }
-$("#lang").addEventListener("click", function(e){
-  e.stopPropagation();
-  var open=!langMenu.hidden;
-  langMenu.hidden=open;
-  this.setAttribute("aria-expanded", open ? "false" : "true");
+[].forEach.call($("#lang").querySelectorAll("[data-lang]"), function(b){
+  b.addEventListener("click", function(){ if (b.dataset.lang!==LANG) applyLang(b.dataset.lang, true) });
 });
-[].forEach.call(langMenu.querySelectorAll("[data-lang]"), function(b){
-  b.addEventListener("click", function(){ closeLang(); applyLang(b.dataset.lang, true) });
+
+/* ---------- sidebar toggle (laptop) ----------
+   Hiding the sidebar gives the sheet the full width; the choice is remembered. */
+var appEl=$(".app");
+function syncSideBtn(){
+  var off=appEl.classList.contains("side-off"), b=$("#sidebtn");
+  b.setAttribute("aria-pressed", off ? "true" : "false");
+  b.setAttribute("aria-label", off ? t("sideShow") : t("sideHide"));
+  b.title=off ? t("sideShow") : t("sideHide");
+}
+try { if (localStorage.getItem("sarawakseats-side")==="off") appEl.classList.add("side-off") } catch(e){}
+$("#sidebtn").addEventListener("click", function(){
+  var off=appEl.classList.toggle("side-off");
+  try { localStorage.setItem("sarawakseats-side", off ? "off" : "on") } catch(e){}
+  syncSideBtn();
+  // the map's box changes width with the sheet; tell Leaflet once it settles
+  setTimeout(function(){ if (MAP.el) MAP.el.invalidateSize() }, 200);
 });
-document.addEventListener("click", function(e){
-  if (!langMenu.hidden && !e.target.closest(".langwrap")) closeLang();
-});
-addEventListener("keydown", function(e){ if (e.key==="Escape" && !langMenu.hidden) closeLang() });
 
 /* ---------- theme ---------- */
 /* No stored choice means follow the OS, which the CSS already does on its own —
