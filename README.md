@@ -96,7 +96,25 @@ Master Indeks (the roll by current seat) and the Notis.
 
 ## Accuracy
 
-The SPR figures were extracted from the PDF by word coordinates (its text layer
+**The 82 seats** are checked by `scripts/verify_data.py` against SPR's Master
+Indeks (the roll by current seat, published with the 2026 exhibition): all 887
+polling districts match on code, name and electors; all 82 seats on name,
+parliament and total; and the state total of 2,037,648 against the Notis, from
+the roll gazetted 29 January 2026 [P.U. (B) 35/2026]. Every seat's sexes, age
+bands and polling districts sum to its electors, and parliament totals to their
+seats. Run it after any data change; it fails loudly on a single elector out.
+
+**Demographics are estimates**, and the page says so. ElectionData.MY ships
+shares, not counts: ethnicity from the 2022 roll, age and sex from the 2025
+roll, applied to the January 2026 elector counts. Ethnic counts are rounded from
+those shares, so a seat's ethnic total can differ from its electors by up to 13
+(235 across the state).
+
+**Kuala Baram** (219/75/01, N.75 Senadin) really does hold 58,283 electors, more
+than two average seats on its own; SPR's P.219 table confirms it, and it is one
+reason the proposal splits Senadin.
+
+**The 99-seat proposal:** the SPR figures were extracted from the PDF by word coordinates (its text layer
 scrambles reading order on some pages), then reconciled against the notice's own
 subtotals: every DUN subtotal (99/99), every federal constituency subtotal
 (31/31), and the stated state total of 2,037,648 electors. Names and figures

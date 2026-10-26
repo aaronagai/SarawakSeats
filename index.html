@@ -341,6 +341,41 @@ main{position:relative; min-width:0; min-height:0; margin:8px 8px 8px 0; overflo
   transition:background-color var(--dur-1) linear}
 .godaerah:hover{background:var(--surface-2)}
 
+/* the primary action in a tray */
+.btnp{display:flex; align-items:center; justify-content:center; gap:6px; width:100%; margin-top:12px;
+  padding:10px 14px; border-radius:999px; background:var(--ink); color:var(--surface); font-size:13.5px;
+  transition:opacity var(--dur-1) linear}
+.btnp:hover{opacity:.88}
+.dhead h2:focus{outline:none}
+
+/* every seat against the average */
+.rkaxis{display:grid; grid-template-columns:24px 44px minmax(0,150px) minmax(0,1fr) 64px 48px; gap:10px;
+  padding:0 8px 8px; font-size:12px; color:var(--faint)}
+.rkx{grid-column:4; display:flex; justify-content:space-between}
+.rank{display:flex; flex-direction:column}
+.rk{display:grid; grid-template-columns:24px 44px minmax(0,150px) minmax(0,1fr) 64px 48px; gap:10px;
+  align-items:center; height:28px; padding:0 8px; border-radius:6px; text-align:left; font-size:13px;
+  color:var(--ink-2); transition:background-color var(--dur-1) linear, opacity var(--dur-2) var(--ease-out)}
+@media (hover:hover){ .rk:hover{background:var(--surface-2); color:var(--ink)} }
+.rk.pick{background:var(--surface-3); color:var(--ink)}
+.rk.dim{opacity:.32}
+.rk-n,.rk-c{font-size:12px; color:var(--faint); font-variant-numeric:tabular-nums}
+.rk-nm{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.rk-t{position:relative; height:8px}
+.rk-t::before{content:""; position:absolute; left:50%; top:-10px; bottom:-10px; width:1px; background:var(--rule-2)}
+.rk-t i{position:absolute; top:0; bottom:0; border-radius:999px}
+.rk-t i.over{background:var(--over)}
+.rk-t i.under{background:var(--under)}
+.rk-v{text-align:right; color:var(--ink); font-variant-numeric:tabular-nums}
+.rk-d{text-align:right; font-size:12px; font-variant-numeric:tabular-nums}
+.rk-d.over{color:var(--over)} .rk-d.under{color:var(--under)}
+@media (max-width:600px){
+  .rk,.rkaxis{grid-template-columns:40px minmax(0,1fr) minmax(0,1fr) 44px; gap:8px}
+  .rk{height:36px}
+  .rk-n,.rk-v{display:none}
+  .rkx{grid-column:3}
+}
+
 /* ---------------- map ---------------- */
 .mapcard{margin-top:0; margin-bottom:14px; overflow:hidden}
 .mapcard .ctitle{align-items:center; padding-bottom:12px}
@@ -457,7 +492,7 @@ mark{background:var(--mark-bg); color:var(--ink); border-radius:2px; padding:0 1
 .rowname:hover{text-decoration:underline; text-underline-offset:3px; text-decoration-color:var(--rule-2)}
 .c-hit{font-size:12px; color:var(--ink-2); margin-top:3px}
 .c-hit b{color:var(--faint)}
-.secthead{display:flex; align-items:center; justify-content:space-between; gap:12px; padding-bottom:12px}
+.secthead{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px 12px; padding-bottom:12px}
 .secthead h2{font-size:18px; letter-spacing:-.015em; color:var(--ink)}
 /* segmented controls: the same pill as the language switch */
 .segs{display:flex; gap:8px; flex-wrap:wrap}
@@ -606,6 +641,9 @@ table.pds .v{text-align:right; color:var(--ink); width:66px}
   #change .c-sub{white-space:nowrap}
   .drawer{top:auto; left:0; right:0; bottom:0; width:100%; max-height:88dvh;
     border-radius:var(--r-sheet) var(--r-sheet) 0 0; transform:translateY(100%)}
+  .dhead{padding-top:24px}
+  .dhead::before{content:""; position:absolute; top:8px; left:50%; width:36px; height:4px;
+    margin-left:-18px; border-radius:999px; background:var(--rule-2)}
 }
 @media (max-width:600px){
   .stats{grid-auto-flow:row; grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -659,7 +697,7 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
       <div class="acc">
         <button class="acchead" type="button" aria-expanded="true" aria-controls="dunlist" data-acc="dunlist">
           <svg class="ic accchev" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="m9.75 5.5 6.5 6.5-6.5 6.5"/></svg>
-          <span data-i18n="dun">DUN</span><span class="accn" id="duncount"></span>
+          <span data-i18n="tabSeats">Kerusi DUN</span><span class="accn" id="duncount"></span>
         </button>
         <div class="acclist" id="dunlist"></div>
       </div>
@@ -673,9 +711,10 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
     </div>
 
     <div class="side-foot">
-      <p><span data-i18n="sourceLabel">Sumber:</span>
-        <a href="https://myst.spr.gov.my/" target="_blank" rel="noopener">SPR</a> &amp;
-        <a href="https://electiondata.my/" target="_blank" rel="noopener">ElectionData</a></p>
+      <p><span data-i18n="srcVoters">Pengundi:</span>
+        <a href="https://myst.spr.gov.my/" target="_blank" rel="noopener">SPR</a>, <span data-i18n="srcRoll">daftar 29 Jan 2026</span></p>
+      <p><span data-i18n="srcDemo">Demografi:</span>
+        <a href="https://electiondata.my/" target="_blank" rel="noopener">ElectionData.MY</a> <span data-i18n="srcEst">(anggaran)</span></p>
       <p><span data-i18n="bordersLabel">Sempadan:</span>
         <a href="https://github.com/Thevesh/paper-meco-maps" target="_blank" rel="noopener">MECo</a> (CC0)</p>
       <p><a class="byline" href="https://aaronagai.com" target="_blank" rel="noopener"><span data-i18n="builtBy">Dibina oleh</span> <span>@aaronagai</span></a></p>
@@ -693,7 +732,7 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
       <div class="crumb"><b>SarawakSeats</b><span class="sep">/</span><span id="crumbNow">82 DUN</span></div>
       <div class="search">
         <svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.2-4.2"/></svg>
-        <input type="search" id="q" placeholder="Cari DUN, daerah mengundi, kod DM atau parlimen"
+        <input type="search" id="q" placeholder="Cari DUN atau daerah mengundi"
                aria-label="Cari" role="combobox" aria-expanded="false" aria-controls="sdrop"
                aria-autocomplete="list" autocomplete="off">
         <div class="sdrop" id="sdrop" role="listbox" aria-label="Keputusan carian" hidden></div>
@@ -725,7 +764,7 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
       <nav class="tabs" id="tabs" role="tablist" aria-label="Bahagian">
         <button type="button" role="tab" id="tab-ringkasan" data-panel="ringkasan" aria-controls="ringkasan" aria-selected="true" class="on"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12h8.5"/></svg><span data-i18n="tabSummary">Ringkasan</span></button>
         <button type="button" role="tab" id="tab-kerusi" data-panel="kerusi" aria-controls="kerusi" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.75h11.5M9 12h11.5M9 17.25h11.5"/><path d="M4 6.75h.01M4 12h.01M4 17.25h.01"/></svg><span data-i18n="tabSeats">Kerusi DUN</span></button>
-        <button type="button" role="tab" id="tab-demografi" data-panel="demografi" aria-controls="demografi" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.25" cy="8.25" r="3.75"/><path d="M2.75 19.75c0-3.4 2.9-6.15 6.5-6.15s6.5 2.75 6.5 6.15"/><path d="M16.25 5.1a3.75 3.75 0 0 1 0 6.9"/><path d="M18.4 14.2c1.9.75 3.1 2.4 3.1 4.3"/></svg><span data-i18n="tabDeviation">Demografi</span></button>
+        <button type="button" role="tab" id="tab-demografi" data-panel="demografi" aria-controls="demografi" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M7 20h10M4.5 7.5h15"/><path d="m4.5 7.5-2.5 6h5zM19.5 7.5l-2.5 6h5z"/></svg><span data-i18n="tabDeviation">Demografi</span></button>
         <button type="button" role="tab" id="tab-demo" data-panel="demo" aria-controls="demo" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.25" cy="8.25" r="3.75"/><path d="M2.75 19.75c0-3.4 2.9-6.15 6.5-6.15s6.5 2.75 6.5 6.15"/><path d="M16.25 5.1a3.75 3.75 0 0 1 0 6.9"/><path d="M18.4 14.2c1.9.75 3.1 2.4 3.1 4.3"/></svg><span data-i18n="tabDemo">Demografi</span></button>
         <button type="button" role="tab" id="tab-change" data-panel="change" aria-controls="change" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 8.5h13M13 5l3.5 3.5L13 12"/><path d="M20.5 15.5h-13M11 12l-3.5 3.5L11 19"/></svg><span data-i18n="tabChange">Perubahan</span></button>
         <button type="button" role="tab" id="tab-daerah" data-panel="daerah" aria-controls="daerah" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10.5" r="2.5"/></svg><span data-i18n="tabPd">Daerah mengundi</span></button>
@@ -756,7 +795,7 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
         <div class="cols">
           <div>
             <div class="card">
-              <div class="ctitle"><h3 data-i18n="ethnic">Komposisi etnik</h3></div>
+              <div class="ctitle"><h3 data-i18n="ethnic">Komposisi etnik</h3><span data-i18n="estEth">Anggaran · daftar 2022</span></div>
               <div class="cbody">
                 <div class="stack" id="ethStack"></div>
                 <div class="legend" id="ethLegend"></div>
@@ -764,11 +803,11 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
             </div>
             <div class="grid2" style="margin-top:10px">
               <figure class="card">
-                <div class="ctitle"><h3 data-i18n="age">Kumpulan umur</h3></div>
+                <div class="ctitle"><h3 data-i18n="age">Kumpulan umur</h3><span data-i18n="estAge">Anggaran · daftar 2025</span></div>
                 <div class="cbody"><div class="rows" id="ageRows"></div></div>
               </figure>
               <figure class="card">
-                <div class="ctitle"><h3 data-i18n="bySex">Jantina</h3></div>
+                <div class="ctitle"><h3 data-i18n="bySex">Jantina</h3><span data-i18n="estAge">Anggaran · daftar 2025</span></div>
                 <div class="cbody">
                   <div class="stack" id="sexStack"></div>
                   <div class="legend" id="sexLegend"></div>
@@ -793,6 +832,14 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
             <p class="note" style="margin-top:11px" id="devNote"></p>
             <p class="note" style="margin-top:6px"><b style="color:var(--ink-2)" data-i18n="avgNote1">Purata negeri</b>
               <span data-i18n="avgNote2">ialah jumlah pengundi dibahagi bilangan DUN. Sisihan setiap kerusi diukur terhadapnya.</span></p>
+          </div>
+        </figure>
+        <figure class="card" style="margin-top:14px">
+          <div class="ctitle"><h3 data-i18n="rankTitle">Setiap kerusi berbanding purata</h3>
+            <span data-i18n="rankSub">Disusun ikut pengundi. Pilih satu kerusi untuk membukanya.</span></div>
+          <div class="cbody">
+            <div class="rkaxis"><span class="rkx"><span data-i18n="rankUnder">Di bawah purata</span><span data-i18n="rankOver">Melebihi purata</span></span></div>
+            <div class="rank" id="rankRows"></div>
           </div>
         </figure>
       </section>
@@ -831,7 +878,8 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
 
       <section class="sect" id="demo" role="tabpanel" aria-labelledby="tab-demo" hidden>
         <div class="secthead">
-          <h2 data-i18n="tabDemo">Demografi</h2>
+          <div><h2 data-i18n="tabDemo">Demografi</h2>
+            <p class="note" style="margin-top:4px; max-width:62ch" data-i18n="estNote">Anggaran ElectionData.MY: etnik daripada daftar pemilih 2022, umur dan jantina daripada daftar 2025, digunakan pada bilangan pengundi daftar Januari 2026. Jumlah etnik boleh berbeza beberapa orang kerana pembundaran.</p></div>
           <div class="segs">
             <div class="seg" id="demoDim" role="group">
               <button type="button" data-dim="eth" class="on" data-i18n="byEthnic">Etnik</button>
@@ -952,7 +1000,10 @@ var I18N={
       " pengundi</strong>."+(hi ? " Kerusi terbesarnya, "+hi+" ("+hv+"), mempunyai "+r+" kali pengundi "+lo+" ("+lv+")." : "") },
     leadSearch:function(n,q,v){ return "<strong>"+n+" DUN</strong> sepadan dengan “"+q+"”, dengan <strong>"+v+" pengundi</strong>." },
     rollSub:"Daftar pemilih 29 Jan 2026", ofState:"daripada jumlah negeri",
-    avgPer:function(a){ return "Purata "+a+" setiap kerusi" }, gapSub:"Terbesar berbanding terkecil",
+    avgPer:function(a){ return "Purata "+a+" setiap kerusi" }, gapSub:"Kerusi terbesar berbanding terkecil",
+    pdAvg:function(a){ return "Purata "+a+" pengundi setiap daerah" },
+    openSeat:"Buka halaman kerusi", rankTitle:"Setiap kerusi berbanding purata",
+    rankUnder:"Di bawah purata", rankOver:"Melebihi purata", rankSub:"Disusun ikut pengundi. Pilih satu kerusi untuk membukanya.",
     vsAvg:function(a){ return "Berbanding purata "+a }, sideHide:"Sembunyikan bar sisi", sideShow:"Tunjukkan bar sisi",
     mapAria:"Peta sempadan 82 DUN Sarawak", bmGrey:"Ringkas", bmStreet:"Jalan", bmSat:"Satelit",
     parliament:"Parlimen", dun:"DUN", name:"Nama", voters:"Pengundi", open:"Buka",
@@ -963,9 +1014,9 @@ var I18N={
     dmCode:"Kod DM",
     sortCode:"Susun ikut kod DUN", sortDesc:"Pengundi terbanyak", sortAsc:"Pengundi tersedikit",
     sortDev:"Sisihan terbesar", sortPar:"Ikut parlimen", sortByDun:"Susun ikut DUN",
-    searchPh:"Cari DUN, daerah mengundi, kod DM atau parlimen",
+    searchPh:"Cari DUN atau daerah mengundi",
     allPar:"Semua parlimen", allDun:"Semua DUN", all:"Semua",
-    seats:"Kerusi DUN", pdCount:"Daerah mengundi", gap:"Jurang besar : kecil",
+    seats:"Kerusi DUN", pdCount:"Daerah mengundi", gap:"Jurang saiz",
     ofTotal:"daripada", stateAvg:"Purata negeri", shownAvg:"Purata dipaparkan",
     largest:"Kerusi terbesar", smallest:"Kerusi terkecil", male:"Lelaki", female:"Perempuan",
     devFromAvg:"Sisihan purata", highlights:"Sorotan",
@@ -1005,7 +1056,9 @@ var I18N={
     avgNote1:"Purata negeri", avgNote2:"ialah jumlah pengundi dibahagi bilangan DUN. Sisihan setiap kerusi diukur terhadapnya.",
     devNote:function(avg,hi,hv,lo,lv,r){ return "Purata negeri "+avg+" pengundi. Terbesar "+hi+
       " ("+hv+"), terkecil "+lo+" ("+lv+") — nisbah "+r+":1." },
-    sourceLabel:"Sumber:",
+    sourceLabel:"Sumber:", srcVoters:"Pengundi:", srcRoll:"daftar 29 Jan 2026", srcDemo:"Demografi:", srcEst:"(anggaran)",
+    estEth:"Anggaran · daftar 2022", estAge:"Anggaran · daftar 2025",
+    estNote:"Anggaran ElectionData.MY: etnik daripada daftar pemilih 2022, umur dan jantina daripada daftar 2025, digunakan pada bilangan pengundi daftar Januari 2026. Jumlah etnik boleh berbeza beberapa orang kerana pembundaran.",
     builtBy:"Dibina oleh",
     eth:["Iban","Cina","Melayu","Bidayuh","Melanau","Orang Ulu","Lain-lain"],
     ethFull:["Melayu","Melanau","Kedayan","Cina","India","Iban","Bidayuh","Orang Ulu","Lain-lain"]
@@ -1029,7 +1082,10 @@ var I18N={
       " electors</strong>."+(hi ? " Its largest, "+hi+" ("+hv+"), has "+r+" times the electors of "+lo+" ("+lv+")." : "") },
     leadSearch:function(n,q,v){ return "<strong>"+n+" state seats</strong> match “"+q+"”, with <strong>"+v+" electors</strong>." },
     rollSub:"Electoral roll of 29 Jan 2026", ofState:"of the state total",
-    avgPer:function(a){ return "Average "+a+" per seat" }, gapSub:"Largest against smallest",
+    avgPer:function(a){ return "Average "+a+" per seat" }, gapSub:"Largest seat against smallest",
+    pdAvg:function(a){ return "Average "+a+" electors per district" },
+    openSeat:"Open seat page", rankTitle:"Every seat against the average",
+    rankUnder:"Below average", rankOver:"Above average", rankSub:"Ordered by electors. Pick a seat to open it.",
     vsAvg:function(a){ return "Against the average of "+a }, sideHide:"Hide sidebar", sideShow:"Show sidebar",
     mapAria:"Map of Sarawak's 82 state seat borders", bmGrey:"Simple", bmStreet:"Streets", bmSat:"Satellite",
     parliament:"Parliament", dun:"State seat", name:"Name", voters:"Electors", open:"Open",
@@ -1040,9 +1096,9 @@ var I18N={
     dmCode:"DM code",
     sortCode:"Sort by seat code", sortDesc:"Most electors", sortAsc:"Fewest electors",
     sortDev:"Largest deviation", sortPar:"By parliament", sortByDun:"Sort by seat",
-    searchPh:"Search a state seat, polling district, DM code or parliament",
+    searchPh:"Search a seat or polling district",
     allPar:"All parliaments", allDun:"All seats", all:"All",
-    seats:"State seats", pdCount:"Polling districts", gap:"Largest : smallest",
+    seats:"State seats", pdCount:"Polling districts", gap:"Size gap",
     ofTotal:"of", stateAvg:"State average", shownAvg:"Average shown",
     largest:"Largest seat", smallest:"Smallest seat", male:"Male", female:"Female",
     devFromAvg:"Deviation", highlights:"Highlights",
@@ -1082,7 +1138,9 @@ var I18N={
     avgNote1:"The state average", avgNote2:"is total electors divided by the number of seats. Each seat's deviation is measured against it.",
     devNote:function(avg,hi,hv,lo,lv,r){ return "State average "+avg+" electors. Largest "+hi+
       " ("+hv+"), smallest "+lo+" ("+lv+") — a ratio of "+r+":1." },
-    sourceLabel:"Source:",
+    sourceLabel:"Source:", srcVoters:"Electors:", srcRoll:"roll of 29 Jan 2026", srcDemo:"Demographics:", srcEst:"(estimates)",
+    estEth:"Estimate · 2022 roll", estAge:"Estimate · 2025 roll",
+    estNote:"ElectionData.MY estimates: ethnicity from the 2022 electoral roll, age and sex from the 2025 roll, applied to the January 2026 elector counts. Ethnic totals can differ by a few electors through rounding.",
     builtBy:"Built by",
     eth:["Iban","Chinese","Malay","Bidayuh","Melanau","Orang Ulu","Other"],
     ethFull:["Malay","Melanau","Kedayan","Chinese","Indian","Iban","Bidayuh","Orang Ulu","Other"]
@@ -1212,7 +1270,7 @@ function drawBig(a, rows){
   var items=[[t("voters"), fmt(a.v), filtered ? pc(a.v/TOTAL*100)+" "+t("ofState") : t("rollSub")]];
   // "1 of 82" says nothing once the scope is one seat
   if (!single) items.push([t("seats"), String(a.n), filtered ? t("ofTotal")+" "+total : t("avgPer")(fmt(Math.round(avg)))]);
-  items.push([t("pdCount"), fmt(a.pd), ""]);
+  items.push([t("pdCount"), fmt(a.pd), a.pd ? t("pdAvg")(fmt(Math.round(a.v/a.pd))) : ""]);
   if (single){
     var d1=(rows[0][V]-avg)/avg, et=a.eth, tot=et.reduce(function(x,y){ return x+y },0)||1, top=0;
     for (var i=1;i<et.length;i++) if (et[i]>et[top]) top=i;
@@ -1258,7 +1316,8 @@ function drawLead(a, rows){
       sp ? sp.r.toFixed(1) : "");
   } else if (state.qRaw){
     eye=t("eyeSearch");
-    lead=rows.length ? t("leadSearch")(rows.length, esc(state.qRaw), fmt(a.v)) : "";
+    lead=rows.length ? t("leadSearch")(rows.length, esc(state.qRaw), fmt(a.v))
+                     : esc(t("noMatch")+" “"+state.qRaw+"”.");
   } else {
     eye=t("eyeState");
     sub=t("subState");
@@ -1276,7 +1335,8 @@ function drawFacts(a, rows){
   var rowsHtml=[
     [t("stateAvg"), fmt(Math.round(avg))]
   ];
-  if (a.n !== seats().length && a.n){
+  // for one seat the "average shown" is just the seat itself
+  if (a.n !== seats().length && a.n > 1){
     rowsHtml.push([t("shownAvg"), fmt(Math.round(a.v/a.n))]);
   }
   if (rows.length===1){
@@ -1342,7 +1402,7 @@ function drawEth(a){
       var seg=document.createElement("i");
       seg.style.background=e.c; seg.style.flex="0 0 "+share+"%";
       seg.style.animationDelay=(stack.children.length*32)+"ms";
-      bindTip(seg, e.c, e.n, fmt(v)+" pengundi · "+pc(share));
+      bindTip(seg, e.c, e.n, fmt(v)+" "+t("voters").toLowerCase()+" · "+pc(share));
       stack.appendChild(seg);
     }
     var d=document.createElement("div");
@@ -1376,10 +1436,37 @@ function drawAge(a){
     row.innerHTML='<span class="bl">'+esc(lbl)+'</span>'+
       '<span class="bt"><span class="bf" style="transform:scaleX('+(v/max)+')"></span></span>'+
       '<span class="bv">'+pc(v/tot*100)+'</span>';
-    bindTip(row, "var(--s1)", "Umur "+lbl, fmt(v)+" pengundi · "+pc(v/tot*100));
+    bindTip(row, "var(--accent)", t("age")+" "+lbl, fmt(v)+" "+t("voters").toLowerCase()+" · "+pc(v/tot*100));
     box.appendChild(row);
   });
 }
+/* Every seat in the map, largest first, as a bar either side of the state
+   average: the malapportionment in one picture. The scope (a parliament, a
+   search) is highlighted in place rather than filtered, so a seat is always
+   seen against the whole state. */
+function drawRank(rows){
+  var box=$("#rankRows");
+  if (!box) return;
+  var avg=AVG(), on={}, all=seats().slice().sort(function(a,b){ return b[V]-a[V] });
+  rows.forEach(function(r){ on[r[0]]=true });
+  var scoped=rows.length<all.length;
+  var max=all.reduce(function(m,r){ return Math.max(m, Math.abs(r[V]-avg)/avg) }, 0) || 1;
+  box.innerHTML=all.map(function(r,i){
+    var d=(r[V]-avg)/avg, w=Math.abs(d)/max*50, over=d>=0;
+    return '<button type="button" class="rk'+(scoped && !on[r[0]] ? ' dim' : '')+(state.dun===r[0] ? ' pick' : '')+
+      '" data-dun="'+esc(r[0])+'"><span class="rk-n">'+(i+1)+'</span><span class="rk-c">'+esc(r[0])+'</span>'+
+      '<span class="rk-nm">'+esc(r[1])+'</span>'+
+      '<span class="rk-t"><i class="'+(over ? 'over' : 'under')+'" style="'+(over ? 'left' : 'right')+':50%;width:'+w.toFixed(2)+'%"></i></span>'+
+      '<span class="rk-v">'+fmt(r[V])+'</span>'+
+      '<span class="rk-d '+(over ? 'over' : 'under')+'">'+(over ? '+' : '\u2212')+Math.abs(d*100).toFixed(0)+'%</span></button>';
+  }).join("");
+}
+$("#rankRows").addEventListener("click", function(e){
+  var b=e.target.closest(".rk");
+  if (!b || state.dun===b.dataset.dun) return;
+  state.dun=b.dataset.dun; state.par=null; closeDrawer();
+  drawParlist(); drawDunlist(); render(); syncURL();
+});
 function drawDev(rows){
   var box=$("#devRows"); box.textContent="";
   var avg=AVG();
@@ -1431,7 +1518,7 @@ function drawTable(rows){
     tr.innerHTML=
       '<td><div class="cell c-code">'+esc(r[0])+'</div></td>'+
       '<td><div class="cell"><button class="rowname" type="button">'+hl(r[1])+(isNew(r[0])?' <span class="newtag">'+esc(newTag())+'</span>':'')+'</button>'+
-        '<div class="c-sub">'+hl(P[r[2]][0]+" "+P[r[2]][1])+' · '+r[3]+' '+t("pdCount")+'</div>'+
+        '<div class="c-sub">'+hl(P[r[2]][0]+" "+P[r[2]][1])+' · '+r[3]+' '+t("pdCount").toLowerCase()+'</div>'+
         (hits.length ? '<div class="c-hit"><b>'+t("daerahLabel")+'</b> '+hits.slice(0,3).map(function(x){
             return hl(x[1])+' ('+fmt(x[2])+')' }).join(", ")+
             (hits.length>3 ? ' <b>+'+(hits.length-3)+' '+t("moreShort")+'</b>' : '')+'</div>' : '')+
@@ -1451,7 +1538,7 @@ function drawTable(rows){
       seg.style.background=x.c; seg.style.flex="0 0 "+(e[i]/tot*100)+"%";
       // title so the value survives touch and screen readers, where hover never fires
       seg.title=x.n+": "+fmt(e[i])+" ("+pc(e[i]/tot*100)+")";
-      bindTip(seg, x.c, r[1]+" — "+x.n, fmt(e[i])+" pengundi · "+pc(e[i]/tot*100));
+      bindTip(seg, x.c, r[1]+" — "+x.n, fmt(e[i])+" "+t("voters").toLowerCase()+" · "+pc(e[i]/tot*100));
       ms.appendChild(seg);
     });
     tr.className="anim";
@@ -1768,7 +1855,7 @@ function drawPd(){
   }
   tb.innerHTML=list.map(function(o,i){
     var r=o.r;
-    return '<tr data-dun="'+esc(r[0])+'"'+(i<14?' class="anim" style="animation-delay:'+(i*22)+'ms"':' class="anim"')+'>'+
+    return '<tr data-dun="'+esc(r[0])+'"'+(i<14?' class="anim" style="animation-delay:'+(i*22)+'ms"':'')+'>'+
       '<td><div class="cell c-code">'+hl(o.pd[0])+'</div></td>'+
       '<td><div class="cell"><div class="c-name">'+hl(o.pd[1])+'</div></div></td>'+
       '<td class="hide-sm"><div class="cell"><span class="c-code">'+esc(r[0])+'</span> '+
@@ -1807,7 +1894,7 @@ function openDrawer(r, from){
   var pd = pdsOf()[r[0]];
 
   drawer.innerHTML=
-    '<div class="dhead"><div><h2>'+esc(r[1])+'</h2><div class="sub">'+esc(r[0])+' · '+
+    '<div class="dhead"><div><h2 tabindex="-1">'+esc(r[1])+'</h2><div class="sub">'+esc(r[0])+' · '+
       esc(P[r[2]][0]+" "+P[r[2]][1])+'</div></div>'+
       '<button class="dclose" aria-label="'+t("close")+'">'+
         icon("close",15)+'</button></div>'+
@@ -1818,9 +1905,10 @@ function openDrawer(r, from){
         (over?"+":"−")+Math.abs(dev*100).toFixed(1)+'%</div><div class="k">'+t("devFromAvg")+'</div></div>'+
       '<div class="dstat"><div class="v">'+r[3]+'</div><div class="k">'+t("pdCount")+'</div></div>'+
       '<div class="dstat"><div class="v">'+pc(r[M]/r[V]*100)+'</div><div class="k">'+t("male")+'</div></div>'+
-    '</div></div>'+
+    '</div>'+(state.dun===r[0] ? '' : '<button type="button" class="btnp" id="openseat">'+esc(t("openSeat"))+
+      ' <span aria-hidden="true">\u2192</span></button>')+'</div>'+
 
-    '<div class="dsec"><h3>'+t("ethnic")+'</h3><div class="stack" id="dEth"></div>'+
+    '<div class="dsec"><h3>'+t("ethnic")+' · '+t("estEth").toLowerCase()+'</h3><div class="stack" id="dEth"></div>'+
       '<table class="eth" style="margin-top:13px"><tbody>'+
       order.map(function(o){
         var v=o[0], i=o[1];
@@ -1851,7 +1939,7 @@ function openDrawer(r, from){
     if (!v) return;
     var seg=document.createElement("i");
     seg.style.background=x.c; seg.style.flex="0 0 "+(v/t9*100)+"%";
-    bindTip(seg, x.c, x.n, fmt(v)+" pengundi · "+pc(v/t9*100));
+    bindTip(seg, x.c, x.n, fmt(v)+" "+t("voters").toLowerCase()+" · "+pc(v/t9*100));
     st.appendChild(seg);
   });
   var go=drawer.querySelector("#godaerah");
@@ -1860,6 +1948,12 @@ function openDrawer(r, from){
     closeDrawer(); drawParlist(); drawDunlist(); render(); syncURL(); showTab("daerah");
   });
   drawer.querySelector(".dclose").addEventListener("click", closeDrawer);
+  var os=drawer.querySelector("#openseat");
+  if (os) os.addEventListener("click", function(){
+    state.dun=r[0]; state.par=null;
+    closeDrawer(); drawParlist(); drawDunlist(); render(); syncURL(); showTab("ringkasan");
+    $("main").scrollTop=0; window.scrollTo(0,0);
+  });
 
   drawer.hidden=false; scrim.hidden=false;
   // Forcing layout gives the transition its start frame synchronously. Doing this
@@ -1867,7 +1961,9 @@ function openDrawer(r, from){
   // present scrim on any frame that never runs (a backgrounded tab, for one).
   void drawer.offsetWidth;
   drawer.classList.add("on"); scrim.classList.add("on");
-  var closeBtn=drawer.querySelector(".dclose"); if (closeBtn) closeBtn.focus();
+  // focus lands on the title, not the close button: a screen reader starts at the
+  // seat's name, and a mouse user is not shown a focus ring they did not ask for
+  var head=drawer.querySelector(".dhead h2"); if (head) head.focus({preventScroll:true});
   returnFocus = from || null;
   state.sel=r[0]; markSel();
 }
@@ -2239,7 +2335,7 @@ $("#mapreset").addEventListener("click", function(){
 function render(){
   var rows=shown(), a=agg(rows), P=pars();
   drawBig(a,rows); drawLead(a,rows); drawFacts(a,rows);
-  drawEth(a); drawAge(a); drawSex(a); drawDev(rows); drawTable(rows); drawDemo(); drawPd(); drawChange();
+  drawEth(a); drawAge(a); drawSex(a); drawDev(rows); drawRank(rows); drawTable(rows); drawDemo(); drawPd(); drawChange();
   // The header names the scope and nothing else: every figure that used to sit
   // in a subtitle here is already in the headline row directly below it.
   var setName = state.set==="99" ? t("crumbProposed") : t("crumbCurrent");
@@ -2259,6 +2355,8 @@ function render(){
   }
   syncTabs();
   $("#ptitle").textContent = title;
+  // a tab, a bookmark or a history entry should say which seat it is
+  document.title = (state.dun || state.par!==null || state.qRaw ? title+" · " : "")+"SarawakSeats";
   $("#crumbNow").textContent = crumb;
   $("#q").placeholder = t("searchPh");
   markSel();
@@ -2341,7 +2439,7 @@ function renderDrop(){
         'id="sopt'+i+'" data-i="'+i+'"><span class="sitem-in">'+
         '<span><span class="sname">'+hl(x.r[1])+'</span>'+
         '<span class="ssub">'+(x.note ? esc(x.note)+" · " : "")+
-          esc(x.r[0]+" · "+P[x.r[2]][0]+" "+P[x.r[2]][1]+" · "+x.r[3]+" daerah")+'</span></span>'+
+          esc(x.r[0]+" · "+P[x.r[2]][0]+" "+P[x.r[2]][1]+" · "+x.r[3]+" "+t("pdCount").toLowerCase())+'</span></span>'+
         '<span class="smeta">'+fmt(x.r[V])+' <span class="dev '+(over?"over":"under")+'">'+
           (over?"+":"\u2212")+Math.abs(dev*100).toFixed(1)+'%</span></span></span></button>';
     } else {
