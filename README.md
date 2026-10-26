@@ -1,44 +1,60 @@
 # SarawakSeats
 
-A dashboard for the Election Commission's (SPR) **proposed** 2026 redelineation
-of Sarawak — the 99 proposed state constituencies (DUN) set against the 82
-currently in force, with the demographic profile of every seat.
+Sarawak's **82 state seats** (DUN) for the coming state election: a map of every
+seat's borders, the electors and demographic profile of every seat, and all 887
+polling districts.
 
-SPR publishes the proposal for public reading, but only inside a flipbook PDF
-viewer that is hard to search or read on a phone. This is the same data, plus
-the demographics needed to actually reason about it.
+## The 99-seat proposal is shelved
+
+The site was built around the Election Commission's (SPR) **proposed** 2026
+redelineation (99 seats). The coming election is fought on the 82 seats gazetted
+in 2015, so the proposal is set aside: no dataset toggle, no Changes tab, and the
+short addresses belong to the 82 seats. Nothing was deleted. Its data stays
+embedded in `index.html` and in `data/`, and setting `var PROPOSAL=true` in
+`index.html` (then re-running `scripts/build_seat_pages.py`) brings the toggle,
+the tab and its addresses back. The sections on the proposal below still
+describe that data.
 
 ## What it shows
 
-- **Two datasets, one electorate.** Toggle between the proposed 99 seats and the
-  current 82. Both are drawn on the same gazetted roll of 2,037,648 electors, so
-  they compare directly.
+- **Seat map.** The borders of all 82 seats and 31 parliaments over a street
+  basemap, coloured by largest ethnic group or by deviation from the state
+  average. It follows the rest of the page: pick a parliament, a seat or search
+  and it frames that; click a seat on the map to open it.
 - **Malapportionment.** Every seat carries its deviation from the state average
-  (20,582 electors under the proposal). The largest-to-smallest spread is
-  **3.33:1** proposed, against **7.11:1** under the current boundaries.
-- **Demographics per seat.** Ethnic composition, five age bands and sex, for all
-  99 (and all 82) seats, filterable by parliamentary constituency.
-- **Polling districts.** All 1,141 proposed daerah mengundi and all 887 current
-  ones, with DM codes and elector counts, searchable and filterable.
-- **What changed.** Per seat and per parliament: which current seats every
-  proposed seat draws its electors from (and where every current seat's electors
-  go), core retention, effective predecessors, the shift in ethnic mix, and the
-  polling districts that moved in and out. Every one of the 2,037,648 electors is
-  accounted for; the 9.3% whose district was split and renamed are marked as
-  resolved rather than stated (see below).
+  (24,849 electors). The largest-to-smallest spread is **7.11:1**.
+- **Demographics per seat.** Ethnic composition, five age bands and sex for all
+  82 seats, filterable by parliamentary constituency.
+- **Polling districts.** All 887 daerah mengundi, with DM codes and elector
+  counts, searchable and filterable.
 
 ## Addresses
 
 Every seat and parliament has its own address, so a link can be saved or pasted
-into a group: `sarawakseats.org/N.16/` is the proposed N.16, `/P.219/` a
-parliament, `/82/N.16/` the current N.16, with `#change` and the other tab names
-after it. Each of those is a real page on the server (`scripts/build_seat_pages.py`
-writes a stub per seat carrying that seat's own title and link preview) that opens
-the app on that seat; the app keeps the same path in the address bar as you move
-around, and the older `?dun=N.16` form still works. Near-misses such as `/n16`
-are caught by `404.html`.
+into a group: `sarawakseats.org/N.16/` is N.16, `/P.219/` a parliament, with
+`#daerah` and the other tab names after it. Each of those is a real page on the
+server (`scripts/build_seat_pages.py` writes a stub per seat carrying that seat's
+own title and link preview) that opens the app on that seat; the app keeps the
+same path in the address bar as you move around, and the older `?dun=N.16` form
+still works. Links shared during the objection period as `/82/N.16/` open the
+same seat. Near-misses such as `/n16` are caught by `404.html`.
 
-## Status of the data
+## Seat borders
+
+`data/dun82-boundaries.json` is from **MECo**, the Malaysian Election Corpus
+(Thevananthan & Chacko, *Electoral Maps and Cartograms from 1954 to 2025*,
+[arXiv:2512.24211](https://arxiv.org/abs/2512.24211)), released CC0 at
+https://github.com/Thevesh/paper-meco-maps. Its `sarawak_2015_dun` layer is the
+2015 delimitation. `scripts/build_boundaries.py` simplifies it with mapshaper
+(shared edges simplified once, so neighbouring seats never open gaps) and
+dissolves the parliaments from the same polygons, so a parliament border always
+sits on a DUN border. All 82 seat codes, names and parliaments match the seat
+table. MECo is a digitisation of SPR's gazetted maps, not an SPR publication: it
+shows where a seat lies, but to confirm which seat a voter is in, use
+[MySPR Semak](https://mysprsemak.spr.gov.my/). The basemap is Esri's World Gray
+Canvas (© Esri, HERE, Garmin, © OpenStreetMap contributors).
+
+## Status of the proposal data
 
 These are **syor yang dicadangkan** — proposed recommendations, not gazetted
 boundaries. Public exhibition ran 1–30 September 2026 and objections can still

@@ -8,6 +8,11 @@ to the app, which then shows the same path in the address bar. So a saved or
 pasted link like sarawakseats.org/N.16/ previews as that seat and opens on it.
 Also writes 404.html, which catches near-misses (n16, N16, n.16) and forwards them.
 
+While the 99-seat proposal is shelved (`var PROPOSAL=false` in index.html), the
+82 seats take the short addresses (/N.16/ is the current N.16) and no proposal
+pages are written. The old /82/... addresses are kept as stubs that open the
+same seat, so links already shared keep working.
+
 Usage: python3 scripts/build_seat_pages.py   (run after build_changes.py)
 """
 import json, re, os, shutil, html
@@ -17,6 +22,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 page = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
 D = json.loads(re.search(r'<script>const D=(\{.*?\});?</script>', page, re.S).group(1))
 SITE = "https://sarawakseats.org"
+PROPOSAL = re.search(r"var PROPOSAL=(true|false);", page).group(1) == "true"
 
 def fmt(n): return "{:,}".format(n)
 def esc(s): return html.escape(s, quote=True)
@@ -48,14 +54,19 @@ def write(path, content):
 for name in os.listdir(ROOT):
     if re.match(r"^(N\.\d{2}|P\.\d{3}|82)$", name): shutil.rmtree(os.path.join(ROOT, name))
 
-n = 0
-for setkey, seats, pars, pd, prefix, setname in [
-        ("99", D["d99"], D["par"], D["pd"], "/", "Cadangan 99 DUN Sarawak 2026"),
-        ("82", D["d82"], D["par82"], D["pd82"], "/82/", "DUN Sarawak semasa (82)")]:
+if PROPOSAL:
+    SETS = [("99", D["d99"], D["par"], D["pd"], ["/"], "Cadangan 99 DUN Sarawak 2026"),
+            ("82", D["d82"], D["par82"], D["pd82"], ["/82/"], "DUN Sarawak semasa (82)")]
+else:
+    SETS = [("82", D["d82"], D["par82"], D["pd82"], ["/", "/82/"], "PRN Sarawak · 82 DUN")]
+
+def pages(setkey, seats, pars, pd, setname):
+    """(path, title, description) for the set's home, every seat and every parliament."""
     chg = D["chg"]["p"] if setkey == "99" else D["chg"]["c"]
+    out = []
     if setkey == "82":
-        write("/82/", stub("/82/", setname, "Sempadan semasa 82 DUN: %s pengundi, %d daerah mengundi, dengan demografi setiap kerusi." % (fmt(sum(r[4] for r in seats)), sum(len(v) for v in pd.values()))))
-        n += 1
+        out.append(("", setname, "%s pengundi, %d DUN, %d daerah mengundi, peta sempadan dan demografi setiap kerusi." % (
+            fmt(sum(r[4] for r in seats)), len(seats), sum(len(v) for v in pd.values()))))
     for r in seats:
         code, name, pi, npd, v = r[0], r[1], r[2], r[3], r[4]
         par = pars[pi]; e = chg.get(code, {})
@@ -64,19 +75,30 @@ for setkey, seats, pars, pd, prefix, setname in [
         if e.get("s") and setkey == "99":
             src = ", ".join("%s %d%%" % (x[1], round(100 * x[4] / e["t"])) for x in e["s"][:3])
             bits.append(("Kerusi baharu, diambil daripada " if e.get("new") else "Diambil daripada ") + src)
-        elif e.get("s") and setkey == "82":
+        elif e.get("s") and PROPOSAL:
             dst = ", ".join("%s %d%%" % (x[1], round(100 * x[4] / e["t"])) for x in e["s"][:3])
             bits.append("Beralih kepada " + dst)
-        write(prefix + code + "/", stub(prefix + code + "/", title + " · " + setname, " · ".join(bits)))
-        n += 1
+        out.append((code + "/", title + " · " + setname, " · ".join(bits)))
     by_par = defaultdict(list)
     for r in seats: by_par[r[2]].append(r)
     for pi, par in enumerate(pars):
         rows = by_par[pi]
-        title = "%s %s · %s" % (par[0], par[1], setname)
-        desc = "%s pengundi · %d DUN: %s" % (fmt(sum(r[4] for r in rows)), len(rows), ", ".join("%s %s" % (r[0], r[1]) for r in rows))
-        write(prefix + par[0] + "/", stub(prefix + par[0] + "/", title, desc))
-        n += 1
+        out.append((par[0] + "/", "%s %s · %s" % (par[0], par[1], setname),
+                    "%s pengundi · %d DUN: %s" % (fmt(sum(r[4] for r in rows)), len(rows),
+                    ", ".join("%s %s" % (r[0], r[1]) for r in rows))))
+    return out
+
+n = 0
+if PROPOSAL:
+    for rel, title, desc in pages("99", D["d99"], D["par"], D["pd"], "Cadangan 99 DUN Sarawak 2026"):
+        if rel: write("/" + rel, stub("/" + rel, title, desc)); n += 1
+    for rel, title, desc in pages("82", D["d82"], D["par82"], D["pd82"], "DUN Sarawak semasa (82)"):
+        write("/82/" + rel, stub("/82/" + rel, title, desc)); n += 1
+else:
+    # the 82 seats own the short addresses; /82/... stays as an alias of the same page
+    for rel, title, desc in pages("82", D["d82"], D["par82"], D["pd82"], "PRN Sarawak · 82 DUN"):
+        if rel: write("/" + rel, stub("/" + rel, title, desc)); n += 1
+        write("/82/" + rel, stub("/" + rel, title, desc)); n += 1
 
 open(os.path.join(ROOT, "404.html"), "w", encoding="utf-8").write('''<!doctype html><html lang="ms"><head><meta charset="utf-8">
 <title>SarawakSeats</title>
