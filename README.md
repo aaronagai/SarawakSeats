@@ -17,10 +17,11 @@ describe that data.
 
 ## What it shows
 
-- **Seat map.** The borders of all 82 seats and 31 parliaments over a street
-  basemap, coloured by largest ethnic group or by deviation from the state
-  average. It follows the rest of the page: pick a parliament, a seat or search
-  and it frames that; click a seat on the map to open it.
+- **Seat map.** The borders of all 82 seats, labelled by seat code, with the 31
+  parliaments as a soft grouping beneath them. Coloured by largest ethnic group
+  or by deviation from the state average, over a grey, street or satellite
+  basemap down to street level. It follows the rest of the page: pick a seat, a
+  parliament or search and it frames that; click a seat on the map to open it.
 - **Malapportionment.** Every seat carries its deviation from the state average
   (24,849 electors). The largest-to-smallest spread is **7.11:1**.
 - **Demographics per seat.** Ethnic composition, five age bands and sex for all
@@ -41,18 +42,25 @@ same seat. Near-misses such as `/n16` are caught by `404.html`.
 
 ## Seat borders
 
-`data/dun82-boundaries.json` is from **MECo**, the Malaysian Election Corpus
+`data/dun82-boundaries.json` and `data/dun82-boundaries-detail.json` are from **MECo**, the Malaysian Election Corpus
 (Thevananthan & Chacko, *Electoral Maps and Cartograms from 1954 to 2025*,
 [arXiv:2512.24211](https://arxiv.org/abs/2512.24211)), released CC0 at
 https://github.com/Thevesh/paper-meco-maps. Its `sarawak_2015_dun` layer is the
-2015 delimitation. `scripts/build_boundaries.py` simplifies it with mapshaper
-(shared edges simplified once, so neighbouring seats never open gaps) and
-dissolves the parliaments from the same polygons, so a parliament border always
-sits on a DUN border. All 82 seat codes, names and parliaments match the seat
+2015 delimitation. `scripts/build_boundaries.py` writes it at two levels: a
+simplified file for the statewide view (~115 KB gzipped; mapshaper simplifies
+shared edges once, so neighbouring seats never open gaps), and every vertex MECo
+has (~174,000 points, one every ~27 m on median; ~570 KB gzipped), which the map
+fetches once the reader zooms in to town level. Both dissolve the parliaments
+from the same polygons, so a parliament border always sits on a DUN border, and
+both carry a label point inside every seat. All 82 seat codes, names and parliaments match the seat
 table. MECo is a digitisation of SPR's gazetted maps, not an SPR publication: it
 shows where a seat lies, but to confirm which seat a voter is in, use
-[MySPR Semak](https://mysprsemak.spr.gov.my/). The basemap is Esri's World Gray
-Canvas (© Esri, HERE, Garmin, © OpenStreetMap contributors).
+[MySPR Semak](https://mysprsemak.spr.gov.my/). At street level, remember the border is
+only as exact as MECo's digitisation of the gazette maps: good for seeing which
+side of a river or road a seat runs, not for settling which side of it a single
+house falls. The basemaps are Esri's World Gray Canvas, World Street Map and
+World Imagery (© Esri, HERE, Garmin, Maxar, Earthstar Geographics,
+© OpenStreetMap contributors).
 
 ## Status of the proposal data
 

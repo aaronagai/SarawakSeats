@@ -416,16 +416,41 @@ main{min-width:0; padding:0 0 60px}
 .mapmsg{position:absolute; inset:0; z-index:600; display:flex; align-items:center;
   justify-content:center; padding:20px; text-align:center; font-size:12px; color:var(--muted)}
 .mapmsg[hidden]{display:none}
+.mapbase{position:absolute; left:10px; bottom:10px; z-index:500; box-shadow:var(--shadow-2);
+  border:1px solid var(--rule-2)}
+/* Over streets and satellite the seat is read by its border, so the line takes
+   over from the fill: white with a dark edge on imagery, ink on streets. */
+#map.bm-sat .seat{stroke:#fff; stroke-opacity:.95; stroke-width:1.4}
+#map.bm-sat .seat.out{stroke-opacity:.5}
+#map.bm-sat .seat.pick{stroke:#fff; stroke-width:3.2}
+#map.bm-sat .parline{stroke:#000; stroke-opacity:.35}
+#map.bm-sat .parsel{stroke:#fff}
+#map.bm-sat .seatlab span{color:#fff; text-shadow:0 0 2px #000,0 0 3px #000,0 0 5px #000}
+#map.bm-street .seat{stroke-opacity:.7; stroke-width:1.3}
+#map.bm-street .seat.pick{stroke-width:3}
 /* Seat fills are classes, not attributes: an SVG fill attribute cannot read a
    custom property, and a class lets the colour follow the theme on its own. */
-.seat{stroke:var(--surface); stroke-width:.9; transition:fill-opacity var(--dur-2) var(--ease-out)}
+.seat{stroke:var(--ink); stroke-opacity:.5; stroke-width:1; transition:fill-opacity var(--dur-2) var(--ease-out)}
 .seat.k0{fill:var(--s1)} .seat.k1{fill:var(--s2)} .seat.k2{fill:var(--s3)} .seat.k3{fill:var(--s4)}
 .seat.k4{fill:var(--s5)} .seat.k5{fill:var(--s6)} .seat.k6{fill:var(--s7)}
 .seat.over{fill:var(--over)} .seat.under{fill:var(--under)}
-.seat.out{stroke:var(--rule-2)}
-.seat.pick{stroke:var(--ink); stroke-width:2.6}
-.parsel{fill:none; stroke:var(--ink); stroke-width:2.6; pointer-events:none}
-.parline{fill:none; stroke:var(--ink); stroke-width:1.5; stroke-opacity:.55; pointer-events:none}
+.seat.out{stroke-opacity:.22}
+.seat.pick{stroke:var(--ink); stroke-opacity:1; stroke-width:2.6}
+/* a parliament is drawn as a soft band under its seats' lines, not as a line of
+   its own: on this map it is the grouping, the seat is the unit */
+.parsel{fill:none; stroke:var(--ink); stroke-width:2; stroke-opacity:.8; stroke-dasharray:6 4; pointer-events:none}
+.parline{fill:none; stroke:var(--ink); stroke-width:3.5; stroke-opacity:.14; pointer-events:none}
+/* seat codes, shown wherever the seat is big enough on screen to hold one */
+.seatlab{background:none; border:0}
+.seatlab span{position:absolute; left:0; top:0; transform:translate(-50%,-50%); white-space:nowrap;
+  font:600 10.5px/1.15 var(--mono); letter-spacing:-.01em; color:var(--ink); text-align:center;
+  text-shadow:0 0 2px var(--surface),0 0 2px var(--surface),0 0 3px var(--surface),0 0 5px var(--surface);
+  transition:opacity var(--dur-1) var(--ease-out)}
+.seatlab span i{display:block; font:500 10.5px/1.15 var(--sans); font-style:normal}
+.seatlab.off span{opacity:0}
+.seatlab.dim span{color:var(--muted)}
+.seatlab.pick span{font-size:12px}
+.seatlab.pick span i{font-size:12px; font-weight:600}
 /* Leaflet's own chrome, brought into this page's materials */
 .leaflet-container{font-family:var(--sans); background:var(--surface-3)}
 .leaflet-bar{border:1px solid var(--rule-2) !important; border-radius:var(--r-ctl) !important;
@@ -693,18 +718,18 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
 
     <div class="sgroup grow">
       <div class="acc">
-        <button class="acchead" type="button" aria-expanded="true" aria-controls="parlist" data-acc="parlist">
-          <svg class="ic accchev" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="m9.75 5.5 6.5 6.5-6.5 6.5"/></svg>
-          <span data-i18n="parliament">Parlimen</span><span class="accn" id="parcount"></span>
-        </button>
-        <div class="acclist" id="parlist"></div>
-      </div>
-      <div class="acc">
-        <button class="acchead" type="button" aria-expanded="false" aria-controls="dunlist" data-acc="dunlist">
+        <button class="acchead" type="button" aria-expanded="true" aria-controls="dunlist" data-acc="dunlist">
           <svg class="ic accchev" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="m9.75 5.5 6.5 6.5-6.5 6.5"/></svg>
           <span data-i18n="dun">DUN</span><span class="accn" id="duncount"></span>
         </button>
-        <div class="acclist" id="dunlist" hidden></div>
+        <div class="acclist" id="dunlist"></div>
+      </div>
+      <div class="acc">
+        <button class="acchead" type="button" aria-expanded="false" aria-controls="parlist" data-acc="parlist">
+          <svg class="ic accchev" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="m9.75 5.5 6.5 6.5-6.5 6.5"/></svg>
+          <span data-i18n="parliament">Parlimen</span><span class="accn" id="parcount"></span>
+        </button>
+        <div class="acclist" id="parlist" hidden></div>
       </div>
     </div>
 
@@ -726,7 +751,7 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
       <div class="crumb"><b>SarawakSeats</b><span>&rsaquo;</span><span id="crumbNow">82 DUN</span></div>
       <div class="search">
         <svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.2-4.2"/></svg>
-        <input type="search" id="q" placeholder="Cari DUN, parlimen, daerah atau kod DM"
+        <input type="search" id="q" placeholder="Cari DUN, daerah mengundi, kod DM atau parlimen"
                aria-label="Cari" role="combobox" aria-expanded="false" aria-controls="sdrop"
                aria-autocomplete="list" autocomplete="off">
         <div class="sdrop" id="sdrop" role="listbox" aria-label="Keputusan carian" hidden></div>
@@ -766,9 +791,9 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
 
       <nav class="tabs" id="tabs" role="tablist" aria-label="Bahagian">
         <button type="button" role="tab" id="tab-ringkasan" data-panel="ringkasan" aria-controls="ringkasan" aria-selected="true" class="on"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12h8.5"/></svg><span data-i18n="tabSummary">Ringkasan</span></button>
+        <button type="button" role="tab" id="tab-kerusi" data-panel="kerusi" aria-controls="kerusi" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.75h11.5M9 12h11.5M9 17.25h11.5"/><path d="M4 6.75h.01M4 12h.01M4 17.25h.01"/></svg><span data-i18n="tabSeats">Kerusi DUN</span></button>
         <button type="button" role="tab" id="tab-demografi" data-panel="demografi" aria-controls="demografi" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.25" cy="8.25" r="3.75"/><path d="M2.75 19.75c0-3.4 2.9-6.15 6.5-6.15s6.5 2.75 6.5 6.15"/><path d="M16.25 5.1a3.75 3.75 0 0 1 0 6.9"/><path d="M18.4 14.2c1.9.75 3.1 2.4 3.1 4.3"/></svg><span data-i18n="tabDeviation">Demografi</span></button>
         <button type="button" role="tab" id="tab-demo" data-panel="demo" aria-controls="demo" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.25" cy="8.25" r="3.75"/><path d="M2.75 19.75c0-3.4 2.9-6.15 6.5-6.15s6.5 2.75 6.5 6.15"/><path d="M16.25 5.1a3.75 3.75 0 0 1 0 6.9"/><path d="M18.4 14.2c1.9.75 3.1 2.4 3.1 4.3"/></svg><span data-i18n="tabDemo">Demografi</span></button>
-        <button type="button" role="tab" id="tab-kerusi" data-panel="kerusi" aria-controls="kerusi" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.75h11.5M9 12h11.5M9 17.25h11.5"/><path d="M4 6.75h.01M4 12h.01M4 17.25h.01"/></svg><span data-i18n="tabSeats">Kerusi DUN</span></button>
         <button type="button" role="tab" id="tab-change" data-panel="change" aria-controls="change" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 8.5h13M13 5l3.5 3.5L13 12"/><path d="M20.5 15.5h-13M11 12l-3.5 3.5L11 19"/></svg><span data-i18n="tabChange">Perubahan</span></button>
         <button type="button" role="tab" id="tab-daerah" data-panel="daerah" aria-controls="daerah" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10.5" r="2.5"/></svg><span data-i18n="tabPd">Daerah mengundi</span></button>
       </nav>
@@ -787,6 +812,11 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
               <svg class="ic" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4.5v4h4"/></svg>
               <span data-i18n="mapAll">Seluruh Sarawak</span></button>
             <div class="mapmsg" id="mapmsg" data-i18n="mapLoading">Memuatkan peta…</div>
+            <div class="seg mapbase" id="mapBase" role="group">
+              <button type="button" data-bm="grey" class="on" data-i18n="bmGrey">Ringkas</button>
+              <button type="button" data-bm="street" data-i18n="bmStreet">Jalan</button>
+              <button type="button" data-bm="sat" data-i18n="bmSat">Satelit</button>
+            </div>
           </div>
           <div class="mapfoot"><div class="legend" id="mapLegend"></div><p class="note" id="mapNote"></p></div>
         </div>
@@ -976,7 +1006,7 @@ var I18N={
     mapLoading:"Memuatkan peta…", mapFail:"Peta tidak dapat dimuatkan. Semua angka di bawah masih tepat.",
     mapNoteMaj:"Lebih pekat, majoriti lebih besar.", mapNoteDev:"Lebih pekat, lebih jauh daripada purata.",
     mapOver:"Melebihi purata", mapUnder:"Di bawah purata", bordersLabel:"Sempadan:",
-    mapAria:"Peta sempadan 82 DUN Sarawak",
+    mapAria:"Peta sempadan 82 DUN Sarawak", bmGrey:"Ringkas", bmStreet:"Jalan", bmSat:"Satelit",
     parliament:"Parlimen", dun:"DUN", name:"Nama", voters:"Pengundi", open:"Buka",
     tabSummary:"Ringkasan", tabDeviation:"Sisihan", tabDemo:"Demografi", tabSeats:"Kerusi DUN",
     tabPd:"Daerah mengundi", deviation:"Sisihan", devShort:"Sisihan",
@@ -985,7 +1015,7 @@ var I18N={
     dmCode:"Kod DM",
     sortCode:"Susun ikut kod DUN", sortDesc:"Pengundi terbanyak", sortAsc:"Pengundi tersedikit",
     sortDev:"Sisihan terbesar", sortPar:"Ikut parlimen", sortByDun:"Susun ikut DUN",
-    searchPh:"Cari DUN, parlimen, daerah atau kod DM",
+    searchPh:"Cari DUN, daerah mengundi, kod DM atau parlimen",
     allPar:"Semua parlimen", allDun:"Semua DUN", all:"Semua",
     seats:"Kerusi DUN", pdCount:"Daerah mengundi", gap:"Jurang besar : kecil",
     ofTotal:"daripada", stateAvg:"Purata negeri", shownAvg:"Purata dipaparkan",
@@ -1038,7 +1068,7 @@ var I18N={
     mapLoading:"Loading the map…", mapFail:"The map could not be loaded. Every figure below is still correct.",
     mapNoteMaj:"Darker means a larger majority.", mapNoteDev:"Darker means further from the average.",
     mapOver:"Above average", mapUnder:"Below average", bordersLabel:"Borders:",
-    mapAria:"Map of Sarawak's 82 state seat borders",
+    mapAria:"Map of Sarawak's 82 state seat borders", bmGrey:"Simple", bmStreet:"Streets", bmSat:"Satellite",
     parliament:"Parliament", dun:"State seat", name:"Name", voters:"Electors", open:"Open",
     tabSummary:"Summary", tabDeviation:"Deviation", tabDemo:"Demographics", tabSeats:"State seats",
     tabPd:"Polling districts", deviation:"Deviation", devShort:"Deviation",
@@ -1047,7 +1077,7 @@ var I18N={
     dmCode:"DM code",
     sortCode:"Sort by seat code", sortDesc:"Most electors", sortAsc:"Fewest electors",
     sortDev:"Largest deviation", sortPar:"By parliament", sortByDun:"Sort by seat",
-    searchPh:"Search a seat, parliament, district or DM code",
+    searchPh:"Search a state seat, polling district, DM code or parliament",
     allPar:"All parliaments", allDun:"All seats", all:"All",
     seats:"State seats", pdCount:"Polling districts", gap:"Largest : smallest",
     ofTotal:"of", stateAvg:"State average", shownAvg:"Average shown",
@@ -1920,6 +1950,9 @@ function drawDunlist(){
       if (innerWidth<=900) setSide(false);
     });
   });
+  // a seat picked elsewhere (the map, search, a link) is brought into view here
+  var on=state.dun && box.querySelector("button.on");
+  if (on && !box.hidden && innerWidth>900) on.scrollIntoView({block:"nearest"});
 }
 [].forEach.call(document.querySelectorAll(".acchead"), function(h){
   h.addEventListener("click", function(){
@@ -1930,21 +1963,28 @@ function drawDunlist(){
 });
 
 /* ---------- map ----------
-   Borders are MECo's digitisation of the 2015 delimitation (CC0), simplified
-   with shared edges kept (scripts/build_boundaries.py). They sit over a plain
-   basemap so a border can be read against the roads, rivers and kampung it
-   actually follows. The map takes the same scope as everything else on the
-   page: a parliament, a seat or a search narrows it, and clicking a seat picks
-   that seat everywhere. Leaflet loads only when the map is first on screen. */
-var MAP={el:null, L:null, seats:{}, pars:{}, mode:"maj", key:null, loading:false, failed:false};
-// Esri's grey canvas: keyless, quiet enough for coloured seats to sit on, with
-// place names as a separate layer drawn above the seats so they stay legible
-var ESRI="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_";
-var TILES={
-  light:ESRI+"Light_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-  dark:ESRI+"Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-  lightLab:ESRI+"Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
-  darkLab:ESRI+"Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
+   Borders are MECo's digitisation of the 2015 delimitation (CC0), at two levels
+   of detail (scripts/build_boundaries.py): a simplified file for the statewide
+   view, and every vertex MECo has, fetched once the reader zooms in to a town
+   or kampung and swapped in place. They sit over a choice of basemap (grey,
+   streets or satellite) so a border can be read against the roads, rivers and
+   houses it actually follows. The map takes the same scope as everything else
+   on the page: a parliament, a seat or a search narrows it, and clicking a seat
+   picks that seat everywhere. Leaflet loads only when the map is first on screen. */
+var MAP={el:null, L:null, seats:{}, pars:{}, parOut:{}, labs:{}, inScope:{}, shapes:[], tiles:[],
+         mode:"maj", key:null, loading:false, failed:false, detail:0, tileKey:null,
+         base:(function(){ try { var v=localStorage.getItem("sarawakseats-basemap");
+           if (v==="grey"||v==="street"||v==="sat") return v } catch(e){} return "grey" })()};
+var DETAIL_ZOOM=10;     // past this, the full-detail borders are worth their 570 KB
+// All three are Esri's and keyless. Grey and satellite keep their place names
+// on a separate layer drawn above the seats, so names stay legible over fills.
+var ESRI="https://server.arcgisonline.com/ArcGIS/rest/services/", XYZ="/MapServer/tile/{z}/{y}/{x}";
+var BASEMAPS={
+  grey:{light:["Canvas/World_Light_Gray_Base","Canvas/World_Light_Gray_Reference"],
+        dark:["Canvas/World_Dark_Gray_Base","Canvas/World_Dark_Gray_Reference"], native:16},
+  street:{light:["World_Street_Map"], dark:["World_Street_Map"], native:18},
+  sat:{light:["World_Imagery","Reference/World_Boundaries_and_Places"],
+       dark:["World_Imagery","Reference/World_Boundaries_and_Places"], native:18}
 };
 var CALM=matchMedia("(prefers-reduced-motion: reduce)").matches;
 function loadScript(src){
@@ -1953,6 +1993,7 @@ function loadScript(src){
     s.src=src; s.onload=ok; s.onerror=no; document.head.appendChild(s);
   });
 }
+function getJSON(url){ return fetch(url).then(function(r){ if (!r.ok) throw r; return r.json() }) }
 function ensureMap(){
   if (MAP.el){ MAP.el.invalidateSize(); if (MAP.key===null) drawMap(); return }
   if (MAP.loading || MAP.failed) return;
@@ -1960,7 +2001,7 @@ function ensureMap(){
   Promise.all([
     loadScript("https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js")
       .then(function(){ return loadScript("https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js") }),
-    fetch("/data/dun82-boundaries.json").then(function(r){ if (!r.ok) throw r; return r.json() })
+    getJSON("/data/dun82-boundaries.json")
   ]).then(function(res){ buildMap(res[1]) }, function(){
     MAP.failed=true; MAP.loading=false;
     var m=$("#mapmsg"); m.hidden=false; m.textContent=t("mapFail");
@@ -1968,7 +2009,7 @@ function ensureMap(){
 }
 function buildMap(topo){
   var L=window.L, el=$("#map");
-  var map=L.map(el, {zoomSnap:0.25, zoomDelta:0.5, minZoom:6, maxZoom:15,
+  var map=L.map(el, {zoomSnap:0.25, zoomDelta:0.5, minZoom:6, maxZoom:19,
     scrollWheelZoom:false, attributionControl:true, zoomControl:true});
   map.attributionControl.setPrefix(false);
   // a page that scrolls should not be hijacked by the map: the wheel zooms
@@ -1978,15 +2019,35 @@ function buildMap(topo){
   map.createPane("labels");
   map.getPane("labels").style.zIndex=650;
   map.getPane("labels").style.pointerEvents="none";
-  var attr='Peta asas &copy; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · '+
-    'Sempadan <a href="https://github.com/Thevesh/paper-meco-maps">MECo</a>';
-  MAP.attr=attr;
+  MAP.el=map; MAP.L=L;
 
+  var dun=drawShapes(topo);
+  // a code at a point inside every seat (computed at build time)
+  dun.features.forEach(function(f){
+    var c=f.properties.code_dun, ll=f.properties.lab;
+    MAP.labs[c]=L.marker([ll[1], ll[0]], {pane:"labels", interactive:false, keyboard:false,
+      icon:L.divIcon({className:"seatlab off", iconSize:[0,0], html:'<span>'+esc(c)+'</span>'})}).addTo(map);
+  });
+  map.on("zoomend", function(){
+    placeLabels();
+    if (map.getZoom()>=DETAIL_ZOOM) loadDetail();
+  });
+  MAP.all=L.geoJSON(dun).getBounds();
+  MAP.loading=false;
+  $("#mapmsg").hidden=true;
+  map.fitBounds(MAP.all, {padding:[12,12], animate:false});
+  setBasemap(MAP.base); drawMap();
+}
+/* Seats, parliament lines and parliament outlines from one topology. Called
+   again with the detailed topology, replacing the simplified shapes in place. */
+function drawShapes(topo){
+  var L=MAP.L, map=MAP.el;
+  MAP.shapes.forEach(function(l){ map.removeLayer(l) });
+  Object.keys(MAP.parOut).forEach(function(c){ map.removeLayer(MAP.parOut[c]) });
+  tip.classList.remove("on");
   var dun=topojson.feature(topo, topo.objects.dun);
-  var par=topojson.mesh(topo, topo.objects.par, function(a,b){ return a!==b });
-  var coast=topojson.mesh(topo, topo.objects.par, function(a,b){ return a===b });
-  L.geoJSON(dun, {
-    style:function(){ return {className:"seat", weight:.9, fillOpacity:.6} },
+  var seatLayer=L.geoJSON(dun, {
+    style:function(){ return {className:"seat", weight:1, fillOpacity:.6} },
     onEachFeature:function(f, layer){
       var code=f.properties.code_dun;
       MAP.seats[code]=layer;
@@ -2000,22 +2061,71 @@ function buildMap(topo){
         drawParlist(); drawDunlist(); render(); syncURL();
       });
     }
-  }).addTo(map);
+  });
   // parliament borders over the seats, and the state's outer edge
-  L.geoJSON(par, {interactive:false, style:{className:"parline", weight:1.5}}).addTo(map);
-  L.geoJSON(coast, {interactive:false, style:{className:"parline", weight:1}}).addTo(map);
+  var par=topojson.mesh(topo, topo.objects.par, function(a,b){ return a!==b });
+  var coast=topojson.mesh(topo, topo.objects.par, function(a,b){ return a===b });
+  MAP.shapes=[seatLayer,
+    L.geoJSON(par, {interactive:false, style:{className:"parline", weight:3.5}}),
+    L.geoJSON(coast, {interactive:false, style:{className:"parline", weight:3.5}})];
+  MAP.shapes.forEach(function(l){ l.addTo(map) });
   // one outline per parliament, drawn only for the parliament in scope, and its
   // bounds for framing it
   topo.objects.par.geometries.forEach(function(g){
-    var o=L.geoJSON(topojson.feature(topo, g), {interactive:false, style:{className:"parsel", weight:2.6}});
+    var o=L.geoJSON(topojson.feature(topo, g), {interactive:false, style:{className:"parsel", weight:2}});
     MAP.pars[g.properties.code_parlimen]=o.getBounds();
-    MAP.parOut=MAP.parOut||{}; MAP.parOut[g.properties.code_parlimen]=o;
+    MAP.parOut[g.properties.code_parlimen]=o;
   });
-  MAP.all=L.geoJSON(dun).getBounds();
-  MAP.el=map; MAP.L=L; MAP.loading=false;
-  $("#mapmsg").hidden=true;
-  map.fitBounds(MAP.all, {padding:[12,12], animate:false});
-  mapTheme(); drawMap();
+  return dun;
+}
+function loadDetail(){
+  if (MAP.detail) return;
+  MAP.detail=1;
+  getJSON("/data/dun82-boundaries-detail.json").then(function(topo){
+    drawShapes(topo); MAP.detail=2;
+    var k=MAP.key; MAP.key=null; drawMap(); MAP.key=k;   // restyle, without reframing
+  }, function(){ MAP.detail=3 });                         // keep the overview; it is still right
+}
+function setBasemap(name){
+  MAP.base=name;
+  var bm=BASEMAPS[name], dark=effectiveTheme()==="dark", L=MAP.L, map=MAP.el;
+  [].forEach.call($("#mapBase").querySelectorAll("button"), function(x){ x.classList.toggle("on", x.dataset.bm===name) });
+  if (!map) return;
+  $("#map").className=$("#map").className.replace(/\s*bm-\w+/g,"")+" bm-"+name;
+  var key=name+(dark ? "-d" : "");
+  if (key===MAP.tileKey) return;
+  MAP.tileKey=key;
+  // new layers rather than setUrl: a URL swapped in the middle of a flight is
+  // redrawn at the flight's fractional zoom, which the tile server does not have
+  MAP.tiles.forEach(function(l){ map.removeLayer(l) });
+  var src=dark ? bm.dark : bm.light, attr=name==="sat"
+    ? 'Imej &copy; Esri, Maxar, Earthstar Geographics · Sempadan <a href="https://github.com/Thevesh/paper-meco-maps">MECo</a>'
+    : 'Peta asas &copy; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · Sempadan <a href="https://github.com/Thevesh/paper-meco-maps">MECo</a>';
+  MAP.tiles=src.map(function(path, i){
+    return L.tileLayer(ESRI+path+XYZ, {maxNativeZoom:bm.native, maxZoom:19,
+      attribution:i ? undefined : attr, pane:i ? "labels" : "tilePane"}).addTo(map);
+  });
+  drawMap();
+}
+/* A seat is labelled once it is big enough on screen to hold its code, and named
+   too once it can hold the name; the picked seat is always labelled and named. */
+function placeLabels(){
+  if (!MAP.el) return;
+  var map=MAP.el, S={};
+  seats().forEach(function(r){ S[r[0]]=r });
+  Object.keys(MAP.labs).forEach(function(c){
+    var m=MAP.labs[c], el=m.getElement(), r=S[c];
+    if (!el || !r) return;
+    var b=MAP.seats[c].getBounds(),
+        a=map.latLngToContainerPoint(b.getNorthWest()), z=map.latLngToContainerPoint(b.getSouthEast());
+    var w=z.x-a.x, h=z.y-a.y, pick=state.dun===c;
+    var named=pick || (w>120 && h>44), show=pick || (w>38 && h>20);
+    var html='<span>'+esc(c)+(named ? '<i>'+esc(r[1])+'</i>' : '')+'</span>';
+    if (el.innerHTML!==html) el.innerHTML=html;
+    el.classList.toggle("off", !show);
+    el.classList.toggle("pick", pick);
+    el.classList.toggle("dim", !pick && !MAP.inScope[c]);
+  });
 }
 function placeTip(e){
   var w=tip.offsetWidth, h=tip.offsetHeight;
@@ -2032,17 +2142,7 @@ function mapTip(code, e){
     '<em>'+esc(ETH[top].n)+' '+pc(et[top]/tot*100)+' · '+esc(pars()[r[2]][0]+" "+pars()[r[2]][1])+'</em>';
   tip.classList.add("on"); placeTip(e);
 }
-/* New layers rather than setUrl: a URL swapped in the middle of a flight is
-   redrawn at the flight's fractional zoom, which the tile server does not have. */
-function mapTheme(){
-  if (!MAP.el) return;
-  var dark=effectiveTheme()==="dark", L=MAP.L;
-  if (MAP.dark===dark) return;
-  MAP.dark=dark;
-  if (MAP.base){ MAP.el.removeLayer(MAP.base); MAP.el.removeLayer(MAP.lab) }
-  MAP.base=L.tileLayer(dark ? TILES.dark : TILES.light, {maxNativeZoom:16, maxZoom:19, attribution:MAP.attr}).addTo(MAP.el);
-  MAP.lab=L.tileLayer(dark ? TILES.darkLab : TILES.lightLab, {maxNativeZoom:16, maxZoom:19, pane:"labels"}).addTo(MAP.el);
-}
+function mapTheme(){ if (MAP.el) setBasemap(MAP.base) }
 /* Colour, dim and frame the seats for the current scope. */
 function drawMap(){
   $("#map").setAttribute("aria-label", t("mapAria"));
@@ -2050,6 +2150,7 @@ function drawMap(){
   if (!MAP.el) return;
   var rows=shown(), avg=AVG(), on={}, n=0, P=pars();
   rows.forEach(function(r){ on[r[0]]=true; n++ });
+  MAP.inScope=on;
   seats().forEach(function(r){
     var layer=MAP.seats[r[0]];
     if (!layer || !layer._path) return;
@@ -2067,6 +2168,8 @@ function drawMap(){
     var inScope=!!on[r[0]], pick=state.dun===r[0];
     layer._path.setAttribute("class", "seat leaflet-interactive "+cls+
       (inScope ? "" : " out")+(pick ? " pick" : ""));
+    // streets and satellite carry their own detail; a lighter fill lets it show
+    if (MAP.base!=="grey") op*=.5;
     layer.setStyle({fillOpacity: inScope ? op : op*.22});
     if (pick) layer.bringToFront();
   });
@@ -2079,6 +2182,7 @@ function drawMap(){
   // frame the scope, flying only when the scope itself has changed
   var key=state.dun || (state.par!==null ? "p"+state.par : "") || (n<seats().length ? "q"+state.q : "all");
   $("#mapreset").hidden = key==="all";
+  placeLabels();
   // a hidden map has no size to fit to; frame it when it is next on screen
   if ($("#ringkasan").hidden){ MAP.key=null; return }
   if (key===MAP.key) return;
@@ -2123,6 +2227,12 @@ function drawMapLegend(){
     MAP.mode=b.dataset.mm;
     [].forEach.call($("#mapMode").querySelectorAll("button"), function(x){ x.classList.toggle("on", x===b) });
     drawMap();
+  });
+});
+[].forEach.call($("#mapBase").querySelectorAll("button"), function(b){
+  b.addEventListener("click", function(){
+    try { localStorage.setItem("sarawakseats-basemap", b.dataset.bm) } catch(e){}
+    setBasemap(b.dataset.bm);
   });
 });
 $("#mapreset").addEventListener("click", function(){
@@ -2199,9 +2309,11 @@ function buildResults(){
     list.slice(0,cap).forEach(function(x){ out.push(x) });
     if (list.length>cap) out.push({more:list.length-cap});
   }
-  push(parl, t("parliament"), 4);
-  push(duns.map(function(r){ return {kind:"dun", r:r} }), t("tabSeats"), 5);
+  // state seats lead: this is a state election, and a parliament is only the
+  // group a seat sits in
+  push(duns.map(function(r){ return {kind:"dun", r:r} }), t("tabSeats"), 6);
   push(pds,  t("tabPd"), 6);
+  push(parl, t("parliament"), 3);
   return out;
 }
 
@@ -2488,7 +2600,7 @@ $("#sort").addEventListener("change", function(){ state.sort=this.value; render(
 
 /* Real tabs: only the selected panel is in the document. Switching does not
    move the scroll position, so the page does not jump under the reader. */
-var PANELS=["ringkasan","demografi","demo","change","kerusi","daerah"];
+var PANELS=["ringkasan","kerusi","demografi","demo","change","daerah"];
 var tabBtns=[].slice.call(document.querySelectorAll(".tabs button"));
 function tabAvailable(name){
   if (name==="kerusi" && state.dun) return false;
