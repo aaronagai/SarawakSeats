@@ -204,7 +204,7 @@ main{position:relative; min-width:0; min-height:0; margin:8px 8px 8px 0; overflo
   background:var(--ground); border:1px solid var(--rule); border-radius:999px;
   transition:border-color var(--dur-1) linear, background-color var(--dur-1) linear}
 .search:focus-within{border-color:var(--rule-2); background:var(--surface)}
-.search svg{position:absolute; left:12px; top:50%; transform:translateY(-50%);
+.search > svg{position:absolute; left:12px; top:50%; transform:translateY(-50%);
   width:15px; height:15px; color:var(--faint); pointer-events:none}
 .search input{width:100%; height:34px; padding:0 14px 0 34px; font:inherit; font-size:13px;
   color:var(--ink); background:none; border:0; outline:none; border-radius:999px}
@@ -471,6 +471,55 @@ tbody tr:hover .c-go .ic, tbody tr:focus-within .c-go .ic, tbody tr.on .c-go .ic
 .c-name{color:var(--ink)}
 .c-sub{font-size:12px; color:var(--faint); margin-top:1px}
 .c-num{text-align:right; color:var(--ink); white-space:nowrap}
+
+/* Kampung: a polling district opens in place to its lokaliti, SPR's unit below
+   it. The district stays the row; its kampung sit on the ground colour beneath. */
+.kexp{display:flex; align-items:flex-start; gap:8px; width:100%; padding:9px 12px; margin:0;
+  border:0; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer}
+.kexp .ic{flex:none; margin-top:3px; color:var(--faint);
+  transition:transform var(--dur-2) var(--ease-out), color var(--dur-1) linear}
+.kexp[aria-expanded="true"] .ic{transform:rotate(90deg); color:var(--ink)}
+.seatlink{padding:0; border:0; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer;
+  text-decoration:underline; text-decoration-color:var(--rule-2); text-underline-offset:3px;
+  transition:text-decoration-color var(--dur-1) linear}
+.seatlink:hover{text-decoration-color:currentColor}
+table.seats tbody tr.krow{cursor:default}
+table.seats tbody tr.krow td, table.seats tbody tr.krow:hover td{background:var(--ground)}
+.kbox{padding:6px 12px 14px 34px; animation:secIn var(--dur-2) var(--ease-out) both}
+.klist{list-style:none; margin:0; padding:0; display:grid; gap:0 18px;
+  grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+.klist li{display:flex; align-items:baseline; gap:8px; min-height:30px; padding:5px 0;
+  border-bottom:1px solid var(--rule); scroll-margin:calc(var(--top-h,57px) + 60px)}
+.klist .kc{flex:none; width:26px; font-size:11.5px; color:var(--faint); font-variant-numeric:tabular-nums}
+.klist .kn{flex:1; min-width:0; color:var(--ink); overflow-wrap:anywhere}
+.klist .inst .kn{color:var(--muted)}
+.klist .knew{flex:none; font-size:11.5px; color:var(--accent); font-variant-numeric:tabular-nums}
+.klist li.hot{background:var(--accent-soft); border-radius:6px; padding-left:6px; padding-right:6px; margin:0 -6px}
+.kpin{flex:none; align-self:center; display:grid; place-items:center; width:26px; height:26px; margin:-4px -4px -4px 0;
+  border:0; border-radius:999px; background:none; color:var(--faint); cursor:pointer;
+  transition:background-color var(--dur-1) linear, color var(--dur-1) linear}
+.kpin:hover{background:var(--surface-2); color:var(--accent)}
+.knone{font-size:13px; color:var(--muted); padding:4px 0}
+.kfoot{margin-top:10px; font-size:12px; color:var(--faint)}
+.khead{display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:8px 16px; margin:-4px 0 12px}
+.khead .note{max-width:72ch}
+.kall{flex:none; height:30px; padding:0 13px; border:1px solid var(--rule); border-radius:999px;
+  background:var(--surface); color:var(--ink); font:inherit; font-size:13px; cursor:pointer;
+  transition:background-color var(--dur-1) linear}
+.kall:hover{background:var(--surface-2)}
+@media (max-width:640px){ .kbox{padding-left:12px} .klist{grid-template-columns:1fr} }
+
+/* kampung on the map: dots from town level, names from street level */
+.kpt{background:none; border:0}
+.kpt i{position:absolute; left:-4px; top:-4px; width:8px; height:8px; border-radius:50%;
+  background:var(--accent); box-shadow:0 0 0 1.5px var(--surface); display:none}
+.kpt span{position:absolute; left:8px; top:-8px; white-space:nowrap; font:400 11.5px/16px var(--sans);
+  color:var(--ink); text-shadow:0 0 2px var(--surface),0 0 2px var(--surface),0 0 4px var(--surface); display:none}
+#map.kz .kpt i{display:block}
+#map.kzl .kpt span, .kpt.hot span{display:block}
+.kpt.hot i{display:block; width:12px; height:12px; left:-6px; top:-6px; box-shadow:0 0 0 2px var(--surface), 0 0 0 5px var(--accent-soft)}
+.kpt.hot span{font-weight:500; left:11px}
+#map.bm-sat .kpt span{color:#fff; text-shadow:0 0 2px #000,0 0 3px #000,0 0 5px #000}
 .dev{display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; min-width:60px; text-align:right}
 .dev.over{color:var(--over); background:var(--over-bg)}
 .dev.under{color:var(--under); background:var(--under-bg)}
@@ -715,6 +764,9 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
         <a href="https://myst.spr.gov.my/" target="_blank" rel="noopener">SPR</a>, <span data-i18n="srcRoll">daftar 29 Jan 2026</span></p>
       <p><span data-i18n="srcDemo">Demografi:</span>
         <a href="https://electiondata.my/" target="_blank" rel="noopener">ElectionData.MY</a> <span data-i18n="srcEst">(anggaran)</span></p>
+      <p><span data-i18n="srcKamp">Kampung:</span>
+        <a href="https://sprinfo.spr.gov.my/" target="_blank" rel="noopener">SPR</a>, <span data-i18n="srcKampRoll">daftar tambahan Ogos–Sep 2026</span>;
+        <span data-i18n="srcKampPos">kedudukan</span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a></p>
       <p><span data-i18n="bordersLabel">Sempadan:</span>
         <a href="https://github.com/Thevesh/paper-meco-maps" target="_blank" rel="noopener">MECo</a> (CC0)</p>
       <p><a class="byline" href="https://aaronagai.com" target="_blank" rel="noopener"><span data-i18n="builtBy">Dibina oleh</span> <span>@aaronagai</span></a></p>
@@ -732,7 +784,7 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
       <div class="crumb"><b>SarawakSeats</b><span class="sep">/</span><span id="crumbNow">82 DUN</span></div>
       <div class="search">
         <svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.2-4.2"/></svg>
-        <input type="search" id="q" placeholder="Cari DUN atau daerah mengundi"
+        <input type="search" id="q" placeholder="Cari kampung, DUN atau daerah mengundi"
                aria-label="Cari" role="combobox" aria-expanded="false" aria-controls="sdrop"
                aria-autocomplete="list" autocomplete="off">
         <div class="sdrop" id="sdrop" role="listbox" aria-label="Keputusan carian" hidden></div>
@@ -859,6 +911,7 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
             <option value="asc" data-i18n="sortAsc">Pengundi tersedikit</option>
           </select></span>
         </div>
+        <div class="khead"><p class="note" id="kampNote"></p><button type="button" class="kall" id="kall" hidden></button></div>
         <div class="card">
           <div class="tablewrap">
             <table class="seats">
@@ -1014,7 +1067,15 @@ var I18N={
     dmCode:"Kod DM",
     sortCode:"Susun ikut kod DUN", sortDesc:"Pengundi terbanyak", sortAsc:"Pengundi tersedikit",
     sortDev:"Sisihan terbesar", sortPar:"Ikut parlimen", sortByDun:"Susun ikut DUN",
-    searchPh:"Cari DUN atau daerah mengundi",
+    searchPh:"Cari kampung, DUN atau daerah mengundi",
+    kampGroup:"Kampung", kampN:function(n){ return n+" kampung" }, kampNone:"Senarai lokaliti belum diterbitkan",
+    kampNoneLong:"SPR belum menerbitkan senarai lokaliti daerah ini. Ia akan muncul dalam daftar tambahan bulan pertama daerah ini mendapat pemilih baharu.",
+    kampInst:"polis / tentera", kampMap:"Lihat di peta", kampNewT:function(n){ return n+" pemilih baharu, Ogos–Sep 2026" },
+    kampAll:"Buka semua", kampFold:"Tutup semua", kampOf:function(dm){ return "DM "+dm },
+    kampNote:function(n){ return "Klik daerah mengundi untuk melihat kampungnya"+(n ? ": "+n+" lokaliti SPR di seluruh Sarawak. " : ". ")+
+      "+n ialah pemilih baharu yang didaftar Ogos–Sep 2026; SPR tidak menerbitkan jumlah pemilih setiap lokaliti." },
+    kampFoot:"Lokaliti seperti dalam senarai SPR. Titik di peta ialah anggaran, dipadankan dengan nama di OpenStreetMap.",
+    srcKamp:"Kampung:", srcKampRoll:"daftar tambahan Ogos–Sep 2026", srcKampPos:"kedudukan",
     allPar:"Semua parlimen", allDun:"Semua DUN", all:"Semua",
     seats:"Kerusi DUN", pdCount:"Daerah mengundi", gap:"Jurang saiz",
     ofTotal:"daripada", stateAvg:"Purata negeri", shownAvg:"Purata dipaparkan",
@@ -1096,7 +1157,15 @@ var I18N={
     dmCode:"DM code",
     sortCode:"Sort by seat code", sortDesc:"Most electors", sortAsc:"Fewest electors",
     sortDev:"Largest deviation", sortPar:"By parliament", sortByDun:"Sort by seat",
-    searchPh:"Search a seat or polling district",
+    searchPh:"Search a kampung, seat or polling district",
+    kampGroup:"Kampung", kampN:function(n){ return n+" kampung" }, kampNone:"Locality list not yet published",
+    kampNoneLong:"SPR has not yet published this district's localities. They will appear in the supplementary roll of the first month the district gains a new elector.",
+    kampInst:"police / army", kampMap:"Show on map", kampNewT:function(n){ return n+" new electors, Aug–Sep 2026" },
+    kampAll:"Open all", kampFold:"Close all", kampOf:function(dm){ return "DM "+dm },
+    kampNote:function(n){ return "Click a polling district to see its kampung"+(n ? ": "+n+" SPR localities across Sarawak. " : ". ")+
+      "+n is new electors registered Aug–Sep 2026; SPR does not publish electors per locality." },
+    kampFoot:"Localities as SPR lists them. Map points are approximate, matched by name to OpenStreetMap.",
+    srcKamp:"Kampung:", srcKampRoll:"supplementary rolls Aug–Sep 2026", srcKampPos:"positions",
     allPar:"All parliaments", allDun:"All seats", all:"All",
     seats:"State seats", pdCount:"Polling districts", gap:"Size gap",
     ofTotal:"of", stateAvg:"State average", shownAvg:"Average shown",
@@ -1196,7 +1265,7 @@ function match(r){
   if ((p[0]+" "+p[1]).toLowerCase().indexOf(term) > -1) return true;
   var pd = pdsOf()[r[0]];
   return !!pd && pd.some(function(x){
-    return x[1].toLowerCase().indexOf(term) > -1 || x[0].indexOf(term) > -1;
+    return x[1].toLowerCase().indexOf(term) > -1 || x[0].indexOf(term) > -1 || kampHits(x[0]).length;
   });
 }
 function shown(){
@@ -1833,12 +1902,97 @@ function stateLevelChange(set, proposed){
 /* ---------- polling districts ----------
    Same filters as everything else. A query that matches daerah names narrows to
    those; a query that only matches a seat or parliament keeps all of its daerah. */
+/* ---------- kampung ----------
+   SPR registers every voter to a lokaliti below the polling district: the
+   kampung, rumah panjang, taman or jalan printed on a MySPR Semak slip. The
+   lists come from SPR's supplementary rolls (scripts/build_kampung.py), in one
+   file fetched once the page is idle or a search starts. Rows are
+   [code, SPR's name, new electors, lon, lat]; codes from 301 are police and
+   army lokaliti. */
+var KAMP={dm:null, all:[], bySeat:{}, total:0, loading:null, open:{}, every:false, hot:null};
+var KAB={kg:"kampung", kpg:"kampung", kampong:"kampung", rh:"rumah", sg:"sungai", sungei:"sungai",
+  jln:"jalan", jl:"jalan", lrg:"lorong", tmn:"taman", bkt:"bukit", lbk:"lubok", ng:"nanga",
+  tg:"tanjung", tanjong:"tanjung", btg:"batang", rd:"road", st:"street", ulu:"hulu"};
+function kfold(str){
+  var w=String(str).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
+  return w+" | "+w.split(" ").map(function(x){ return KAB[x]||x }).join(" ");
+}
+function loadKampung(){
+  if (KAMP.loading || state.set!=="82") return KAMP.loading;
+  KAMP.loading=getJSON("/data/kampung.json").then(function(j){
+    var seatOf={}, dm={};
+    Object.keys(D.pd82).forEach(function(s){ D.pd82[s].forEach(function(x){ seatOf[x[0]]=s }) });
+    Object.keys(j.dm).forEach(function(code){
+      dm[code]=j.dm[code].map(function(r){
+        var k={dm:code, c:r[0], n:r[1], nw:r[2], ll:r.length>4 ? [r[4],r[3]] : null,
+               seat:seatOf[code], inst:r[0]>=300, key:kfold(r[1])};
+        KAMP.all.push(k);
+        if (!k.inst){ KAMP.total++; KAMP.bySeat[k.seat]=(KAMP.bySeat[k.seat]||0)+1 }
+        return k;
+      });
+    });
+    KAMP.dm=dm;
+    if (state.q) render(); else drawPd();
+    if (!drop.hidden) renderDrop();
+    drawKampPts();
+  }, function(){ KAMP.loading=null });
+  return KAMP.loading;
+}
+// a query folded the same way, so "kampung sebandi" finds SPR's "KG SEBANDI"
+var kq={raw:null};
+function kampQuery(){
+  if (kq.raw!==state.q){
+    var f=kfold(state.q).split(" | ");
+    kq={raw:state.q, a:f[0], b:f[1]};
+  }
+  return kq;
+}
+function kampMatch(k){
+  var q=kampQuery();
+  return q.a.length>1 && (k.key.indexOf(q.a)>-1 || k.key.indexOf(q.b)>-1);
+}
+function kampHits(dm){
+  if (!state.q || !KAMP.dm || !KAMP.dm[dm]) return [];
+  return KAMP.dm[dm].filter(kampMatch);
+}
+// SPR prints names in capitals; read in a list, they are easier in title case
+function kname(n){
+  return n.toLowerCase().replace(/(^|[\s(\/.\-])([a-z])/g, function(m,a,b){ return a+b.toUpperCase() })
+    .replace(/\b(Ii|Iii|Iv|Vi|Vii|Viii|Ix)\b/g, function(x){ return x.toUpperCase() });
+}
+// a district the reader opened or closed stays that way; otherwise "open all",
+// or a search that found a kampung in it, opens it
+function kampOpen(dm){
+  if (dm in KAMP.open) return KAMP.open[dm];
+  return KAMP.every || kampHits(dm).length>0;
+}
+function kampBox(dm){
+  var list=KAMP.dm && KAMP.dm[dm];
+  if (!KAMP.dm) return '<div class="kbox"><p class="knone">'+esc(t("mapLoading"))+'</p></div>';
+  if (!list) return '<div class="kbox"><p class="knone">'+esc(t("kampNoneLong"))+'</p></div>';
+  return '<div class="kbox"><ol class="klist">'+list.map(function(k){
+    var id=k.dm+"/"+k.c, hit=state.q && kampMatch(k);
+    return '<li class="'+(k.inst?"inst":"")+(hit||KAMP.hot===id?" hot":"")+'" data-k="'+esc(id)+'">'+
+      '<span class="kc">'+String(k.c).padStart(3,"0")+'</span>'+
+      '<span class="kn">'+hl(kname(k.n))+(k.inst ? ' <span class="c-sub">· '+esc(t("kampInst"))+'</span>' : '')+'</span>'+
+      (k.nw ? '<span class="knew" title="'+esc(t("kampNewT")(k.nw))+'">+'+k.nw+'</span>' : '')+
+      (k.ll ? '<button type="button" class="kpin" data-pin="'+esc(id)+'" aria-label="'+esc(t("kampMap")+": "+kname(k.n))+'" title="'+esc(t("kampMap"))+'">'+
+        '<svg class="ic" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10.5" r="2.5"/></svg></button>' : '')+
+      '</li>';
+  }).join("")+'</ol><p class="kfoot">'+esc(t("kampFoot"))+'</p></div>';
+}
+function kampById(id){
+  var i=id.lastIndexOf("/"), list=KAMP.dm && KAMP.dm[id.slice(0,i)], c=+id.slice(i+1);
+  return list ? list.filter(function(k){ return k.c===c })[0] : null;
+}
+function seatRow(code){ return seats().filter(function(r){ return r[0]===code })[0] }
+
 function shownPd(){
   var out=[];
   shown().forEach(function(r){
     var list=pdsOf()[r[0]]||[];
     var hits=state.q ? list.filter(function(x){
-      return x[1].toLowerCase().indexOf(state.q)>-1 || x[0].indexOf(state.q)>-1;
+      return x[1].toLowerCase().indexOf(state.q)>-1 || x[0].indexOf(state.q)>-1 || kampHits(x[0]).length;
     }) : null;
     (hits && hits.length ? hits : list).forEach(function(x){ out.push({pd:x, r:r}) });
   });
@@ -1848,29 +2002,59 @@ function shownPd(){
   return out;
 }
 function drawPd(){
-  var tb=$("#pdbody"), P=pars(), list=shownPd();
+  var tb=$("#pdbody"), P=pars(), list=shownPd(), live=state.set==="82";
+  var note=$("#kampNote"), all=$("#kall");
+  note.hidden = all.hidden = !live;
+  if (live){
+    note.textContent = t("kampNote")(KAMP.dm ? fmt(KAMP.total) : "");
+    all.textContent = KAMP.every ? t("kampFold") : t("kampAll");
+    all.setAttribute("aria-pressed", KAMP.every ? "true" : "false");
+  }
   if (!list.length){
     tb.innerHTML='<tr><td colspan="6"><div class="empty"><p>'+t("noPd")+'</p></div></td></tr>';
     return;
   }
   tb.innerHTML=list.map(function(o,i){
-    var r=o.r;
-    return '<tr data-dun="'+esc(r[0])+'"'+(i<14?' class="anim" style="animation-delay:'+(i*22)+'ms"':'')+'>'+
-      '<td><div class="cell c-code">'+hl(o.pd[0])+'</div></td>'+
-      '<td><div class="cell"><div class="c-name">'+hl(o.pd[1])+'</div></div></td>'+
-      '<td class="hide-sm"><div class="cell"><span class="c-code">'+esc(r[0])+'</span> '+
-        hl(r[1])+'</div></td>'+
+    var r=o.r, dm=o.pd[0], open=live && kampOpen(dm), ks=KAMP.dm && KAMP.dm[dm];
+    var n=ks ? ks.filter(function(k){ return !k.inst }).length : 0;
+    var sub=!live ? '' : '<div class="c-sub">'+esc(!KAMP.dm ? "" : ks ? t("kampN")(n) : t("kampNone"))+'</div>';
+    var name=live
+      ? '<button type="button" class="kexp" aria-expanded="'+open+'" aria-controls="k-'+esc(dm)+'">'+
+          icon("chevron",12)+'<span><span class="c-name">'+hl(o.pd[1])+'</span>'+sub+'</span></button>'
+      : '<div class="cell"><div class="c-name">'+hl(o.pd[1])+'</div></div>';
+    return '<tr data-dun="'+esc(r[0])+'" data-dm="'+esc(dm)+'"'+(i<14?' class="anim" style="animation-delay:'+(i*22)+'ms"':'')+'>'+
+      '<td><div class="cell c-code">'+hl(dm)+'</div></td>'+
+      '<td>'+name+'</td>'+
+      '<td class="hide-sm"><div class="cell"><button type="button" class="seatlink"><span class="c-code">'+esc(r[0])+'</span> '+
+        hl(r[1])+'</button></div></td>'+
       '<td class="hide-sm"><div class="cell c-sub" style="margin:0">'+
         hl(P[r[2]][0]+" "+P[r[2]][1])+'</div></td>'+
       '<td><div class="cell c-num">'+fmt(o.pd[2])+'</div></td>'+
-      '<td class="c-go"><div class="cell" style="padding-left:0">'+icon("chevron",13)+'</div></td></tr>';
+      '<td class="c-go"><div class="cell" style="padding-left:0">'+(live ? '' : icon("chevron",13))+'</div></td></tr>'+
+      (open ? '<tr class="krow" id="k-'+esc(dm)+'"><td colspan="6">'+kampBox(dm)+'</td></tr>' : '');
   }).join("");
 }
 $("#pdbody").addEventListener("click", function(e){
+  var pin=e.target.closest("[data-pin]");
+  if (pin){ kampToMap(pin.dataset.pin); return }
+  if (e.target.closest(".krow")) return;
   var tr=e.target.closest("tr[data-dun]");
   if (!tr) return;
-  var hit=seats().filter(function(r){ return r[0]===tr.dataset.dun })[0];
+  // the district opens to its kampung; the seat's own name opens the seat
+  if (state.set==="82" && !e.target.closest(".seatlink")){
+    var dm=tr.dataset.dm, was=kampOpen(dm);
+    KAMP.open[dm]=!was;
+    loadKampung(); drawPd();
+    var b=$("#pdbody").querySelector('tr[data-dm="'+dm+'"] .kexp');
+    if (b && e.detail===0) b.focus();
+    return;
+  }
+  var hit=seatRow(tr.dataset.dun);
   if (hit) openDrawer(hit);
+});
+$("#kall").addEventListener("click", function(){
+  KAMP.every=!KAMP.every; KAMP.open={};
+  loadKampung(); drawPd();
 });
 $("#pdsort").addEventListener("change", function(){ state.pdsort=this.value; drawPd() });
 
@@ -1926,9 +2110,10 @@ function openDrawer(r, from){
           '<span class="bv">'+pc(r[A0+i]/ageTot*100)+'</span></div>';
       }).join("")+'</div></div>'+
 
-    (pd ? '<div class="dsec"><h3>'+t("tabPd")+' · '+pd.length+'</h3>'+
+    (pd ? '<div class="dsec"><h3>'+t("tabPd")+' · '+pd.length+
+        (KAMP.bySeat[r[0]] ? ' · '+esc(t("kampN")(KAMP.bySeat[r[0]])) : '')+'</h3>'+
         '<button type="button" class="godaerah" id="godaerah">'+t("viewPd")+' '+pd.length+
-        ' '+t("pdSuffix")+'</button></div>'
+        ' '+t("pdSuffix")+(KAMP.bySeat[r[0]] ? ' · '+esc(t("kampN")(KAMP.bySeat[r[0]])) : '')+'</button></div>'
       : '');
 
   var st=drawer.querySelector("#dEth");
@@ -2118,10 +2303,17 @@ function buildMap(topo){
     MAP.labs[c]=L.marker([ll[1], ll[0]], {pane:"labels", interactive:false, keyboard:false,
       icon:L.divIcon({className:"seatlab off", iconSize:[0,0], html:'<span>'+esc(c)+'</span>'})}).addTo(map);
   });
+  map.createPane("kamp");
+  map.getPane("kamp").style.zIndex=640;
+  function kz(){
+    el.classList.toggle("kz", map.getZoom()>=11);
+    el.classList.toggle("kzl", map.getZoom()>=13);
+  }
   map.on("zoomend", function(){
-    placeLabels();
+    placeLabels(); kz();
     if (map.getZoom()>=DETAIL_ZOOM) loadDetail();
   });
+  kz(); drawKampPts();
   MAP.all=L.geoJSON(dun).getBounds();
   MAP.loading=false;
   $("#mapmsg").hidden=true;
@@ -2168,12 +2360,54 @@ function drawShapes(topo){
   });
   return dun;
 }
+/* Kampung with a position, as dots from town level and names from street level.
+   A position is OSM's place of that name inside the kampung's seat, so it is
+   approximate: good for finding the kampung, not for drawing its edge. */
+function drawKampPts(){
+  if (!MAP.el || !KAMP.dm || MAP.kamp) return;
+  var L=MAP.L;
+  MAP.kamp={};
+  var g=L.layerGroup();
+  KAMP.all.forEach(function(k){
+    if (!k.ll) return;
+    var id=k.dm+"/"+k.c;
+    var m=L.marker(k.ll, {pane:"kamp", keyboard:false, riseOnHover:true,
+      icon:L.divIcon({className:"kpt", iconSize:[0,0], html:'<i></i><span>'+esc(kname(k.n))+'</span>'})});
+    m.on("mouseover", function(ev){
+      var r=seatRow(k.seat), dmName=((pdsOf()[k.seat]||[]).filter(function(d){ return d[0]===k.dm })[0]||[])[1]||"";
+      tip.innerHTML='<b>'+esc(kname(k.n))+'</b><em>'+esc(t("kampOf")(k.dm)+" "+dmName)+'</em>'+
+        (r ? '<em>'+esc(r[0]+" "+r[1])+'</em>' : '')+
+        (k.nw ? '<em>'+esc(t("kampNewT")(k.nw))+'</em>' : '');
+      tip.classList.add("on"); placeTip(ev.originalEvent);
+    });
+    m.on("mousemove", function(ev){ placeTip(ev.originalEvent) });
+    m.on("mouseout", function(){ tip.classList.remove("on") });
+    m.on("click", function(){
+      tip.classList.remove("on");
+      if (state.dun===k.seat) return;
+      state.dun=k.seat; state.par=null; closeDrawer();
+      drawParlist(); drawDunlist(); render(); syncURL();
+    });
+    MAP.kamp[id]=m; g.addLayer(m);
+  });
+  g.addTo(MAP.el);
+}
+// from a kampung in the list to its point on the map, its seat in scope
+function kampToMap(id){
+  var k=kampById(id);
+  if (!k || !k.ll) return;
+  closeDrawer();
+  if (state.dun!==k.seat){ state.dun=k.seat; state.par=null; drawParlist(); drawDunlist() }
+  KAMP.hot=id; MAP.focus=k;
+  render(); syncURL(); showTab("ringkasan");
+  var top=$(".mapcard"); if (top) top.scrollIntoView({block:"start", behavior:CALM ? "auto" : "smooth"});
+}
 function loadDetail(){
   if (MAP.detail) return;
   MAP.detail=1;
   getJSON("/data/dun82-boundaries-detail.json").then(function(topo){
     drawShapes(topo); MAP.detail=2;
-    var k=MAP.key; MAP.key=null; drawMap(); MAP.key=k;   // restyle, without reframing
+    MAP.keep=true; drawMap(); MAP.keep=false;            // restyle, without reframing
   }, function(){ MAP.detail=3 });                         // keep the overview; it is still right
 }
 function setBasemap(name){
@@ -2275,6 +2509,17 @@ function drawMap(){
   placeLabels();
   // a hidden map has no size to fit to; frame it when it is next on screen
   if ($("#ringkasan").hidden){ MAP.key=null; return }
+  if (MAP.keep){ MAP.key=key; return }
+  if (MAP.focus && MAP.kamp){
+    var f=MAP.focus, hot=MAP.kamp[f.dm+"/"+f.c];
+    MAP.focus=null; MAP.key=key;
+    Object.keys(MAP.kamp).forEach(function(id){
+      var e=MAP.kamp[id].getElement(); if (e) e.classList.toggle("hot", MAP.kamp[id]===hot);
+    });
+    if (hot) hot.setZIndexOffset(1000);
+    if (CALM) MAP.el.setView(f.ll, 15); else MAP.el.flyTo(f.ll, 15, {duration:.7});
+    return;
+  }
   if (key===MAP.key) return;
   MAP.key=key;
   var b;
@@ -2390,6 +2635,17 @@ function buildResults(){
     });
   }
   var duns=S.filter(function(r){ return (r[0]+" "+r[1]).toLowerCase().indexOf(term)>-1; });
+  // kampung whose name starts with the term first, then the shorter names
+  var kamp=[];
+  if (KAMP.dm && state.set==="82"){
+    var q=kampQuery();
+    kamp=KAMP.all.filter(function(k){ return !k.inst && kampMatch(k) }).map(function(k){
+      var a=k.key.indexOf(q.a), b=k.key.indexOf(q.b);
+      return {k:k, s:Math.min(a<0?999:a, b<0?999:b)};
+    }).sort(function(x,y){ return x.s-y.s || x.k.n.length-y.k.n.length }).map(function(x){
+      return {kind:"kamp", k:x.k, r:seatRow(x.k.seat)};
+    }).filter(function(x){ return x.r });
+  }
   var parl=[];
   P.forEach(function(p,i){
     if ((p[0]+" "+p[1]).toLowerCase().indexOf(term)>-1) parl.push({kind:"par", p:p, i:i});
@@ -2404,6 +2660,7 @@ function buildResults(){
   // state seats lead: this is a state election, and a parliament is only the
   // group a seat sits in
   push(duns.map(function(r){ return {kind:"dun", r:r} }), t("tabSeats"), 6);
+  push(kamp, t("kampGroup"), 6);
   push(pds,  t("tabPd"), 6);
   push(parl, t("parliament"), 3);
   return out;
@@ -2426,7 +2683,15 @@ function renderDrop(){
     if (x.more){ html+='<div class="smore">+'+x.more+' '+t("more")+'</div>'; return; }
     var i=dropItems.length;
     dropItems.push(x);
-    if (x.kind==="pd"){
+    if (x.kind==="kamp"){
+      var dmName=((pdsOf()[x.r[0]]||[]).filter(function(d){ return d[0]===x.k.dm })[0]||[])[1]||"";
+      html+='<button class="sitem" type="button" role="option" aria-selected="false" '+
+        'id="sopt'+i+'" data-i="'+i+'"><span class="sitem-in">'+
+        '<span><span class="sname">'+hl(kname(x.k.n))+'</span>'+
+        '<span class="ssub">'+esc(dmName+" · "+x.r[0]+" "+x.r[1])+
+          '<span class="ssub-par"> · '+esc(t("kampOf")(x.k.dm))+'</span></span></span>'+
+        '<span class="smeta">'+(x.k.ll ? '<svg class="ic" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10.5" r="2.5"/></svg>' : '')+'</span></span></button>';
+    } else if (x.kind==="pd"){
       html+='<button class="sitem" type="button" role="option" aria-selected="false" '+
         'id="sopt'+i+'" data-i="'+i+'"><span class="sitem-in">'+
         '<span><span class="sname">'+hl(x.pd[1])+'</span>'+
@@ -2481,6 +2746,17 @@ function choose(i){
   if (!x) return;
   closeDrop(); closeDrawer();
 
+  if (x.kind==="kamp"){
+    // its seat, with the search kept so the district list lands on its district,
+    // opened, with the kampung marked
+    state.dun=x.r[0]; state.par=null;
+    KAMP.hot=x.k.dm+"/"+x.k.c; delete KAMP.open[x.k.dm];
+    drawParlist(); drawDunlist(); render(); syncURL(); qEl.blur();
+    showTab("daerah");
+    var li=$("#pdbody").querySelector('[data-k="'+KAMP.hot+'"]');
+    if (li) li.scrollIntoView({block:"center", behavior:CALM ? "auto" : "smooth"});
+    return;
+  }
   if (x.kind==="par"){
     state.par=x.i; state.dun=null;
   } else {
@@ -2489,6 +2765,7 @@ function choose(i){
   }
   // a district keeps the query, so the table lands on the one that was searched
   if (x.kind!=="pd"){ qEl.value=""; state.q=""; state.qRaw="" }
+  KAMP.hot=null;
 
   drawParlist(); drawDunlist(); render(); syncURL(); qEl.blur();
   showTab(x.kind==="pd" ? "daerah" : "ringkasan");
@@ -2671,7 +2948,7 @@ qEl.addEventListener("input", function(){
   state.qRaw=this.value.trim(); state.q=state.qRaw.toLowerCase();
   render(); renderDrop();
 });
-qEl.addEventListener("focus", renderDrop);
+qEl.addEventListener("focus", function(){ loadKampung(); renderDrop() });
 qEl.addEventListener("keydown", function(e){
   if (e.key==="ArrowDown"){ e.preventDefault(); if (drop.hidden) renderDrop(); else moveActive(1) }
   else if (e.key==="ArrowUp"){ e.preventDefault(); moveActive(-1) }
@@ -2729,6 +3006,7 @@ function showTab(name, focusTab){
   });
   state.tab=name;
   if (name==="ringkasan") ensureMap();
+  if (name==="daerah") loadKampung();
   if (history.replaceState && lastURL!==null){
     lastURL=urlFor();
     history.replaceState(null,"",lastURL);
@@ -2752,5 +3030,7 @@ tabBtns.forEach(function(b){
 });
 applyLang(LANG, false);
 applyURL();
+// the kampung list is not needed to draw the page; fetch it once the page is idle
+(window.requestIdleCallback || function(f){ setTimeout(f, 1200) })(function(){ loadKampung() });
 })();
 </script>

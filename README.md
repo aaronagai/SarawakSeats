@@ -1,8 +1,8 @@
 # SarawakSeats
 
 Sarawak's **82 state seats** (DUN) for the coming state election: a map of every
-seat's borders, the electors and demographic profile of every seat, and all 887
-polling districts.
+seat's borders, the electors and demographic profile of every seat, all 887
+polling districts, and the 6,875 kampung (SPR lokaliti) inside them.
 
 ## The 99-seat proposal is shelved
 
@@ -28,6 +28,10 @@ describe that data.
   82 seats, filterable by parliamentary constituency.
 - **Polling districts.** All 887 daerah mengundi, with DM codes and elector
   counts, searchable and filterable.
+- **Kampung.** Each polling district opens to its kampung, rumah panjang, taman
+  and jalan, as SPR lists them. Search finds a kampung by name ("kampung
+  sebandi" finds SPR's "KG SEBANDI HILIR"), and about one in eight has a point
+  on the map.
 
 ## Addresses
 
@@ -61,6 +65,38 @@ side of a river or road a seat runs, not for settling which side of it a single
 house falls. The basemaps are Esri's World Gray Canvas, World Street Map and
 World Imagery (© Esri, HERE, Garmin, Maxar, Earthstar Geographics,
 © OpenStreetMap contributors).
+
+## Kampung
+
+Below the polling district, SPR registers every voter to a **lokaliti**: the
+kampung, rumah panjang, taman or jalan printed on a MySPR Semak slip. SPR does
+not publish the lokaliti on their own. However, each monthly *Daftar Pemilih
+Tambahan* (supplementary roll, sprinfo.spr.gov.my) opens every polling district
+that gained a voter with its full *Senarai Lokaliti*. That list numbers every
+lokaliti in the district, including those with no new voter that month.
+`scripts/build_kampung.py` reads those lists from the August 2026 roll
+(gazetted 25 Sep 2026) and the September 2026 roll (gazetted 22 Oct 2026) into
+`data/kampung.json`.
+
+- **Coverage:** 6,875 lokaliti in 863 of the 887 polling districts, plus 123
+  police and army lokaliti (codes 301 and up). The other 24 districts (6,678
+  electors) gained no voter in either month, so their lists aren't out yet. To
+  add them as SPR publishes them, add the next month to `MONTHS` and re-run.
+- **Checks:** in every list the numbers run without a break, and the new voters
+  sum to SPR's own total for the district. Both months list the same lokaliti.
+  The few numbering gaps appear identically in both months: they are codes SPR
+  has retired.
+- **What's counted:** SPR publishes no electors per lokaliti. The one figure
+  shown is the new voters each lokaliti gained over the months read.
+- **Privacy:** only the Senarai Lokaliti pages are read. The pages that list
+  new voters by name are skipped, and nothing about any person is kept. The
+  PDFs are cached in `.cache/`, which isn't committed.
+- **Map points:** a lokaliti gets a point only when its name exactly matches a
+  named place or road in OpenStreetMap inside its own seat, after expanding
+  SPR's abbreviations (KG, SG, RH, JLN...). 909 qualify. Most of the rest are
+  rumah panjang known by their Tuai Rumah's name, which OSM doesn't carry. The
+  points are approximate, and the positions are derived from
+  © OpenStreetMap contributors (ODbL).
 
 ## Status of the proposal data
 

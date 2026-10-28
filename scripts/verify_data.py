@@ -4,7 +4,8 @@
 Always: every seat's sexes and age bands sum to its electors, its polling
 districts sum to its electors and match its district count, every DM code
 sits under its own seat and parliament, parliament and state totals add up,
-and the seat map carries the same 82 seats.
+the seat map carries the same 82 seats, and every kampung list belongs to
+one of the 887 polling districts.
 
 When SPR's exhibition files are present (SPR Sarawak 2026/, not committed):
 every one of the 887 polling districts against SPR's Master Indeks (code, name,
@@ -48,6 +49,21 @@ if os.path.exists(geo):
     got = {g["properties"]["code_dun"]: g["properties"]["code_parlimen"] for g in t["objects"]["dun"]["geometries"]}
     if got != {r[0]: par[r[2]][0] for r in seats}: fail.append("map: boundary seats differ from the seat table")
 
+kamp = os.path.join(ROOT, "data", "kampung.json")
+kline = "kampung: data/kampung.json missing"
+if os.path.exists(kamp):
+    K = json.load(open(kamp, encoding="utf-8"))["dm"]
+    site_dm = {x[0]: c for c, l in pd.items() for x in l}
+    for dm, rows in K.items():
+        if dm not in site_dm: fail.append("kampung: %s is not one of the polling districts" % dm); continue
+        codes = [r[0] for r in rows]
+        if len(set(codes)) != len(codes): fail.append("kampung: %s repeats a lokaliti code" % dm)
+        if any(not r[1].strip() for r in rows): fail.append("kampung: %s has a lokaliti with no name" % dm)
+        if any(len(r) not in (3, 5) for r in rows): fail.append("kampung: %s has a malformed row" % dm)
+    n = sum(1 for rows in K.values() for r in rows if r[0] < 300)
+    kline = "kampung: %d lokaliti in %d of %d polling districts, %d on the map" % (
+        n, len(K), len(site_dm), sum(1 for rows in K.values() for r in rows if len(r) == 5))
+
 checked_spr = False
 mi_path = os.path.join(SPR, "Master Indeks KSP Sarawak.pdf")
 if os.path.exists(mi_path):
@@ -90,6 +106,7 @@ if os.path.exists(mi_path):
     checked_spr = True
 
 print("82 seats, %d polling districts, %s electors" % (sum(len(l) for l in pd.values()), "{:,}".format(total)))
+print(kline)
 print("SPR Master Indeks and Notis:", "checked" if checked_spr else "skipped (SPR Sarawak 2026/ not present)")
 print("ethnicity (estimate, 2022-roll shares): %d seats off by rounding, largest gap %d, net %d" %
       (sum(1 for d in eth if d), max(map(abs, eth)), sum(eth)))
