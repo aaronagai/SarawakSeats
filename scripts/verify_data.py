@@ -24,6 +24,10 @@ SPR = os.path.join(ROOT, "SPR Sarawak 2026", "2 - State Documents (4)")
 page = open(os.path.join(ROOT, "index.html"), encoding="utf-8").read()
 D = json.loads(re.search(r'<script>const D=(\{.*?\});?</script>', page, re.S).group(1))
 seats, pd, par = D["d82"], D["pd82"], D["par82"]
+# Seats carried on a newer SPR roll (scripts/apply_roll.py) are checked for their
+# own sums like every seat, but not against the January 2026 Master Indeks or
+# Notis: those compare their January figures (kept in D.roll[seat].was).
+ROLL = D.get("roll", {})
 fail = []
 def norm(n): return re.sub(r"[^A-Z0-9]", "", n.upper())
 
@@ -84,6 +88,8 @@ if os.path.exists(mi_path):
             if l == "JUMLAH PEMILIH" and kod and i + 1 < len(L) and re.match(r"^[\d,]+$", L[i + 1]):
                 tot[kod] = int(L[i + 1].replace(",", ""))
     site = {x[0]: (x[1], x[2]) for l in pd.values() for x in l}
+    for rc, rinfo in ROLL.items():
+        site.update({x[0]: (x[1], x[2]) for x in rinfo["was"]["pd"]})
     for k in sorted(set(site) | set(MI)):
         if k not in MI: fail.append("DM %s %s: not in SPR's Master Indeks" % (k, site[k][0])); continue
         if k not in site: fail.append("DM %s %s: in SPR's Master Indeks, missing here" % (k, MI[k][0])); continue
@@ -96,17 +102,22 @@ if os.path.exists(mi_path):
         if norm(sn) != norm(r[1]): fail.append("%s: named %s here, %s in SPR" % (c, r[1], sn))
         if pc != par[r[2]][0] or norm(pn) != norm(par[r[2]][1]):
             fail.append("%s: in %s %s here, %s %s in SPR" % (c, par[r[2]][0], par[r[2]][1], pc, pn))
-        if tot.get(c) != r[4]: fail.append("%s: %d electors here, %s in SPR" % (c, r[4], tot.get(c)))
+        jan = ROLL[c]["was"]["row"][4] if c in ROLL else r[4]
+        if tot.get(c) != jan: fail.append("%s: %d electors here, %s in SPR" % (c, jan, tot.get(c)))
     notis = os.path.join(SPR, "Notis Syor Untuk Pameran Kali Pertama.pdf")
     if os.path.exists(notis):
         txt = " ".join(p.get_text() for p in fitz.open(notis))
         m = re.search(r"pemilih seramai ([\d,]+) orang", txt)
-        if not m or int(m.group(1).replace(",", "")) != total:
-            fail.append("state total %d here, %s in SPR's Notis" % (total, m and m.group(1)))
+        jan_total = total - sum(r[4] - ROLL[r[0]]["was"]["row"][4] for r in seats if r[0] in ROLL)
+        if not m or int(m.group(1).replace(",", "")) != jan_total:
+            fail.append("state total %d here (January basis), %s in SPR's Notis" % (jan_total, m and m.group(1)))
     checked_spr = True
 
 print("82 seats, %d polling districts, %s electors" % (sum(len(l) for l in pd.values()), "{:,}".format(total)))
 print(kline)
+for rc, rinfo in ROLL.items():
+    r = next(x for x in seats if x[0] == rc)
+    print("%s on %s: %d electors (January 2026: %d)" % (rc, rinfo["roll"], r[4], rinfo["was"]["row"][4]))
 print("SPR Master Indeks and Notis:", "checked" if checked_spr else "skipped (SPR Sarawak 2026/ not present)")
 print("ethnicity (estimate, 2022-roll shares): %d seats off by rounding, largest gap %d, net %d" %
       (sum(1 for d in eth if d), max(map(abs, eth)), sum(eth)))

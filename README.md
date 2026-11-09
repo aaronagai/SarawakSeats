@@ -98,6 +98,34 @@ lokaliti in the district, including those with no new voter that month.
   points are approximate, and the positions are derived from
   © OpenStreetMap contributors (ODbL).
 
+## Seats on SPR's full roll
+
+For **N.16 Muara Tuang** the site carries SPR's full electoral roll (*Daftar
+Pemilih Muara Tuang*, April 2026) in place of the January totals and
+ElectionData's estimates. Its sidebar entry has a green **Baru** flag and its
+charts are labelled with the roll they come from.
+
+- **What changes:** electors (34,482 against 34,276 in January), sex and the
+  five age bands are counted from the roll, as are the electors of each polling
+  district and the parliament and state totals. Race is counted too, except
+  that SPR gives Melayu and Melanau as one group; it is divided between the two
+  in the proportion of the seat's previous estimate, and the chart says so.
+- **Kampung:** each lokaliti shows its electors, and where it has 10 or more,
+  its sex and age split (18-28, 29-45, 46-60, 61+), as a table with the
+  district's total below. A district that holds a lokaliti under 10 shows its
+  total without the split (on the page and in the data file), so the small
+  lokaliti can't be worked out by subtraction. Four police and army
+  lokaliti that the supplementary lists have not named yet are added from the
+  roll. Age is exact on 9 Nov 2026, from the date of birth in the IC number.
+- **Privacy:** the roll holds names and IC numbers, so it is never committed.
+  `scripts/build_roll.py` reads it from outside the repository and writes only
+  counts to `data/roll-2026.json`; `scripts/apply_roll.py` writes the seat into
+  `index.html` (and `--undo` puts the January figures back).
+- **Checks:** `scripts/verify_data.py` checks N.16's new figures for their own
+  sums like every seat, and checks its January figures (kept in `D.roll`)
+  against SPR's Master Indeks and Notis as before.
+- **N.04 Pantai Damai** is held back: its roll is missing the Rampangi district.
+
 ## Status of the proposal data
 
 These are **syor yang dicadangkan** — proposed recommendations, not gazetted
