@@ -574,6 +574,7 @@ mark{background:var(--mark-bg); color:var(--ink); border-radius:2px; padding:0 1
 /* segmented controls: the same pill as the language switch */
 .segs{display:flex; gap:8px; flex-wrap:wrap}
 .seg{display:flex; gap:2px; padding:2px; border-radius:999px; background:var(--ground); border:1px solid var(--rule)}
+.seg button:disabled{opacity:.4; cursor:not-allowed}
 .seg button{padding:4px 11px; border-radius:999px; font-size:12.5px; color:var(--faint);
   transition:color var(--dur-1) linear, background-color var(--dur-1) linear}
 .seg button:hover{color:var(--ink)}
@@ -845,11 +846,11 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
 
       <nav class="tabs" id="tabs" role="tablist" aria-label="Bahagian">
         <button type="button" role="tab" id="tab-ringkasan" data-panel="ringkasan" aria-controls="ringkasan" aria-selected="true" class="on"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5V12h8.5"/></svg><span data-i18n="tabSummary">Ringkasan</span></button>
+        <button type="button" role="tab" id="tab-demo" data-panel="demo" aria-controls="demo" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.25" cy="8.25" r="3.75"/><path d="M2.75 19.75c0-3.4 2.9-6.15 6.5-6.15s6.5 2.75 6.5 6.15"/><path d="M16.25 5.1a3.75 3.75 0 0 1 0 6.9"/><path d="M18.4 14.2c1.9.75 3.1 2.4 3.1 4.3"/></svg><span data-i18n="tabDemo">Demografi</span></button>
+        <button type="button" role="tab" id="tab-daerah" data-panel="daerah" aria-controls="daerah" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10.5" r="2.5"/></svg><span data-i18n="tabPd">Daerah mengundi</span></button>
         <button type="button" role="tab" id="tab-kerusi" data-panel="kerusi" aria-controls="kerusi" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6.75h11.5M9 12h11.5M9 17.25h11.5"/><path d="M4 6.75h.01M4 12h.01M4 17.25h.01"/></svg><span data-i18n="tabSeats">Kerusi DUN</span></button>
         <button type="button" role="tab" id="tab-demografi" data-panel="demografi" aria-controls="demografi" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v16M7 20h10M4.5 7.5h15"/><path d="m4.5 7.5-2.5 6h5zM19.5 7.5l-2.5 6h5z"/></svg><span data-i18n="tabDeviation">Demografi</span></button>
-        <button type="button" role="tab" id="tab-demo" data-panel="demo" aria-controls="demo" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="9.25" cy="8.25" r="3.75"/><path d="M2.75 19.75c0-3.4 2.9-6.15 6.5-6.15s6.5 2.75 6.5 6.15"/><path d="M16.25 5.1a3.75 3.75 0 0 1 0 6.9"/><path d="M18.4 14.2c1.9.75 3.1 2.4 3.1 4.3"/></svg><span data-i18n="tabDemo">Demografi</span></button>
         <button type="button" role="tab" id="tab-change" data-panel="change" aria-controls="change" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 8.5h13M13 5l3.5 3.5L13 12"/><path d="M20.5 15.5h-13M11 12l-3.5 3.5L11 19"/></svg><span data-i18n="tabChange">Perubahan</span></button>
-        <button type="button" role="tab" id="tab-daerah" data-panel="daerah" aria-controls="daerah" aria-selected="false"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10.5" r="2.5"/></svg><span data-i18n="tabPd">Daerah mengundi</span></button>
       </nav>
 
       <section class="sect" id="ringkasan" role="tabpanel" aria-labelledby="tab-ringkasan">
@@ -962,12 +963,17 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
       <section class="sect" id="demo" role="tabpanel" aria-labelledby="tab-demo" hidden>
         <div class="secthead">
           <div><h2 data-i18n="tabDemo">Demografi</h2>
-            <p class="note" style="margin-top:4px; max-width:62ch" data-i18n="estNote">Anggaran ElectionData.MY: etnik daripada daftar pemilih 2022, umur dan jantina daripada daftar 2025, digunakan pada bilangan pengundi daftar Januari 2026. Jumlah etnik boleh berbeza beberapa orang kerana pembundaran.</p></div>
+            <p class="note" id="demoNote" style="margin-top:4px; max-width:62ch" data-i18n="estNote">Anggaran ElectionData.MY: etnik daripada daftar pemilih 2022, umur dan jantina daripada daftar 2025, digunakan pada bilangan pengundi daftar Januari 2026. Jumlah etnik boleh berbeza beberapa orang kerana pembundaran.</p></div>
           <div class="segs">
             <div class="seg" id="demoDim" role="group">
               <button type="button" data-dim="eth" class="on" data-i18n="byEthnic">Etnik</button>
               <button type="button" data-dim="age" data-i18n="byAge">Umur</button>
               <button type="button" data-dim="sex" data-i18n="bySex">Jantina</button>
+            </div>
+            <div class="seg" id="demoLevel" role="group">
+              <button type="button" data-level="seat" class="on" data-i18n="lvlSeat">Kerusi</button>
+              <button type="button" data-level="dm" data-i18n="lvlDm">DM</button>
+              <button type="button" data-level="lok" data-i18n="lvlLok">Lokaliti</button>
             </div>
             <div class="seg" id="demoMode" role="group">
               <button type="button" data-mode="pct" class="on" data-i18n="percent">Peratus</button>
@@ -1074,13 +1080,12 @@ var I18N={
     subState:"Kerusi Dewan Undangan Negeri bagi Pilihan Raya Negeri Sarawak",
     subSeat:function(n){ return "Kerusi DUN · "+n+" daerah mengundi" },
     subPar:function(n){ return n+" kerusi DUN dalam kawasan parlimen ini" },
-    leadState:function(v,n,hi,hv,lo,lv,r){ return "<strong>"+v+" pengundi</strong> memilih <strong>"+n+" ADUN</strong>. "+
-      "Kerusi terbesar, "+hi+", mempunyai "+hv+" pengundi, <strong>"+r+" kali</strong> kerusi terkecil, "+lo+" ("+lv+")." },
-    leadSeat:function(name,v,d,more,avg,eth,ep,par){ return name+" mempunyai <strong>"+v+" pengundi</strong>, <strong>"+d+
-      (more ? " lebih" : " kurang")+"</strong> daripada purata negeri ("+avg+"). Kumpulan etnik terbesar ialah <strong>"+eth+
-      " ("+ep+")</strong>, dan kerusi ini terletak dalam "+par+"." },
-    leadPar:function(name,n,v,hi,hv,lo,lv,r){ return name+" merangkumi <strong>"+n+" DUN</strong> dengan <strong>"+v+
-      " pengundi</strong>."+(hi ? " Kerusi terbesarnya, "+hi+" ("+hv+"), mempunyai "+r+" kali pengundi "+lo+" ("+lv+")." : "") },
+    leadState:function(v,n,yp,eth,ep){ return "<strong>"+v+" pengundi</strong> memilih <strong>"+n+" ADUN</strong>. "+
+      "<strong>"+yp+"</strong> berumur 18–30, dan kumpulan etnik terbesar ialah <strong>"+eth+" ("+ep+")</strong>." },
+    leadSeat:function(name,v,pd,eth,ep,yp,par){ return name+" mempunyai <strong>"+v+" pengundi</strong> dalam "+pd+" daerah mengundi. "+
+      "Kumpulan etnik terbesar ialah <strong>"+eth+" ("+ep+")</strong>, dan <strong>"+yp+"</strong> berumur 18–30. Kerusi ini terletak dalam "+par+"." },
+    leadPar:function(name,n,v,yp,eth,ep){ return name+" merangkumi <strong>"+n+" DUN</strong> dengan <strong>"+v+" pengundi</strong>. "+
+      "<strong>"+yp+"</strong> berumur 18–30, dan kumpulan etnik terbesar ialah <strong>"+eth+" ("+ep+")</strong>." },
     leadSearch:function(n,q,v){ return "<strong>"+n+" DUN</strong> sepadan dengan “"+q+"”, dengan <strong>"+v+" pengundi</strong>." },
     rollSub:"Daftar pemilih 29 Jan 2026", ofState:"daripada jumlah negeri",
     avgPer:function(a){ return "Purata "+a+" setiap kerusi" }, gapSub:"Kerusi terbesar berbanding terkecil",
@@ -1111,6 +1116,10 @@ var I18N={
     ofTotal:"daripada", stateAvg:"Purata negeri", shownAvg:"Purata dipaparkan",
     largest:"Kerusi terbesar", smallest:"Kerusi terkecil", male:"Lelaki", female:"Perempuan",
     devFromAvg:"Sisihan purata", highlights:"Sorotan",
+    lvlSeat:"Kerusi", lvlDm:"DM", lvlLok:"Lokaliti",
+    lvlNone:"Pecahan mengikut DM dan lokaliti hanya ada bagi kerusi yang daftar pemilih penuh SPR dipegang (kini N.16 Muara Tuang).",
+    rollDemoNote:"Dikira daripada daftar pemilih penuh SPR, April 2026. Etnik seperti dalam daftar (Melayu/Melanau satu kumpulan); umur tepat pada 9 Nov 2026. Lokaliti dengan kurang 10 pemilih, dan DM yang mengandunginya, hanya menunjukkan jumlah.",
+    youth:"Pemilih muda (18–30)", youthN:function(n){ return n+" pengundi" },
     byEthnic:"Etnik", byAge:"Umur", bySex:"Jantina",
     percent:"Peratus", counts:"Bilangan", total:"Jumlah", seatCol:"Kerusi",
     pdLargest:"Daerah terbesar", pdSmallest:"Daerah terkecil",
@@ -1168,13 +1177,12 @@ var I18N={
     subState:"State assembly seats for the Sarawak state election",
     subSeat:function(n){ return "State seat · "+n+" polling districts" },
     subPar:function(n){ return n+" state seats in this parliamentary constituency" },
-    leadState:function(v,n,hi,hv,lo,lv,r){ return "<strong>"+v+" electors</strong> choose <strong>"+n+" assembly members</strong>. "+
-      "The largest seat, "+hi+", has "+hv+" electors, <strong>"+r+" times</strong> the smallest, "+lo+" ("+lv+")." },
-    leadSeat:function(name,v,d,more,avg,eth,ep,par){ return name+" has <strong>"+v+" electors</strong>, <strong>"+d+
-      (more ? " more" : " fewer")+"</strong> than the state average ("+avg+"). Its largest ethnic group is <strong>"+eth+
-      " ("+ep+")</strong>, and it sits in "+par+"." },
-    leadPar:function(name,n,v,hi,hv,lo,lv,r){ return name+" covers <strong>"+n+" state seats</strong> with <strong>"+v+
-      " electors</strong>."+(hi ? " Its largest, "+hi+" ("+hv+"), has "+r+" times the electors of "+lo+" ("+lv+")." : "") },
+    leadState:function(v,n,yp,eth,ep){ return "<strong>"+v+" electors</strong> choose <strong>"+n+" assembly members</strong>. "+
+      "<strong>"+yp+"</strong> are aged 18–30, and the largest ethnic group is <strong>"+eth+" ("+ep+")</strong>." },
+    leadSeat:function(name,v,pd,eth,ep,yp,par){ return name+" has <strong>"+v+" electors</strong> in "+pd+" polling districts. "+
+      "The largest ethnic group is <strong>"+eth+" ("+ep+")</strong>, and <strong>"+yp+"</strong> are aged 18–30. The seat is in "+par+"." },
+    leadPar:function(name,n,v,yp,eth,ep){ return name+" covers <strong>"+n+" state seats</strong> with <strong>"+v+" electors</strong>. "+
+      "<strong>"+yp+"</strong> are aged 18–30, and the largest ethnic group is <strong>"+eth+" ("+ep+")</strong>." },
     leadSearch:function(n,q,v){ return "<strong>"+n+" state seats</strong> match “"+q+"”, with <strong>"+v+" electors</strong>." },
     rollSub:"Electoral roll of 29 Jan 2026", ofState:"of the state total",
     avgPer:function(a){ return "Average "+a+" per seat" }, gapSub:"Largest seat against smallest",
@@ -1205,6 +1213,10 @@ var I18N={
     ofTotal:"of", stateAvg:"State average", shownAvg:"Average shown",
     largest:"Largest seat", smallest:"Smallest seat", male:"Male", female:"Female",
     devFromAvg:"Deviation", highlights:"Highlights",
+    lvlSeat:"Seat", lvlDm:"DM", lvlLok:"Lokaliti",
+    lvlNone:"A breakdown by polling district and lokaliti is available only for seats where SPR's full roll is held (now N.16 Muara Tuang).",
+    rollDemoNote:"Counted from SPR's full electoral roll, April 2026. Ethnicity as the roll gives it (Melayu/Melanau one group); age exact on 9 Nov 2026. A lokaliti under 10 electors, and any district holding one, shows its total only.",
+    youth:"Young voters (18–30)", youthN:function(n){ return n+" electors" },
     byEthnic:"Ethnicity", byAge:"Age", bySex:"Sex",
     percent:"Percent", counts:"Count", total:"Total", seatCol:"Seat",
     pdLargest:"Largest district", pdSmallest:"Smallest district",
@@ -1276,7 +1288,7 @@ function relabelEth(){ ETH.forEach(function(e,i){ e.n=t("eth")[i] }) }
 var TOTAL=2037854;
 
 var state={set:PROPOSAL ? "99" : "82", q:"", qRaw:"", par:null, dun:null, sort:"code", pdsort:"code",
-           sel:null, tab:"ringkasan", demoDim:"eth", demoMode:"pct"};
+           sel:null, tab:"ringkasan", demoDim:"eth", demoMode:"pct", demoLevel:"seat"};
 
 function seats(){ return state.set==="99" ? D.d99 : D.d82 }
 function isNew(code){ return state.set==="99" && !!(D.chg.p[code] && D.chg.p[code]['new']) }
@@ -1385,6 +1397,17 @@ function bindTip(el, swatch, label, value){
 var lastBig=[];
 /* The headline figures, as one bordered row: label, figure, and a line that
    says what the figure is measured against. */
+/* The voter profile the page leads with: the share aged 18-30 (the site's first
+   two age bands) and the largest ethnic group. */
+function youthOf(a){
+  var tot=a.age.reduce(function(x,y){ return x+y },0)||1, n=a.age[0]+a.age[1];
+  return {n:n, p:n/tot*100};
+}
+function topEthOf(a){
+  var et=a.eth, tot=et.reduce(function(x,y){ return x+y },0)||1, top=0;
+  for (var i=1;i<et.length;i++) if (et[i]>et[top]) top=i;
+  return {n:ETH[top].n, p:et[top]/tot*100};
+}
 function drawBig(a, rows){
   var sp=spread(rows), total=seats().length, filtered=a.n!==total;
   var single=rows.length===1, avg=AVG();
@@ -1392,15 +1415,9 @@ function drawBig(a, rows){
   // "1 of 82" says nothing once the scope is one seat
   if (!single) items.push([t("seats"), String(a.n), filtered ? t("ofTotal")+" "+total : t("avgPer")(fmt(Math.round(avg)))]);
   items.push([t("pdCount"), fmt(a.pd), a.pd ? t("pdAvg")(fmt(Math.round(a.v/a.pd))) : ""]);
-  if (single){
-    var d1=(rows[0][V]-avg)/avg, et=a.eth, tot=et.reduce(function(x,y){ return x+y },0)||1, top=0;
-    for (var i=1;i<et.length;i++) if (et[i]>et[top]) top=i;
-    items.push([t("devFromAvg"), '<span class="'+(d1>=0?"up":"down")+'">'+(d1>=0?"+":"\u2212")+
-      Math.abs(d1*100).toFixed(1)+'%</span>', t("vsAvg")(fmt(Math.round(avg)))]);
-    items.push([t("topEthnic"), pc(et[top]/tot*100), ETH[top].n]);
-  } else if (sp){
-    items.push([t("gap"), sp.r.toFixed(2)+':1', t("gapSub")]);
-  }
+  var y=youthOf(a);
+  items.push([t("youth"), pc(y.p), t("youthN")(fmt(y.n))+" · "+estLabel("age", single ? rows[0][0] : null)]);
+  if (single){ var te=topEthOf(a); items.push([t("topEthnic"), pc(te.p), te.n]) }
   var host=$("#bignums");
   var next=items.map(function(x){ return x[1] });
   var changed=next.some(function(v,i){ return v!==lastBig[i] });
@@ -1423,18 +1440,15 @@ function drawLead(a, rows){
   var P=pars(), avg=AVG(), eye, sub="", lead="", sp=spread(rows);
   function nm(r){ return r[0]+" "+r[1] }
   if (state.dun && rows.length===1){
-    var r=rows[0], d=(r[V]-avg)/avg, et=a.eth, tot=et.reduce(function(x,y){ return x+y },0)||1, top=0;
-    for (var i=1;i<et.length;i++) if (et[i]>et[top]) top=i;
+    var r=rows[0], te=topEthOf(a), y=youthOf(a);
     eye=P[r[2]][0]+" "+P[r[2]][1];
     sub=t("subSeat")(r[3]);
-    lead=t("leadSeat")(esc(nm(r)), fmt(r[V]), Math.abs(d*100).toFixed(1)+"%", d>=0, fmt(Math.round(avg)),
-      esc(ETH[top].n), pc(et[top]/tot*100), esc(P[r[2]][0]+" "+P[r[2]][1]));
+    lead=t("leadSeat")(esc(nm(r)), fmt(r[V]), r[3], esc(te.n), pc(te.p), pc(y.p), esc(P[r[2]][0]+" "+P[r[2]][1]));
   } else if (state.par!==null){
     eye=t("eyePar");
     sub=t("subPar")(rows.length);
-    lead=t("leadPar")(esc(P[state.par][0]+" "+P[state.par][1]), rows.length, fmt(a.v),
-      sp ? esc(nm(sp.hi)) : "", sp ? fmt(sp.hi[V]) : "", sp ? esc(nm(sp.lo)) : "", sp ? fmt(sp.lo[V]) : "",
-      sp ? sp.r.toFixed(1) : "");
+    var tp=topEthOf(a);
+    lead=t("leadPar")(esc(P[state.par][0]+" "+P[state.par][1]), rows.length, fmt(a.v), pc(youthOf(a).p), esc(tp.n), pc(tp.p));
   } else if (state.qRaw){
     eye=t("eyeSearch");
     lead=rows.length ? t("leadSearch")(rows.length, esc(state.qRaw), fmt(a.v))
@@ -1442,8 +1456,8 @@ function drawLead(a, rows){
   } else {
     eye=t("eyeState");
     sub=t("subState");
-    lead=sp ? t("leadState")(fmt(a.v), rows.length, esc(nm(sp.hi)), fmt(sp.hi[V]), esc(nm(sp.lo)),
-      fmt(sp.lo[V]), sp.r.toFixed(1)) : "";
+    var ts=topEthOf(a);
+    lead=t("leadState")(fmt(a.v), rows.length, pc(youthOf(a).p), esc(ts.n), pc(ts.p));
   }
   $("#peyebrow").textContent=eye;
   $("#psub").textContent=sub; $("#psub").hidden=!sub;
@@ -1459,10 +1473,6 @@ function drawFacts(a, rows){
   // for one seat the "average shown" is just the seat itself
   if (a.n !== seats().length && a.n > 1){
     rowsHtml.push([t("shownAvg"), fmt(Math.round(a.v/a.n))]);
-  }
-  if (rows.length===1){
-    var d=(rows[0][V]-avg)/avg;
-    rowsHtml.push([t("devFromAvg"), (d>=0?"+":"−")+Math.abs(d*100).toFixed(1)+"%"]);
   }
   function named(name, value){
     return '<span class="fname">'+esc(name)+'</span>'+
@@ -1690,7 +1700,66 @@ function demoCols(){
     return {label:t("ethFull")[i], get:function(r){ return r[E0+i] }};
   });
 }
+function demoLevelOk(){ return !!(state.dun && shown().length===1 && rollOf(state.dun)) }
+function syncDemoLevel(){
+  var ok=demoLevelOk(), box=$("#demoLevel");
+  if (!ok) state.demoLevel="seat";
+  [].forEach.call(box.querySelectorAll("button"), function(b){
+    var lock=b.dataset.level!=="seat" && !ok;
+    b.disabled=lock; b.title=lock ? t("lvlNone") : "";
+    b.classList.toggle("on", b.dataset.level===state.demoLevel);
+  });
+  var rollView=ok && state.demoLevel!=="seat";
+  $("#demoNote").textContent = rollView ? t("rollDemoNote") : t("estNote");
+  return rollView;
+}
+/* One seat on SPR's full roll can be broken down by its polling districts or
+   its kampung, with the roll's own groups: ethnicity as SPR gives it, and the
+   age groups 18-28, 29-45, 46-60, 61+. */
+function drawDemoRoll(){
+  var tbl=$("#demoTable"), code=state.dun, pct=state.demoMode==="pct", dim=state.demoDim;
+  if (!ROLLK.ready){ loadRoll(); tbl.innerHTML='<tbody><tr><td><div class="empty"><p>'+esc(t("mapLoading"))+'</p></div></td></tr></tbody>'; return }
+  var labels = dim==="age" ? ROLLK.age : dim==="sex" ? [t("male"), t("female")] : ROLLK.kaum;
+  function vals(c){
+    if (!c || c.L==null) return null;
+    return dim==="age" ? c.age : dim==="sex" ? [c.L, c.P] : c.kaum;
+  }
+  function cells(c){
+    var v=vals(c);
+    if (!v) return labels.map(function(){ return '<td class="num"><div class="cell c-sub" title="'+esc(t("kampFew"))+'">–</div></td>' }).join("");
+    var base=v.reduce(function(a,x){ return a+x },0), top=0;
+    for (var i=1;i<v.length;i++) if (v[i]>v[top]) top=i;
+    return v.map(function(x,i){
+      return '<td class="num"><div class="cell'+(i===top?" peak":"")+'">'+(pct ? (base ? (x/base*100).toFixed(1)+"%" : "—") : fmt(x))+'</div></td>';
+    }).join("");
+  }
+  var rows=[], names={};
+  (D.pd82[code]||[]).forEach(function(x){ names[x[0]]=x[1] });
+  Object.keys(names).sort().forEach(function(dm){
+    if (state.demoLevel==="dm") rows.push({k:dm, n:names[dm], sub:"", c:ROLLK.tot[dm]});
+    else {
+      var l=ROLLK.dm[dm]||{};
+      Object.keys(l).sort(function(a,b){ return a-b }).forEach(function(c){
+        rows.push({k:String(c).padStart(3,"0"), n:kname(l[c].name), sub:dm+" "+names[dm], c:l[c]});
+      });
+    }
+  });
+  var first = state.demoLevel==="dm" ? t("dmCode") : t("lvlLok");
+  var head='<thead><tr><th style="width:84px">'+esc(first)+'</th><th>'+esc(t("name"))+'</th>'+
+    labels.map(function(l){ return '<th class="r num">'+esc(l)+'</th>' }).join("")+
+    '<th class="r num">'+esc(t("voters"))+'</th></tr></thead>';
+  var body=rows.map(function(o){
+    return '<tr><td><div class="cell c-code">'+esc(o.k)+'</div></td>'+
+      '<td><div class="cell"><div class="c-name">'+esc(o.n)+'</div>'+(o.sub ? '<div class="c-sub">'+esc(o.sub)+'</div>' : '')+'</div></td>'+
+      cells(o.c)+'<td class="num"><div class="cell c-num">'+fmt(o.c ? o.c.n : 0)+'</div></td></tr>';
+  }).join("");
+  var st=ROLLK.seat[code];
+  var foot='<tfoot><tr><td></td><td><div class="cell">'+esc(t("total"))+'</div></td>'+cells(st)+
+    '<td class="num"><div class="cell">'+fmt(st.n)+'</div></td></tr></tfoot>';
+  tbl.innerHTML=head+'<tbody>'+body+'</tbody>'+foot;
+}
 function drawDemo(){
+  if (syncDemoLevel()) return drawDemoRoll();
   var tbl=$("#demoTable"), rows=shown(), P=pars(), cols=demoCols();
   var pct=state.demoMode==="pct";
   var totals=cols.map(function(){ return 0 }), grand=0;
@@ -1735,10 +1804,11 @@ $("#demoTable").addEventListener("click", function(e){
   var hit=seats().filter(function(r){ return r[0]===tr.dataset.dun })[0];
   if (hit) openDrawer(hit);
 });
-[["#demoDim","dim","demoDim"],["#demoMode","mode","demoMode"]].forEach(function(cfg){
+[["#demoDim","dim","demoDim"],["#demoMode","mode","demoMode"],["#demoLevel","level","demoLevel"]].forEach(function(cfg){
   var box=$(cfg[0]);
   [].forEach.call(box.querySelectorAll("button"), function(b){
     b.addEventListener("click", function(){
+      if (b.disabled) return;
       state[cfg[2]] = b.dataset[cfg[1]];
       [].forEach.call(box.querySelectorAll("button"), function(x){ x.classList.toggle("on", x===b) });
       drawDemo();
@@ -1969,16 +2039,23 @@ function kfold(str){
   var w=String(str).toLowerCase().replace(/[^a-z0-9]+/g," ").trim();
   return w+" | "+w.split(" ").map(function(x){ return KAB[x]||x }).join(" ");
 }
-var ROLLK={dm:{}, tot:{}, age:null, loading:null};
-function loadKampung(){
-  if (KAMP.loading || state.set!=="82") return KAMP.loading;
-  if (D.roll && !ROLLK.loading) ROLLK.loading=getJSON("/data/roll-2026.json").then(function(j){
+var ROLLK={dm:{}, tot:{}, seat:{}, age:null, kaum:null, loading:null};
+function loadRoll(){
+  if (!D.roll || ROLLK.loading) return ROLLK.loading;
+  ROLLK.loading=getJSON("/data/roll-2026.json").then(function(j){
     Object.keys(j.seats).forEach(function(s){
       var lok=j.seats[s].lok; Object.keys(lok).forEach(function(dm){ ROLLK.dm[dm]=lok[dm] });
       Object.keys(j.seats[s].dm).forEach(function(dm){ ROLLK.tot[dm]=j.seats[s].dm[dm] });
+      ROLLK.seat[s]=j.seats[s].seat;
     });
-    ROLLK.age=j.age; drawPd();
+    ROLLK.age=j.age; ROLLK.kaum=j.kaum; ROLLK.ready=true;
+    drawPd(); drawDemo();
   }, function(){ ROLLK.loading=null });
+  return ROLLK.loading;
+}
+function loadKampung(){
+  if (KAMP.loading || state.set!=="82") return KAMP.loading;
+  loadRoll();
   KAMP.loading=getJSON("/data/kampung.json").then(function(j){
     var seatOf={}, dm={};
     Object.keys(D.pd82).forEach(function(s){ D.pd82[s].forEach(function(x){ seatOf[x[0]]=s }) });
@@ -2184,8 +2261,7 @@ function openDrawer(r, from){
 
     '<div class="dsec"><div class="dstats">'+
       '<div class="dstat"><div class="v">'+fmt(r[V])+'</div><div class="k">'+t("voters")+'</div></div>'+
-      '<div class="dstat"><div class="v" style="color:'+(over?"var(--over)":"var(--under)")+'">'+
-        (over?"+":"−")+Math.abs(dev*100).toFixed(1)+'%</div><div class="k">'+t("devFromAvg")+'</div></div>'+
+      '<div class="dstat"><div class="v">'+pc((r[A0]+r[A0+1])/(ageTot||1)*100)+'</div><div class="k">'+t("youth")+'</div></div>'+
       '<div class="dstat"><div class="v">'+r[3]+'</div><div class="k">'+t("pdCount")+'</div></div>'+
       '<div class="dstat"><div class="v">'+pc(r[M]/r[V]*100)+'</div><div class="k">'+t("male")+'</div></div>'+
     '</div>'+(state.dun===r[0] ? '' : '<button type="button" class="btnp" id="openseat">'+esc(t("openSeat"))+

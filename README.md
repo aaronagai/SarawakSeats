@@ -1,8 +1,9 @@
 # SarawakSeats
 
-Sarawak's **82 state seats** (DUN) for the coming state election: a map of every
-seat's borders, the electors and demographic profile of every seat, all 887
-polling districts, and the 6,875 kampung (SPR lokaliti) inside them.
+Voter analysis for Sarawak's **82 state seats** (DUN) in the coming state
+election: the electors and demographic profile of every seat, all 887 polling
+districts, the 6,875 kampung (SPR lokaliti) inside them, and a map of every
+seat's borders.
 
 ## The 99-seat proposal is shelved
 
@@ -17,21 +18,24 @@ describe that data.
 
 ## What it shows
 
-- **Seat map.** The borders of all 82 seats, labelled by seat code, with the 31
-  parliaments as a soft grouping beneath them. Coloured by largest ethnic group
-  or by deviation from the state average, over a grey, street or satellite
-  basemap down to street level. It follows the rest of the page: pick a seat, a
-  parliament or search and it frames that; click a seat on the map to open it.
-- **Malapportionment.** Every seat carries its deviation from the state average
-  (24,849 electors). The largest-to-smallest spread is **7.11:1**.
-- **Demographics per seat.** Ethnic composition, five age bands and sex for all
-  82 seats, filterable by parliamentary constituency.
-- **Polling districts.** All 887 daerah mengundi, with DM codes and elector
-  counts, searchable and filterable.
-- **Kampung.** Each polling district opens to its kampung, rumah panjang, taman
-  and jalan, as SPR lists them. Search finds a kampung by name ("kampung
-  sebandi" finds SPR's "KG SEBANDI HILIR"), and about one in eight has a point
-  on the map.
+A voter analysis for the coming state election, seat by seat:
+
+- **Who the voters are.** Every seat, parliament and the state open on their
+  voter profile: electors, the share aged 18–30, and the largest ethnic group.
+- **Demographics.** Ethnic composition, age bands and sex for all 82 seats,
+  filterable by parliamentary constituency. Where SPR's full roll is held
+  (N.16 Muara Tuang), the same table breaks down by polling district or by
+  kampung, from the roll itself.
+- **Polling districts and kampung.** All 887 daerah mengundi, with DM codes and
+  elector counts, searchable and filterable. Each opens to its kampung, rumah
+  panjang, taman and jalan, as SPR lists them, with the new voters each gained;
+  for N.16, every kampung's electors, sex and age.
+- **Seat map.** The borders of all 82 seats, coloured by largest ethnic group
+  (or by size against the state average), over a grey, street or satellite
+  basemap down to street level.
+- **Seat size.** Every seat's deviation from the state average (24,852
+  electors) is still there, in the last tab; the largest-to-smallest spread is
+  **7.11:1**.
 
 ## Addresses
 
