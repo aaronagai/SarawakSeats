@@ -476,11 +476,40 @@ tbody tr:hover .c-go .ic, tbody tr:focus-within .c-go .ic, tbody tr.on .c-go .ic
 .c-sub{font-size:12px; color:var(--faint); margin-top:1px}
 .c-num{text-align:right; color:var(--ink); white-space:nowrap}
 
+/* Polling districts: grouped under a quiet band per seat, three columns, the
+   kampung count read inline and each district's size against its seat's largest
+   drawn as a faint bar beside the count. */
+table.seats th.pdvh{width:170px}
+table.seats tbody tr.pdgrp{cursor:default}
+table.seats tbody tr.pdgrp td, table.seats tbody tr.pdgrp:hover td{background:var(--surface-2)}
+.pdgrp-in{display:flex; align-items:baseline; gap:10px; min-width:0; padding:9px 12px}
+.pdgrp .seatlink{flex:none; color:var(--ink); font-weight:500; text-decoration-color:transparent}
+.pdgrp .seatlink:hover{text-decoration-color:currentColor}
+.pdgrp .newpill{flex:none; margin-left:-4px}
+.pdgrp-meta{min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:12px; color:var(--faint)}
+.pdgrp-v{margin-left:auto; padding-right:2px; font-size:12.5px; color:var(--ink-2); font-variant-numeric:tabular-nums; white-space:nowrap}
+.pdmain{display:flex; align-items:center; gap:12px; min-width:0}
+.pdname{display:flex; align-items:baseline; gap:8px; min-width:0}
+.pdname .c-name{min-width:0; overflow-wrap:anywhere}
+.pdk{flex:none; font-size:12px; color:var(--faint); white-space:nowrap}
+.seatlink.pdseat{flex:none; margin-left:auto; padding-right:12px; font-size:12px; color:var(--muted); text-decoration-color:transparent}
+.seatlink.pdseat:hover{color:var(--ink); text-decoration-color:currentColor}
+.pdv{display:flex; align-items:center; justify-content:flex-end; gap:12px}
+.pdv .c-num{min-width:52px; text-align:right; font-variant-numeric:tabular-nums}
+.pdbar{flex:none; width:56px; height:3px; border-radius:999px; background:var(--rule); overflow:hidden}
+.pdbar i{display:block; height:100%; border-radius:inherit; background:var(--muted); opacity:.55; transform-origin:left center}
+tr.pdrow.open td{background:var(--surface-2)}
+tr.pdrow.open .c-name{color:var(--ink)}
+@media (max-width:640px){
+  .pdbar, .pdgrp-meta, .pdseat{display:none}
+  table.seats th.pdvh{width:90px}
+  .pdname{flex-wrap:wrap; gap:0 8px}
+}
 /* Kampung: a polling district opens in place to its lokaliti, SPR's unit below
    it. The district stays the row; its kampung sit on the ground colour beneath. */
-.kexp{display:flex; align-items:flex-start; gap:8px; width:100%; padding:9px 12px; margin:0;
+.kexp{display:flex; align-items:center; gap:8px; width:100%; padding:10px 12px; margin:0;
   border:0; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer}
-.kexp .ic{flex:none; margin-top:3px; color:var(--faint);
+.kexp .ic{flex:none; color:var(--faint);
   transition:transform var(--dur-2) var(--ease-out), color var(--dur-1) linear}
 .kexp[aria-expanded="true"] .ic{transform:rotate(90deg); color:var(--ink)}
 .seatlink{padding:0; border:0; background:none; color:inherit; font:inherit; text-align:left; cursor:pointer;
@@ -947,12 +976,9 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
           <div class="tablewrap">
             <table class="seats">
               <thead><tr>
-                <th style="width:96px" data-i18n="dmCode">Kod DM</th>
+                <th style="width:104px" data-i18n="dmCode">Kod DM</th>
                 <th data-i18n="tabPd">Daerah mengundi</th>
-                <th class="hide-sm" data-i18n="tabSeats">Kerusi DUN</th>
-                <th class="hide-sm" style="width:170px" data-i18n="parliament">Parlimen</th>
-                <th class="r" style="width:96px" data-i18n="voters">Pengundi</th>
-                <th style="width:26px"><span class="sr-only" data-i18n="open">Buka</span></th>
+                <th class="r pdvh" data-i18n="voters">Pengundi</th>
               </tr></thead>
               <tbody id="pdbody"></tbody>
             </table>
@@ -1104,12 +1130,12 @@ var I18N={
     sortDev:"Sisihan terbesar", sortPar:"Ikut parlimen", sortByDun:"Susun ikut DUN",
     searchPh:"Cari kampung, DUN atau daerah mengundi",
     kampGroup:"Kampung", kampN:function(n){ return n+" kampung" }, kampNone:"Senarai lokaliti belum diterbitkan",
+    pdGrp:function(n){ return n+" daerah" },
     kampNoneLong:"SPR belum menerbitkan senarai lokaliti daerah ini. Ia akan muncul dalam daftar tambahan bulan pertama daerah ini mendapat pemilih baharu.",
     kampInst:"polis / tentera", kampMap:"Lihat di peta", kampNewT:function(n){ return n+" pemilih baharu, Ogos–Sep 2026" },
     kampAll:"Buka semua", kampFold:"Tutup semua", kampOf:function(dm){ return "DM "+dm },
-    kampNote:function(n){ return "Klik daerah mengundi untuk melihat kampungnya"+(n ? ": "+n+" lokaliti SPR di seluruh Sarawak. " : ". ")+
-      "+n ialah pemilih baharu yang didaftar Ogos–Sep 2026; SPR tidak menerbitkan jumlah pemilih setiap lokaliti." },
-    kampFoot:"Lokaliti seperti dalam senarai SPR. Titik di peta ialah anggaran, dipadankan dengan nama di OpenStreetMap.",
+    kampNote:function(n){ return "Klik daerah mengundi untuk melihat kampungnya"+(n ? " · "+n+" lokaliti di seluruh Sarawak." : ".") },
+    kampFoot:"+n ialah pemilih baharu yang didaftar Ogos–Sep 2026. Lokaliti seperti dalam senarai SPR. Titik di peta ialah anggaran, dipadankan dengan nama di OpenStreetMap.",
     srcKamp:"Kampung:", srcKampRoll:"daftar tambahan Ogos–Sep 2026", srcKampPos:"kedudukan",
     allPar:"Semua parlimen", allDun:"Semua DUN", all:"Semua",
     seats:"Kerusi DUN", pdCount:"Daerah mengundi", gap:"Jurang saiz",
@@ -1161,7 +1187,7 @@ var I18N={
     rollNew:"Baru", rollNewT:"Dikemas kini daripada daftar pemilih penuh SPR, April 2026",
     estRoll:"SPR · daftar Apr 2026", estRollEth:"SPR · daftar Apr 2026 · Melayu/Melanau dipecah ikut anggaran",
     kampCol:"Kampung", kampNewCol:"Baru", kampNewH:"Pemilih baharu didaftar Ogos–Sep 2026", kampFew:"Kurang 10 pemilih: pecahan tidak ditunjukkan",
-    kampRollFoot:"Bilangan pemilih setiap lokaliti dikira daripada daftar pemilih penuh SPR, April 2026. Lokaliti dengan kurang 10 pemilih hanya menunjukkan jumlah.",
+    kampRollFoot:"Pemilih setiap lokaliti dikira daripada daftar pemilih penuh SPR, April 2026; lokaliti bawah 10 pemilih menunjukkan jumlah sahaja.",
     estNote:"Anggaran ElectionData.MY: etnik daripada daftar pemilih 2022, umur dan jantina daripada daftar 2025, digunakan pada bilangan pengundi daftar Januari 2026. Jumlah etnik boleh berbeza beberapa orang kerana pembundaran.",
     builtBy:"Dibina oleh",
     eth:["Iban","Cina","Melayu","Bidayuh","Melanau","Orang Ulu","Lain-lain"],
@@ -1201,12 +1227,12 @@ var I18N={
     sortDev:"Largest deviation", sortPar:"By parliament", sortByDun:"Sort by seat",
     searchPh:"Search a kampung, seat or polling district",
     kampGroup:"Kampung", kampN:function(n){ return n+" kampung" }, kampNone:"Locality list not yet published",
+    pdGrp:function(n){ return n+(n===1?" district":" districts") },
     kampNoneLong:"SPR has not yet published this district's localities. They will appear in the supplementary roll of the first month the district gains a new elector.",
     kampInst:"police / army", kampMap:"Show on map", kampNewT:function(n){ return n+" new electors, Aug–Sep 2026" },
     kampAll:"Open all", kampFold:"Close all", kampOf:function(dm){ return "DM "+dm },
-    kampNote:function(n){ return "Click a polling district to see its kampung"+(n ? ": "+n+" SPR localities across Sarawak. " : ". ")+
-      "+n is new electors registered Aug–Sep 2026; SPR does not publish electors per locality." },
-    kampFoot:"Localities as SPR lists them. Map points are approximate, matched by name to OpenStreetMap.",
+    kampNote:function(n){ return "Click a polling district to see its kampung"+(n ? " · "+n+" localities across Sarawak." : ".") },
+    kampFoot:"+n is new electors registered Aug–Sep 2026. Localities as SPR lists them. Map points are approximate, matched by name to OpenStreetMap.",
     srcKamp:"Kampung:", srcKampRoll:"supplementary rolls Aug–Sep 2026", srcKampPos:"positions",
     allPar:"All parliaments", allDun:"All seats", all:"All",
     seats:"State seats", pdCount:"Polling districts", gap:"Size gap",
@@ -1258,7 +1284,7 @@ var I18N={
     rollNew:"New", rollNewT:"Updated from SPR's full electoral roll, April 2026",
     estRoll:"SPR · Apr 2026 roll", estRollEth:"SPR · Apr 2026 roll · Melayu/Melanau split by estimate",
     kampCol:"Kampung", kampNewCol:"New", kampNewH:"New electors registered Aug–Sep 2026", kampFew:"Fewer than 10 electors: split not shown",
-    kampRollFoot:"Electors per lokaliti are counted from SPR's full electoral roll, April 2026. A lokaliti with fewer than 10 electors shows its total only.",
+    kampRollFoot:"Electors per lokaliti are counted from SPR's full roll, April 2026; a lokaliti under 10 shows its total only.",
     estNote:"ElectionData.MY estimates: ethnicity from the 2022 electoral roll, age and sex from the 2025 roll, applied to the January 2026 elector counts. Ethnic totals can differ by a few electors through rounding.",
     builtBy:"Built by",
     eth:["Iban","Chinese","Malay","Bidayuh","Melanau","Orang Ulu","Other"],
@@ -2187,28 +2213,46 @@ function drawPd(){
     all.setAttribute("aria-pressed", KAMP.every ? "true" : "false");
   }
   if (!list.length){
-    tb.innerHTML='<tr><td colspan="6"><div class="empty"><p>'+t("noPd")+'</p></div></td></tr>';
+    tb.innerHTML='<tr><td colspan="3"><div class="empty"><p>'+t("noPd")+'</p></div></td></tr>';
     return;
   }
-  tb.innerHTML=list.map(function(o,i){
+  // Grouped by seat, the way a list is grouped by status: the seat and its
+  // parliament are said once, in a quiet band, not repeated on every row. One
+  // seat on screen needs no band; a list sorted by size can't be grouped, so
+  // each row names its seat instead.
+  var grouped=state.pdsort==="code", single=!!state.dun && shown().length===1;
+  var per={}, big={};
+  list.forEach(function(o){ var c=o.r[0]; per[c]=(per[c]||0)+1; big[c]=Math.max(big[c]||0, o.pd[2]) });
+  // bars compare a district with its seat's largest; a list mixing seats by size shares one scale
+  if (!grouped){ var top=Math.max.apply(null, list.map(function(o){ return o.pd[2] })); Object.keys(big).forEach(function(c){ big[c]=top }) }
+  var last=null, rowsHtml=[];
+  list.forEach(function(o,i){
     var r=o.r, dm=o.pd[0], open=live && kampOpen(dm), ks=KAMP.dm && KAMP.dm[dm];
+    if (grouped && !single && r[0]!==last){
+      last=r[0];
+      rowsHtml.push('<tr class="pdgrp" data-dun="'+esc(r[0])+'"><td colspan="3"><div class="pdgrp-in">'+
+        '<button type="button" class="seatlink"><span class="c-code">'+esc(r[0])+'</span> '+hl(r[1])+'</button>'+rollPill(r[0])+
+        '<span class="pdgrp-meta">'+hl(P[r[2]][0]+" "+P[r[2]][1])+' · '+esc(t("pdGrp")(per[r[0]]))+'</span>'+
+        '<span class="pdgrp-v">'+fmt(r[V])+'</span></div></td></tr>');
+    }
     var n=ks ? ks.filter(function(k){ return !k.inst }).length : 0;
-    var sub=!live ? '' : '<div class="c-sub">'+esc(!KAMP.dm ? "" : ks ? t("kampN")(n) : t("kampNone"))+'</div>';
+    var count=!live || !KAMP.dm ? '' : '<span class="pdk">'+esc(ks ? t("kampN")(n) : t("kampNone"))+'</span>';
+    var seat=grouped && !single ? '' : single ? '' :
+      '<button type="button" class="seatlink pdseat"><span class="c-code">'+esc(r[0])+'</span> '+hl(r[1])+'</button>';
     var name=live
       ? '<button type="button" class="kexp" aria-expanded="'+open+'" aria-controls="k-'+esc(dm)+'">'+
-          icon("chevron",12)+'<span><span class="c-name">'+hl(o.pd[1])+'</span>'+sub+'</span></button>'
-      : '<div class="cell"><div class="c-name">'+hl(o.pd[1])+'</div></div>';
-    return '<tr data-dun="'+esc(r[0])+'" data-dm="'+esc(dm)+'"'+(i<14?' class="anim" style="animation-delay:'+(i*22)+'ms"':'')+'>'+
+          icon("chevron",12)+'<span class="pdname"><span class="c-name">'+hl(o.pd[1])+'</span>'+count+'</span></button>'
+      : '<div class="cell pdname"><span class="c-name">'+hl(o.pd[1])+'</span></div>';
+    var share=o.pd[2]/(big[r[0]]||1);
+    rowsHtml.push('<tr class="pdrow'+(open?' open':'')+(i<16?' anim':'')+'" data-dun="'+esc(r[0])+'" data-dm="'+esc(dm)+'"'+
+        (i<16?' style="animation-delay:'+(i*24)+'ms"':'')+'>'+
       '<td><div class="cell c-code">'+hl(dm)+'</div></td>'+
-      '<td>'+name+'</td>'+
-      '<td class="hide-sm"><div class="cell"><button type="button" class="seatlink"><span class="c-code">'+esc(r[0])+'</span> '+
-        hl(r[1])+'</button></div></td>'+
-      '<td class="hide-sm"><div class="cell c-sub" style="margin:0">'+
-        hl(P[r[2]][0]+" "+P[r[2]][1])+'</div></td>'+
-      '<td><div class="cell c-num">'+fmt(o.pd[2])+'</div></td>'+
-      '<td class="c-go"><div class="cell" style="padding-left:0">'+(live ? '' : icon("chevron",13))+'</div></td></tr>'+
-      (open ? '<tr class="krow" id="k-'+esc(dm)+'"><td colspan="6">'+kampBox(dm)+'</td></tr>' : '');
-  }).join("");
+      '<td><div class="pdmain">'+name+seat+'</div></td>'+
+      '<td class="num"><div class="cell pdv"><span class="pdbar" aria-hidden="true"><i style="transform:scaleX('+share.toFixed(3)+')"></i></span>'+
+        '<span class="c-num">'+fmt(o.pd[2])+'</span></div></td></tr>'+
+      (open ? '<tr class="krow" id="k-'+esc(dm)+'"><td colspan="3">'+kampBox(dm)+'</td></tr>' : ''));
+  });
+  tb.innerHTML=rowsHtml.join("");
 }
 $("#pdbody").addEventListener("click", function(e){
   var pin=e.target.closest("[data-pin]");
@@ -2216,6 +2260,7 @@ $("#pdbody").addEventListener("click", function(e){
   if (e.target.closest(".krow")) return;
   var tr=e.target.closest("tr[data-dun]");
   if (!tr) return;
+  if (tr.classList.contains("pdgrp") && !e.target.closest(".seatlink")) return;
   // the district opens to its kampung; the seat's own name opens the seat
   if (state.set==="82" && !e.target.closest(".seatlink")){
     var dm=tr.dataset.dm, was=kampOpen(dm);
