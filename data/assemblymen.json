@@ -1,0 +1,416 @@
+{
+ "source": "Outgoing 19th DUN (dissolved 26 Oct 2026). Wikipedia, '19th Sarawak State Legislative Assembly'.",
+ "dissolved": "2026-10-26",
+ "seats": {
+  "N.01": {
+   "name": "Billy Sujang",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.02": {
+   "name": "Henry Harry Jinep",
+   "party": "PDP",
+   "coalition": "GPS"
+  },
+  "N.03": {
+   "name": "Azizul Annuar Adenan",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.04": {
+   "name": "Abdul Rahman Junaidi",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.05": {
+   "name": "Hazland Abang Hipni",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.06": {
+   "name": "Fazzrudin Abdul Rahman",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.07": {
+   "name": "Sharifah Hasidah Sayeed Aman Ghazali",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.08": {
+   "name": "Ibrahim Baki",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.09": {
+   "name": "Chong Chieng Jen",
+   "party": "DAP",
+   "coalition": "PH"
+  },
+  "N.10": {
+   "name": "Violet Yong Wui Wui",
+   "party": "DAP",
+   "coalition": "PH"
+  },
+  "N.11": {
+   "name": "See Chee How",
+   "party": "Independent",
+   "coalition": null
+  },
+  "N.12": {
+   "name": "Wilfred Yap Yau Sin",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.13": {
+   "name": "Lo Khere Chiang",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.14": {
+   "name": "Sim Kui Hian",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.15": {
+   "name": "Abdul Karim Rahman Hamzah",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.16": {
+   "name": "Idris Buang",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.17": {
+   "name": "Hamzah Brahim",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.18": {
+   "name": "Miro Simuh",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.19": {
+   "name": "Jerip Susil",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.20": {
+   "name": "Roland Sagah Wee Inn",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.21": {
+   "name": "Simon Sinang Bada",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.22": {
+   "name": "Martin Ben",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.23": {
+   "name": "John Ilus",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.24": {
+   "name": "Aidel Lariwoo",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.25": {
+   "name": "Awla Dris",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.26": {
+   "name": "Abang Abdul Rahman Zohari Abang Openg",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.27": {
+   "name": "Julaihi Narawi",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.28": {
+   "name": "Dayang Noorazah Awang Sohor",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.29": {
+   "name": "Razaili Gapor",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.30": {
+   "name": "Snowdan Lawan",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.31": {
+   "name": "Mong Dagang",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.32": {
+   "name": "Francis Harden Hollis",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.33": {
+   "name": "Johnical Rayong Ngipa",
+   "party": "PDP",
+   "coalition": "GPS"
+  },
+  "N.34": {
+   "name": "Malcom Mussen Lamoh",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.35": {
+   "name": "Ricky @ Mohamad Razi Sitam",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.36": {
+   "name": "Gerald Rentap Jabu",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.37": {
+   "name": "Douglas Uggah Embas",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.38": {
+   "name": "Mohamad Duri",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.39": {
+   "name": "Friday Belik",
+   "party": "PDP",
+   "coalition": "GPS"
+  },
+  "N.40": {
+   "name": "Mohd Chee Kadir",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.41": {
+   "name": "Talif @ Len Salleh",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.42": {
+   "name": "Abdullah Saidol",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.43": {
+   "name": "Safiee Ahmad",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.44": {
+   "name": "Juanda Jaya",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.45": {
+   "name": "Huang Tiong Sii",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.46": {
+   "name": "Ding Kuong Hiing",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.47": {
+   "name": "William Mawan Ikom",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.48": {
+   "name": "Rolland Duat Jubin",
+   "party": "PDP",
+   "coalition": "GPS"
+  },
+  "N.49": {
+   "name": "Anyi Jana",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.50": {
+   "name": "Allan Siden Gramong",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.51": {
+   "name": "Joseph Chieng Jin Ek",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.52": {
+   "name": "Tiong King Sing",
+   "party": "PDP",
+   "coalition": "GPS"
+  },
+  "N.53": {
+   "name": "Wong Soon Koh",
+   "party": "PDP",
+   "coalition": "GPS"
+  },
+  "N.54": {
+   "name": "Michael Tiang Ming Tee",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.55": {
+   "name": "Annuar Rapaee",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.56": {
+   "name": "Fatimah Abdullah",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.57": {
+   "name": "Royston Valentine",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.58": {
+   "name": "Abdul Yakub Arbi",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.59": {
+   "name": "Christopher Gira Sambang",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.60": {
+   "name": "John Sikie Tayai",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.61": {
+   "name": "Wilson Nyabong Ijang",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.62": {
+   "name": "Lidam Assan",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.63": {
+   "name": "Jefferson Jamit Unyat",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.64": {
+   "name": "Nicholas Kudi Jantai Masing",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.65": {
+   "name": "Liwan Lagang",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.66": {
+   "name": "Kennedy Chukpai Ugon",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.67": {
+   "name": "Iskandar Turkee",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.68": {
+   "name": "Johnny Pang Leong Ming",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.69": {
+   "name": "Stephen Rundi Utom",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.70": {
+   "name": "Majang Renggi",
+   "party": "PRS",
+   "coalition": "GPS"
+  },
+  "N.71": {
+   "name": "Rosey Yunus",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.72": {
+   "name": "Ripin Lamat",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.73": {
+   "name": "Sebastian Ting Chiew Yew",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.74": {
+   "name": "Adam Yii Siew Sang",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.75": {
+   "name": "Lee Kim Shin",
+   "party": "SUPP",
+   "coalition": "GPS"
+  },
+  "N.76": {
+   "name": "Penguang Manggil",
+   "party": "PDP",
+   "coalition": "GPS"
+  },
+  "N.77": {
+   "name": "Dennis Ngau",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.78": {
+   "name": "Gerawat Gala",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.79": {
+   "name": "Abdul Rahman Ismail",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.80": {
+   "name": "Paulus Palu Gumbang",
+   "party": "PBB",
+   "coalition": "GPS"
+  },
+  "N.81": {
+   "name": "Baru Bian",
+   "party": "PDP",
+   "coalition": "GPS"
+  },
+  "N.82": {
+   "name": "Awang Tengah Ali Hasan",
+   "party": "PBB",
+   "coalition": "GPS"
+  }
+ }
+}
