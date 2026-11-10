@@ -16,7 +16,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
 /* One type family at one weight (500 only for figures called out in a
    sentence): hierarchy comes from size and from black against grey ink, not
@@ -441,91 +440,37 @@ main{position:relative; min-width:0; min-height:0; margin:8px 8px 8px 0; overflo
   box-shadow:var(--shadow-2)}
 /* Seat fills are classes, not attributes: an SVG fill attribute cannot read a
    custom property, and a class lets the colour follow the theme on its own. */
-.seat{stroke:var(--ink); stroke-opacity:.5; stroke-width:1; transition:fill-opacity var(--dur-2) var(--ease-out)}
-.seat.k0{fill:var(--s1)} .seat.k1{fill:var(--s2)} .seat.k2{fill:var(--s3)} .seat.k3{fill:var(--s4)}
-.seat.k4{fill:var(--s5)} .seat.k5{fill:var(--s6)} .seat.k6{fill:var(--s7)}
-.seat.over{fill:var(--over)} .seat.under{fill:var(--under)}
-.seat.out{stroke-opacity:.22}
-.seat.pick{stroke:var(--ink); stroke-opacity:1; stroke-width:2.6}
 /* a parliament is drawn as a soft band under its seats' lines, not as a line of
    its own: on this map it is the grouping, the seat is the unit */
-.parsel{fill:none; stroke:var(--ink); stroke-width:2; stroke-opacity:.8; stroke-dasharray:6 4; pointer-events:none}
-.parline{fill:none; stroke:var(--ink); stroke-width:3.5; stroke-opacity:.14; pointer-events:none}
 /* Over streets and satellite the seat is read by its border, so the line takes
    over from the fill: white with a dark edge on imagery, ink on streets. */
-#map.bm-sat .seat{stroke:#fff; stroke-opacity:.95; stroke-width:1.4}
-#map.bm-sat .seat.out{stroke-opacity:.5}
-#map.bm-sat .seat.pick{stroke:#fff; stroke-width:3.2}
-#map.bm-sat .parline{stroke:#000; stroke-opacity:.35}
-#map.bm-sat .parsel{stroke:#fff}
-#map.bm-sat .seatlab span{color:#fff; text-shadow:0 0 2px #000,0 0 3px #000,0 0 5px #000}
-#map.bm-street .seat{stroke-opacity:.7; stroke-width:1.3}
-#map.bm-street .seat.pick{stroke-width:3}
 /* seat codes, shown wherever the seat is big enough on screen to hold one */
-.seatlab{background:none; border:0}
-.seatlab span{position:absolute; left:0; top:0; transform:translate(-50%,-50%); white-space:nowrap;
-  font:500 11px/1.15 var(--sans); font-variant-numeric:tabular-nums; color:var(--ink); text-align:center;
-  text-shadow:0 0 2px var(--surface),0 0 2px var(--surface),0 0 3px var(--surface),0 0 5px var(--surface);
-  transition:opacity var(--dur-1) var(--ease-out)}
-.seatlab span i{display:block; font:400 11px/1.15 var(--sans); font-style:normal}
-.seatlab.off span{opacity:0}
-.seatlab.dim span{color:var(--muted)}
-.seatlab.pick span{font-size:12.5px}
-.seatlab.pick span i{font-size:12.5px; font-weight:500}
 /* Leaflet's chrome in this page's materials: round floating buttons */
-.leaflet-container{font-family:var(--sans); background:var(--surface-2)}
-.leaflet-bar,.leaflet-touch .leaflet-bar{border:0 !important; border-radius:0 !important;
-  box-shadow:none !important; background:none; display:grid; gap:6px}
-.leaflet-bar a,.leaflet-touch .leaflet-bar a{width:34px !important; height:34px !important;
-  line-height:32px !important; border-radius:50% !important; border:1px solid var(--rule) !important;
-  background:var(--surface) !important; color:var(--ink) !important; box-shadow:var(--shadow-2);
-  font:400 18px/32px var(--sans) !important}
-.leaflet-bar a:hover{background:var(--surface-2) !important}
-.leaflet-control-attribution{background:color-mix(in srgb, var(--surface) 82%, transparent) !important;
-  color:var(--faint) !important; font-size:10px !important; border-radius:6px 0 0 0}
-.leaflet-control-attribution a{color:var(--ink-2) !important}
-.leaflet-tile-pane{transition:opacity var(--dur-2) var(--ease-out)}
 .mapfoot[hidden]{display:none}
+/* MapLibre's chrome in this page's materials: round floating buttons */
+#map.maplibregl-map{font:inherit}
+#map .maplibregl-ctrl-group{background:none; box-shadow:none; display:grid; gap:6px}
+#map .maplibregl-ctrl-group button{width:34px; height:34px; border-radius:50%; border:1px solid var(--rule);
+  background:var(--surface); box-shadow:var(--shadow-2)}
+#map .maplibregl-ctrl-group button + button{border-top:1px solid var(--rule)}
+#map .maplibregl-ctrl-group button:hover{background:var(--surface-2)}
+#map .maplibregl-ctrl-top-left{top:2px; left:2px}
+#map .maplibregl-ctrl-attrib{background:rgba(8,9,10,.72); color:rgba(255,255,255,.45); font-size:10px; border-radius:6px 0 0 0}
+#map .maplibregl-ctrl-attrib a{color:rgba(255,255,255,.7)}
+#map.map-light .maplibregl-ctrl-attrib{background:rgba(255,255,255,.78); color:rgba(23,24,26,.5)}
+#map.map-light .maplibregl-ctrl-attrib a{color:rgba(23,24,26,.75)}
+:root[data-theme="dark"] #map .maplibregl-ctrl-icon{filter:invert(1)}
+@media (prefers-color-scheme:dark){ :root:not([data-theme="light"]) #map .maplibregl-ctrl-icon{filter:invert(1)} }
+#mapback{right:12px}
 /* focus: a veil over everything outside it, a blue glow just past its edge */
-.fveil{fill:#05060a; fill-opacity:.5; pointer-events:none}
-#map.bm-grey .fveil{fill-opacity:.62}
-.fglow{stroke:#3D7BFF; stroke-opacity:.75; filter:url(#fglowf); pointer-events:none}
-.fedge{stroke:#6FA0FF; stroke-opacity:.9; pointer-events:none}
-#map.bm-sat .fveil{fill-opacity:.45}
 /* estimated localities: dashed cells, solid polling-district lines */
-.lcell{stroke:#fff; stroke-opacity:.32; stroke-dasharray:2 3; fill:#fff; fill-opacity:0 !important;
-  transition:fill-opacity var(--dur-1) linear}
-@media (hover:hover) and (pointer:fine){ .lcell:hover{fill-opacity:.1 !important} }
-.ldm{stroke:#fff; stroke-opacity:.6; pointer-events:none}
-#map.bm-street .lcell, #map.bm-street .ldm{stroke:#17181a}
 .legend .lsw{width:14px; height:0; border-radius:0; border-top:1.5px dashed var(--muted); background:none}
 .legend .lsw.ldmsw{border-top-style:solid}
 .mapfoot .note{white-space:normal}
 /* The dark map, in both themes. Roads are lifted a little so they read as a
    network, the way a night map does, not as noise. */
-.mapbox:has(#map.bm-grey), #map.bm-grey, #map.bm-grey.leaflet-container{background:#0a0a0b}
-#map.bm-grey .leaflet-tile-pane{filter:grayscale(1) invert(1) brightness(.7) contrast(1.35)}
-#map.bm-grey .seat{stroke:#fff; stroke-opacity:.35; stroke-width:1}
-#map.bm-grey .seat.out{stroke-opacity:.16}
-#map.bm-grey .seat.pick{stroke:#fff; stroke-opacity:1; stroke-width:2.2}
-#map.bm-grey .seat.g-pick{fill:#fff}
-#map.bm-grey .seat.g-in{fill:#3D7BFF; stroke:#4D8DFF; stroke-opacity:.95; stroke-width:1.5}
-#map.bm-grey .seat.g-out{fill:none; stroke:#fff; stroke-opacity:.14; stroke-width:.8}
-#map.bm-grey .parline{stroke:#fff; stroke-opacity:.1}
-#map.bm-grey .parsel{stroke:#4D8DFF; stroke-opacity:.9}
-#map.bm-grey .seatlab span{color:rgba(255,255,255,.82); text-shadow:0 0 2px #000,0 0 4px #000,0 0 6px #000}
-#map.bm-grey .seatlab.dim span{color:rgba(255,255,255,.45)}
-#map.bm-grey .seatlab.pick span{color:#fff}
 /* kampung stay quiet on the night map: small grey dots, names only up close
    or for the one picked from the table */
-#map.bm-grey .kpt i{width:5px; height:5px; left:-2.5px; top:-2.5px; background:rgba(255,255,255,.55); box-shadow:none}
-#map.bm-grey .kpt span{color:rgba(255,255,255,.7); font-size:11px; text-shadow:0 0 2px #000,0 0 3px #000,0 0 5px #000}
-#map.bm-grey.kzl .kpt span{display:none}
-#map.bm-grey.kzx .kpt span, #map.bm-grey .kpt.hot span{display:block}
-#map.bm-grey .kpt.hot i{width:10px; height:10px; left:-5px; top:-5px; background:#4D8DFF; box-shadow:0 0 0 2px #0a0a0b, 0 0 0 5px rgba(77,141,255,.3)}
-#map.bm-grey .kpt.hot span{color:#fff}
-#map.bm-grey .leaflet-control-attribution{background:rgba(10,10,11,.72) !important; color:rgba(255,255,255,.45) !important}
-#map.bm-grey .leaflet-control-attribution a{color:rgba(255,255,255,.7) !important}
 
 /* ---------------- tables ---------------- */
 /* No overflow container: it would become the sticky header's scrollport. The
@@ -643,16 +588,6 @@ table.seats .ktab .sep{border-left:1px solid var(--rule)}
 @media (max-width:640px){ .kbox{padding-left:12px} .klist{grid-template-columns:1fr} }
 
 /* kampung on the map: dots from town level, names from street level */
-.kpt{background:none; border:0}
-.kpt i{position:absolute; left:-4px; top:-4px; width:8px; height:8px; border-radius:50%;
-  background:var(--accent); box-shadow:0 0 0 1.5px var(--surface); display:none}
-.kpt span{position:absolute; left:8px; top:-8px; white-space:nowrap; font:400 11.5px/16px var(--sans);
-  color:var(--ink); text-shadow:0 0 2px var(--surface),0 0 2px var(--surface),0 0 4px var(--surface); display:none}
-#map.kz .kpt i{display:block}
-#map.kzl .kpt span, .kpt.hot span{display:block}
-.kpt.hot i{display:block; width:12px; height:12px; left:-6px; top:-6px; box-shadow:0 0 0 2px var(--surface), 0 0 0 5px var(--accent-soft)}
-.kpt.hot span{font-weight:500; left:11px}
-#map.bm-sat .kpt span{color:#fff; text-shadow:0 0 2px #000,0 0 3px #000,0 0 5px #000}
 .dev{display:inline-block; font-size:12px; padding:2px 8px; border-radius:999px; min-width:60px; text-align:right}
 .dev.over{color:var(--over); background:var(--over-bg)}
 .dev.under{color:var(--under); background:var(--under-bg)}
@@ -975,6 +910,9 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
             <button type="button" class="mapreset" id="mapreset" hidden>
               <svg class="ic" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4.5v4h4"/></svg>
               <span data-i18n="mapAll">Seluruh Sarawak</span></button>
+            <button type="button" class="mapreset" id="mapback" hidden>
+              <svg class="ic" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6"/></svg>
+              <span id="mapbackTxt"></span></button>
             <div class="mapmsg" id="mapmsg" data-i18n="mapLoading">Memuatkan peta…</div>
             <div class="seg mapbase" id="mapBase" role="group">
               <button type="button" data-bm="grey" class="on" data-i18n="bmGrey">Ringkas</button>
@@ -1162,6 +1100,7 @@ function icon(name, size){
 var I18N={
   ms:{
     brandsub:PROPOSAL ? "Persempadanan 2026" : "PRN Sarawak · 82 DUN", dataset:"Set data", proposed:"Cadangan", current:"Semasa",
+    backDun:function(s){ return "Kembali ke "+s },
     locKey:"Lokaliti", locDmKey:"Daerah mengundi (anggaran)", locTip:"Kawasan anggaran",
     locNote:function(a,b){ return "Kawasan terdekat dengan setiap kampung yang diketahui kedudukannya: "+a+" daripada "+b+" daerah mengundi." },
     locNone:"Tiada kampung dengan kedudukan untuk melukis garis lokaliti di kerusi ini.",
@@ -1264,6 +1203,7 @@ var I18N={
   },
   en:{
     brandsub:PROPOSAL ? "Redelineation 2026" : "Sarawak election · 82 seats", dataset:"Dataset", proposed:"Proposed", current:"Current",
+    backDun:function(s){ return "Back to "+s },
     locKey:"Locality", locDmKey:"Polling district (approximate)", locTip:"Approximate area",
     locNote:function(a,b){ return "Area nearest each kampung with a known position: "+a+" of "+b+" polling districts." },
     locNone:"No kampung in this seat has a position to draw locality outlines from.",
@@ -2483,32 +2423,26 @@ function drawDunlist(){
 });
 
 /* ---------- map ----------
-   Borders are MECo's digitisation of the 2015 delimitation (CC0), at two levels
-   of detail (scripts/build_boundaries.py): a simplified file for the statewide
-   view, and every vertex MECo has, fetched once the reader zooms in to a town
-   or kampung and swapped in place. They sit over a choice of basemap (grey,
-   streets or satellite) so a border can be read against the roads, rivers and
-   houses it actually follows. The map takes the same scope as everything else
-   on the page: a parliament, a seat or a search narrows it, and clicking a seat
-   picks that seat everywhere. Leaflet loads only when the map is first on screen. */
-var MAP={el:null, L:null, seats:{}, pars:{}, parOut:{}, labs:{}, inScope:{}, shapes:[], tiles:[],
-         mode:"maj", key:null, loading:false, failed:false, detail:0, tileKey:null,
+   Our own map. The basemap is OpenStreetMap cut to Sarawak as one vector
+   tileset (data/sarawak.pmtiles, scripts/build_basemap.sh) and drawn in the
+   browser by MapLibre with our own style: near-black land, the road network in
+   greys, rivers, towns. Nothing about its look comes from a tile server, so it
+   can be restyled or made more detailed here. Seat borders are MECo's (CC0,
+   scripts/build_boundaries.py); locality outlines are our estimate
+   (scripts/build_localities.py). The map takes the same scope as everything
+   else on the page: a parliament, a seat or a search narrows it; everything
+   outside the focus fades under a veil and the focus's edge glows. On a seat,
+   a locality can be clicked to focus it alone, with a button back to the seat.
+   Streets and satellite remain as Esri raster alternatives. MapLibre loads only
+   when the map is first on screen. */
+var MAP={el:null, gl:null, loading:false, failed:false, key:null, ready:false,
+         feat:{}, par:{}, all:null, inScope:{}, locCode:null, locNote:null, locData:null,
+         locFocus:null, hoverLoc:null, mode:"maj",
          base:(function(){ try { var v=localStorage.getItem("sarawakseats-basemap");
            if (v==="grey"||v==="street"||v==="sat") return v } catch(e){} return "grey" })()};
-var DETAIL_ZOOM=10;     // past this, the full-detail borders are worth their 570 KB
-// All three are Esri's and keyless. The default is Esri's street map turned
-// into a night map in CSS (greyscale, inverted, dimmed): near-black land with
-// the whole road network in grey, so a seat reads as a lit shape over real
-// streets, in both themes. Satellite keeps its place names on a separate layer
-// drawn above the seats, so names stay legible over fills.
 var ESRI="https://server.arcgisonline.com/ArcGIS/rest/services/", XYZ="/MapServer/tile/{z}/{y}/{x}";
-var BASEMAPS={
-  grey:{light:["World_Street_Map"], dark:["World_Street_Map"], native:18},
-  street:{light:["World_Street_Map"], dark:["World_Street_Map"], native:18},
-  sat:{light:["World_Imagery","Reference/World_Boundaries_and_Places"],
-       dark:["World_Imagery","Reference/World_Boundaries_and_Places"], native:18}
-};
 var CALM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+var FONT_R=["Noto Sans Regular"], FONT_M=["Noto Sans Medium"];
 function loadScript(src){
   return new Promise(function(ok, no){
     var s=document.createElement("script");
@@ -2517,286 +2451,270 @@ function loadScript(src){
 }
 function getJSON(url){ return fetch(url).then(function(r){ if (!r.ok) throw r; return r.json() }) }
 function ensureMap(){
-  if (MAP.el){ MAP.el.invalidateSize(); if (MAP.key===null) drawMap(); return }
+  if (MAP.el){ MAP.el.resize(); if (MAP.key===null) drawMap(); return }
   if (MAP.loading || MAP.failed) return;
   MAP.loading=true;
   Promise.all([
-    loadScript("https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js")
-      .then(function(){ return loadScript("https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js") }),
-    getJSON("/data/dun82-boundaries.json")
-  ]).then(function(res){ buildMap(res[1]) }, function(){
+    (function(){ var l=document.createElement("link"); l.rel="stylesheet";
+      l.href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.css";
+      document.head.appendChild(l);
+      return loadScript("https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.min.js") })(),
+    loadScript("https://unpkg.com/pmtiles@3.2.1/dist/pmtiles.js"),
+    loadScript("https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"),
+    getJSON("/data/dun82-boundaries-detail.json")
+  ]).then(function(res){ buildMap(res[3]) }, function(){
     MAP.failed=true; MAP.loading=false;
     var m=$("#mapmsg"); m.hidden=false; m.textContent=t("mapFail");
   });
 }
+
+/* ----- the style: our basemap, then our layers over it ----- */
+/* Two palettes, one per site theme. Dark is the night map: near-black land,
+   roads in stepped greys. Light is its daytime twin: pale land, roads darker
+   the more important they are. Every themed paint value is listed in THEMED
+   and swapped in place when the theme changes, so the map never reloads. */
+var PAL={
+  dark:{bg:"#08090a", earth:"#0e0f11", forest:"#0f1210", urban:"#141518", water:"#05070a", river:"#121a24",
+    bld:"#18191c", path:"#24262a", min:"#2e3034", ter:"#3e4146", sec:"#4b4e54", pri:"#5b5e65", hw:"#6a6d74",
+    border:"#55585f", rlab:"#6c6f76", plab:"#8a8d94", clab:"#4c4f56", halo:"#08090a",
+    veil:"#05060a", veilOp:.62, ink:"#ffffff", inkDim:"rgba(255,255,255,.45)", inkLab:"rgba(255,255,255,.82)",
+    labHalo:"#000000", rbm:.55},
+  light:{bg:"#e9ebee", earth:"#f4f4f2", forest:"#eaefe8", urban:"#ececea", water:"#c9d6e3", river:"#b4c6d8",
+    bld:"#e3e3e0", path:"#e0e1e3", min:"#d7d9dc", ter:"#c8cbcf", sec:"#b9bcc1", pri:"#a7abb1", hw:"#959aa1",
+    border:"#9a9da4", rlab:"#85888e", plab:"#55585e", clab:"#a0a3a9", halo:"#f4f4f2",
+    veil:"#f6f7f8", veilOp:.72, ink:"#17181a", inkDim:"rgba(23,24,26,.42)", inkLab:"rgba(23,24,26,.82)",
+    labHalo:"#ffffff", rbm:1}
+};
+function pal(){ return PAL[effectiveTheme()==="dark" ? "dark" : "light"] }
+var THEMED=[["bg","background-color","bg"],["earth","fill-color","earth"],["landcover","fill-color","forest"],
+  ["landuse","fill-color","urban"],["water","fill-color","water"],["river","line-color","river"],
+  ["buildings","fill-color","bld"],["r-path","line-color","path"],["r-min","line-color","min"],
+  ["r-ter","line-color","ter"],["r-sec","line-color","sec"],["r-pri","line-color","pri"],["r-hw","line-color","hw"],
+  ["border","line-color","border"],["road-lab","text-color","rlab"],["road-lab","text-halo-color","halo"],
+  ["place-lab","text-color","plab"],["place-lab","text-halo-color","halo"],["country-lab","text-color","clab"],
+  ["country-lab","text-halo-color","halo"],["loc-fill","fill-color","ink"],["loc-line","line-color","ink"],
+  ["dm-line","line-color","ink"],["veil","fill-color","veil"],["veil","fill-opacity","veilOp"],
+  ["kamp-lab","text-color","inkLab"],["kamp-lab","text-halo-color","labHalo"],["kamp-dot","circle-stroke-color","bg"],
+  ["seat-lab","text-halo-color","labHalo"],["esri-street","raster-brightness-max","rbm"]];
+function applyPalette(){
+  if (!MAP.ready) return;
+  var map=MAP.el, P0=pal();
+  THEMED.forEach(function(x){ if (map.getLayer(x[0])) map.setPaintProperty(x[0], x[1], P0[x[2]]) });
+  map.setPaintProperty("kamp-dot", "circle-color", ["case",["boolean",["feature-state","hot"],false],"#3D7BFF",P0.ink]);
+  map.setPaintProperty("seat-lab", "text-color", ["case",["get","pick"],P0.ink,["get","dim"],P0.inkDim,P0.inkLab]);
+  $("#map").style.background=P0.bg;
+  $("#map").classList.toggle("map-light", P0===PAL.light);
+}
+var RD=PAL.dark;
+function zl(stops){ return ["interpolate",["exponential",1.6],["zoom"]].concat(stops) }
+function baseLayers(){
+  // OSM's road classes, from tracks up to trunk roads, each a step brighter
+  // and wider, the way a night map ranks them
+  var road=function(id, kinds, color, widths, minz, details){
+    var f=["in",["get","kind"],["literal",kinds]];
+    if (details) f=["all", f, ["in",["get","kind_detail"],["literal",details]]];
+    return {id:id, type:"line", source:"base", "source-layer":"roads", minzoom:minz||0,
+      filter:f,
+      layout:{"line-cap":"round","line-join":"round"},
+      paint:{"line-color":color, "line-width":zl(widths)}};
+  };
+  return [
+    {id:"bg", type:"background", paint:{"background-color":"#08090a"}},
+    {id:"earth", type:"fill", source:"base", "source-layer":"earth", paint:{"fill-color":"#0e0f11"}},
+    {id:"landcover", type:"fill", source:"base", "source-layer":"landcover",
+      filter:["in",["get","kind"],["literal",["forest","wood"]]], paint:{"fill-color":"#0f1210", "fill-opacity":.7}},
+    {id:"landuse", type:"fill", source:"base", "source-layer":"landuse", minzoom:11,
+      filter:["in",["get","kind"],["literal",["residential","neighbourhood","industrial","commercial"]]],
+      paint:{"fill-color":"#141518"}},
+    {id:"water", type:"fill", source:"base", "source-layer":"water",
+      filter:["==",["geometry-type"],"Polygon"], paint:{"fill-color":"#05070a"}},
+    {id:"river", type:"line", source:"base", "source-layer":"water",
+      filter:["==",["geometry-type"],"LineString"],
+      paint:{"line-color":"#121a24", "line-width":zl([8,.4, 12,1.2, 16,3])}},
+    {id:"buildings", type:"fill", source:"base", "source-layer":"buildings", minzoom:14,
+      paint:{"fill-color":"#18191c"}},
+    road("r-path", ["path"], RD.path, [13,.3, 18,2], 13),
+    road("r-min", ["minor_road","other"], RD.min, [11,.3, 14,1, 18,7], 11),
+    road("r-ter", ["major_road"], RD.ter, [9,.3, 13,1.2, 18,10], 9, ["tertiary","tertiary_link"]),
+    road("r-sec", ["major_road"], RD.sec, [7,.35, 12,1.5, 18,11], 7, ["secondary","secondary_link"]),
+    road("r-pri", ["major_road"], RD.pri, [5,.5, 12,2, 18,13], 5, ["primary","primary_link","trunk","trunk_link"]),
+    road("r-hw", ["highway"], RD.hw, [5,.6, 12,2.2, 18,14], 5),
+    {id:"border", type:"line", source:"base", "source-layer":"boundaries",
+      filter:["==",["get","kind"],"country"],
+      paint:{"line-color":"#55585f", "line-width":1, "line-dasharray":[3,2]}},
+    // the raster alternatives sit under our own layers, hidden until picked
+    {id:"esri-street", type:"raster", source:"esri-street", layout:{visibility:"none"},
+      paint:{"raster-saturation":-1, "raster-brightness-max":.55, "raster-contrast":.2}},
+    {id:"esri-sat", type:"raster", source:"esri-sat", layout:{visibility:"none"}},
+    {id:"road-lab", type:"symbol", source:"base", "source-layer":"roads", minzoom:13,
+      filter:["has","name"],
+      layout:{"symbol-placement":"line", "text-field":["get","name"], "text-font":FONT_R, "text-size":10.5},
+      paint:{"text-color":"#6c6f76", "text-halo-color":"#08090a", "text-halo-width":1.4}},
+    {id:"place-lab", type:"symbol", source:"base", "source-layer":"places",
+      filter:["in",["get","kind"],["literal",["locality","neighbourhood","macrohood"]]],
+      layout:{"text-field":["coalesce",["get","name:ms"],["get","name:en"],["get","name"]], "text-font":FONT_R,
+        "text-size":["interpolate",["linear"],["zoom"], 6,10, 12,12.5, 16,14],
+        "symbol-sort-key":["get","min_zoom"], "text-max-width":8},
+      paint:{"text-color":"#8a8d94", "text-halo-color":"#08090a", "text-halo-width":1.4}},
+    {id:"country-lab", type:"symbol", source:"base", "source-layer":"places", maxzoom:8,
+      filter:["==",["get","kind"],"country"],
+      layout:{"text-field":["upcase",["get","name"]], "text-font":FONT_M, "text-size":11, "text-letter-spacing":.15},
+      paint:{"text-color":"#4c4f56", "text-halo-color":"#08090a", "text-halo-width":1}}
+  ];
+}
+function ownLayers(){
+  var fs=function(k, dflt){ return ["coalesce",["feature-state",k],dflt] };
+  return [
+    {id:"seat-fill", type:"fill", source:"seats",
+      paint:{"fill-color":["to-color",fs("c","#ffffff")], "fill-opacity":fs("op",0)}},
+    {id:"seat-line", type:"line", source:"seats", layout:{"line-join":"round"},
+      paint:{"line-color":["to-color",fs("lc","#ffffff")], "line-opacity":fs("lo",.35), "line-width":fs("lw",1)}},
+    {id:"loc-fill", type:"fill", source:"loc", filter:["==",["get","t"],"k"],
+      paint:{"fill-color":"#ffffff", "fill-opacity":["case",["boolean",["feature-state","h"],false],.1,0]}},
+    {id:"loc-line", type:"line", source:"loc", filter:["==",["get","t"],"k"],
+      paint:{"line-color":"#ffffff", "line-opacity":.32, "line-width":.8, "line-dasharray":[2,3]}},
+    {id:"dm-line", type:"line", source:"loc", filter:["==",["get","t"],"d"],
+      paint:{"line-color":"#ffffff", "line-opacity":.6, "line-width":1.3}},
+    {id:"veil", type:"fill", source:"veil", paint:{"fill-color":"#05060a", "fill-opacity":.62}},
+    {id:"glow", type:"line", source:"edge", layout:{"line-join":"round"},
+      paint:{"line-color":"#3D7BFF", "line-opacity":.75, "line-width":14, "line-blur":10}},
+    {id:"edge", type:"line", source:"edge", layout:{"line-join":"round"},
+      paint:{"line-color":["coalesce",["get","c"],"#6FA0FF"], "line-opacity":.95, "line-width":["coalesce",["get","w"],1.5]}},
+    {id:"kamp-dot", type:"circle", source:"kamp", minzoom:11,
+      paint:{"circle-radius":["interpolate",["linear"],["zoom"], 11,1.8, 15,3.2],
+        "circle-color":["case",["boolean",["feature-state","hot"],false],"#4D8DFF","#ffffff"],
+        "circle-opacity":["case",["boolean",["feature-state","hot"],false],1,.55],
+        "circle-stroke-width":["case",["boolean",["feature-state","hot"],false],2,0],
+        "circle-stroke-color":"#08090a"}},
+    {id:"kamp-lab", type:"symbol", source:"kamp", minzoom:14.5,
+      layout:{"text-field":["get","name"], "text-font":FONT_R, "text-size":11,
+        "text-anchor":"left", "text-offset":[.6,0], "text-optional":true},
+      paint:{"text-color":"rgba(255,255,255,.72)", "text-halo-color":"#000", "text-halo-width":1.4}},
+    {id:"seat-lab", type:"symbol", source:"seatlab",
+      layout:{"text-field":["case",["get","named"],["format",["get","code"],{"font-scale":1},"\n",{},["get","name"],{"font-scale":.95}],["get","code"]],
+        "text-font":FONT_M, "text-size":["case",["get","pick"],12.5,11], "text-line-height":1.15,
+        "symbol-sort-key":["case",["get","pick"],0,1]},
+      paint:{"text-color":["case",["get","pick"],"#ffffff",["get","dim"],"rgba(255,255,255,.45)","rgba(255,255,255,.82)"],
+        "text-halo-color":"#000", "text-halo-width":1.6}}
+  ];
+}
+function mapStyle(){
+  var empty={type:"FeatureCollection", features:[]};
+  return {version:8,
+    glyphs:location.origin+"/fonts/{fontstack}/{range}.pbf",
+    sources:{
+      base:{type:"vector", url:"pmtiles://"+location.origin+"/data/sarawak.pmtiles",
+        attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · <a href="https://protomaps.com">Protomaps</a>'},
+      "esri-street":{type:"raster", tiles:[ESRI+"World_Street_Map"+XYZ], tileSize:256, maxzoom:18,
+        attribution:"Esri, HERE, Garmin"},
+      "esri-sat":{type:"raster", tiles:[ESRI+"World_Imagery"+XYZ], tileSize:256, maxzoom:18,
+        attribution:"Esri, Maxar, Earthstar Geographics"},
+      seats:{type:"geojson", data:empty, promoteId:"code_dun"},
+      seatlab:{type:"geojson", data:empty},
+      loc:{type:"geojson", data:empty, promoteId:"id"},
+      veil:{type:"geojson", data:empty},
+      edge:{type:"geojson", data:empty},
+      kamp:{type:"geojson", data:empty, promoteId:"id"}
+    },
+    layers:baseLayers().concat(ownLayers())};
+}
+
 function buildMap(topo){
-  var L=window.L, el=$("#map");
-  var map=L.map(el, {zoomSnap:0.25, zoomDelta:0.5, minZoom:6, maxZoom:19,
-    scrollWheelZoom:false, attributionControl:true, zoomControl:true});
-  map.attributionControl.setPrefix(false);
+  var gl=window.maplibregl, el=$("#map");
+  var proto=new pmtiles.Protocol();
+  gl.addProtocol("pmtiles", proto.tile);
+  var map=new gl.Map({container:el, style:mapStyle(), bounds:[109.5,0.8,115.7,5.1],
+    fitBoundsOptions:{padding:12}, minZoom:5.5, maxZoom:18.5, maxBounds:[[104,-3],[121,9]],
+    attributionControl:false, dragRotate:false, pitchWithRotate:false, touchPitch:false});
+  map.touchZoomRotate.disableRotation();
+  map.addControl(new gl.NavigationControl({showCompass:false}), "top-left");
+  map.addControl(new gl.AttributionControl({compact:false, customAttribution:
+    'Sempadan <a href="https://github.com/Thevesh/paper-meco-maps">MECo</a>'}), "bottom-right");
   // a page that scrolls should not be hijacked by the map: the wheel zooms
   // only once the reader has clicked into it
-  map.on("click", function(){ map.scrollWheelZoom.enable() });
-  el.addEventListener("mouseleave", function(){ map.scrollWheelZoom.disable() });
-  map.createPane("labels");
-  map.getPane("labels").style.zIndex=650;
-  map.getPane("labels").style.pointerEvents="none";
-  MAP.el=map; MAP.L=L;
+  map.scrollZoom.disable();
+  map.on("click", function(){ map.scrollZoom.enable() });
+  el.addEventListener("mouseleave", function(){ map.scrollZoom.disable() });
+  MAP.el=map; MAP.gl=gl;
 
-  var dun=drawShapes(topo);
-  // a code at a point inside every seat (computed at build time)
-  dun.features.forEach(function(f){
-    var c=f.properties.code_dun, ll=f.properties.lab;
-    MAP.labs[c]=L.marker([ll[1], ll[0]], {pane:"labels", interactive:false, keyboard:false,
-      icon:L.divIcon({className:"seatlab off", iconSize:[0,0], html:'<span>'+esc(c)+'</span>'})}).addTo(map);
-  });
-  map.createPane("kamp");
-  map.getPane("kamp").style.zIndex=640;
-  function kz(){
-    el.classList.toggle("kz", map.getZoom()>=11);
-    el.classList.toggle("kzl", map.getZoom()>=13);
-    el.classList.toggle("kzx", map.getZoom()>=15);
-  }
-  map.on("zoomend", function(){
-    placeLabels(); kz();
-    if (map.getZoom()>=DETAIL_ZOOM) loadDetail();
-  });
-  kz(); drawKampPts();
-  MAP.all=L.geoJSON(dun).getBounds();
-  MAP.loading=false;
-  $("#mapmsg").hidden=true;
-  map.fitBounds(MAP.all, {padding:[12,12], animate:false});
-  setBasemap(MAP.base); drawMap();
-}
-/* Seats, parliament lines and parliament outlines from one topology. Called
-   again with the detailed topology, replacing the simplified shapes in place. */
-function drawShapes(topo){
-  var L=MAP.L, map=MAP.el;
-  MAP.shapes.forEach(function(l){ map.removeLayer(l) });
-  Object.keys(MAP.parOut).forEach(function(c){ map.removeLayer(MAP.parOut[c]) });
-  tip.classList.remove("on");
   var dun=topojson.feature(topo, topo.objects.dun);
-  var seatLayer=L.geoJSON(dun, {
-    style:function(){ return {className:"seat", weight:1, fillOpacity:.6} },
-    onEachFeature:function(f, layer){
-      var code=f.properties.code_dun;
-      MAP.seats[code]=layer;
-      layer.on("mouseover", function(ev){ mapTip(code, ev.originalEvent) });
-      layer.on("mousemove", function(ev){ placeTip(ev.originalEvent) });
-      layer.on("mouseout", function(){ tip.classList.remove("on") });
-      layer.on("click", function(){
-        tip.classList.remove("on");
-        if (state.dun===code) return;
-        state.dun=code; state.par=null; closeDrawer();
-        drawParlist(); drawDunlist(); render(); syncURL();
-      });
-    }
-  });
-  // parliament borders over the seats, and the state's outer edge
-  var par=topojson.mesh(topo, topo.objects.par, function(a,b){ return a!==b });
-  var coast=topojson.mesh(topo, topo.objects.par, function(a,b){ return a===b });
-  MAP.shapes=[seatLayer,
-    L.geoJSON(par, {interactive:false, style:{className:"parline", weight:3.5}}),
-    L.geoJSON(coast, {interactive:false, style:{className:"parline", weight:3.5}})];
-  MAP.shapes.forEach(function(l){ l.addTo(map) });
-  // one outline per parliament, drawn only for the parliament in scope, and its
-  // bounds for framing it
+  dun.features.forEach(function(f){ MAP.feat[f.properties.code_dun]=f });
   topo.objects.par.geometries.forEach(function(g){
-    var o=L.geoJSON(topojson.feature(topo, g), {interactive:false, style:{className:"parsel", weight:2}});
-    MAP.pars[g.properties.code_parlimen]=o.getBounds();
-    MAP.parOut[g.properties.code_parlimen]=o;
+    MAP.par[g.properties.code_parlimen]=topojson.feature(topo, g);
   });
-  return dun;
-}
-/* Kampung with a position, as dots from town level and names from street level.
-   A position is OSM's place of that name inside the kampung's seat, so it is
-   approximate: good for finding the kampung, not for drawing its edge. */
-function drawKampPts(){
-  if (!MAP.el || !KAMP.dm || MAP.kamp) return;
-  var L=MAP.L;
-  MAP.kamp={};
-  var g=L.layerGroup();
-  KAMP.all.forEach(function(k){
-    if (!k.ll) return;
-    var id=k.dm+"/"+k.c;
-    var m=L.marker(k.ll, {pane:"kamp", keyboard:false, riseOnHover:true,
-      icon:L.divIcon({className:"kpt", iconSize:[0,0], html:'<i></i><span>'+esc(kname(k.n))+'</span>'})});
-    m.on("mouseover", function(ev){
-      var r=seatRow(k.seat), dmName=((pdsOf()[k.seat]||[]).filter(function(d){ return d[0]===k.dm })[0]||[])[1]||"";
-      tip.innerHTML='<b>'+esc(kname(k.n))+'</b><em>'+esc(t("kampOf")(k.dm)+" "+dmName)+'</em>'+
-        (r ? '<em>'+esc(r[0]+" "+r[1])+'</em>' : '')+
-        (k.nw ? '<em>'+esc(t("kampNewT")(k.nw))+'</em>' : '');
-      tip.classList.add("on"); placeTip(ev.originalEvent);
-    });
-    m.on("mousemove", function(ev){ placeTip(ev.originalEvent) });
-    m.on("mouseout", function(){ tip.classList.remove("on") });
-    m.on("click", function(){
-      tip.classList.remove("on");
-      if (state.dun===k.seat) return;
-      state.dun=k.seat; state.par=null; closeDrawer();
-      drawParlist(); drawDunlist(); render(); syncURL();
-    });
-    m._seat=k.seat;
-    MAP.kamp[id]=m; g.addLayer(m);
+  MAP.dun=dun; MAP.topo=topo;
+  map.on("load", function(){
+    map.getSource("seats").setData(dun);
+    MAP.ready=true; MAP.loading=false;
+    $("#mapmsg").hidden=true;
+    bindMapEvents(map);
+    applyPalette();
+    drawKampPts();
+    setBasemap(MAP.base);
   });
-  g.addTo(MAP.el);
-  syncKampVis();
+  map.on("error", function(e){ if (window.console) console.warn("map:", e && e.error && e.error.message) });
 }
-/* With a seat or parliament in focus, only its own kampung are on the map;
-   the rest belong to seats the reader is not looking at. */
-function syncKampVis(){
-  if (!MAP.kamp) return;
-  var narrow=shown().length<seats().length, on=MAP.inScope||{};
-  Object.keys(MAP.kamp).forEach(function(id){
-    var m=MAP.kamp[id], e=m.getElement();
-    if (e) e.style.display = !narrow || on[m._seat] ? "" : "none";
-  });
+
+/* ----- geometry helpers ----- */
+function ringsOfGeom(g){
+  if (!g) return [];
+  if (g.type==="Polygon") return [g.coordinates[0]];
+  if (g.type==="MultiPolygon") return g.coordinates.map(function(p){ return p[0] });
+  if (g.type==="FeatureCollection") return [].concat.apply([], g.features.map(function(f){ return ringsOfGeom(f.geometry) }));
+  if (g.type==="Feature") return ringsOfGeom(g.geometry);
+  return [];
 }
-/* The focus: everything outside the seat, parliament or search in scope is
-   faded under a dark veil, and the focus's edge glows blue just outside it,
-   so the eye lands on the area and the surroundings recede. The veil is one
-   polygon, the world with the focus cut out of it. */
-/* Locality outlines for the seat in focus. They are estimates (see
-   scripts/build_localities.py): each positioned kampung gets the part of its
-   seat nearest to it, so the map says so under it, with how many of the seat's
-   polling districts have a kampung to draw from. */
-function drawLocal(){
-  var map=MAP.el; if (!map) return;
-  var code = state.set==="82" && state.dun || null;
-  if (code===MAP.locCode) return;
-  MAP.locCode=code; MAP.locNote=null;
-  (MAP.loc||[]).forEach(function(l){ map.removeLayer(l) });
-  MAP.loc=[];
-  drawMapLegend();
-  if (!code) return;
-  getJSON("/data/localities/"+code+".json").then(function(j){
-    if (MAP.locCode!==code) return;
-    var L=MAP.L;
-    function flip(r){ return r.map(function(p){ return [p[1],p[0]] }) }
-    j.k.forEach(function(k){
-      var id=k[0]+"/"+k[1];
-      var l=L.polygon(k[2].map(flip), {className:"lcell", weight:.8, fillOpacity:1});
-      l.on("mouseover", function(ev){
-        var kk=kampById(id), dmName=((pdsOf()[code]||[]).filter(function(d){ return d[0]===k[0] })[0]||[])[1]||"";
-        tip.innerHTML='<b>'+esc(kk ? kname(kk.n) : t("kampOf")(k[0]))+'</b>'+
-          '<em>'+esc(t("kampOf")(k[0])+" "+dmName)+'</em><em>'+esc(t("locTip"))+'</em>';
-        tip.classList.add("on"); placeTip(ev.originalEvent);
-      });
-      l.on("mousemove", function(ev){ placeTip(ev.originalEvent) });
-      l.on("mouseout", function(){ tip.classList.remove("on") });
-      MAP.loc.push(l);
-    });
-    j.d.forEach(function(d){
-      MAP.loc.push(L.polygon(d[1].map(flip), {className:"ldm", interactive:false, fill:false, weight:1.3}));
-    });
-    MAP.loc.forEach(function(l){ l.addTo(map) });
-    MAP.locNote = j.k.length ? t("locNote")(j.cov[0], j.cov[1]) : t("locNone");
-    drawMapLegend();
-  }, function(){});
+function boundsOf(rings){
+  var b=[180,90,-180,-90];
+  rings.forEach(function(r){ r.forEach(function(p){
+    if (p[0]<b[0]) b[0]=p[0]; if (p[1]<b[1]) b[1]=p[1];
+    if (p[0]>b[2]) b[2]=p[0]; if (p[1]>b[3]) b[3]=p[1];
+  }) });
+  return b[0]>b[2] ? null : [[b[0],b[1]],[b[2],b[3]]];
 }
-function ringsOf(layer){
-  var out=[];
-  (function walk(ll){
-    if (!ll.length) return;
-    if (MAP.L.LineUtil.isFlat(ll)){ out.push(ll); return }
-    // a polygon is [outer, holes…]; a multipolygon is a list of those
-    if (MAP.L.LineUtil.isFlat(ll[0])){ out.push(ll[0]); return }
-    ll.forEach(walk);
-  })(layer.getLatLngs());
-  return out;
-}
-function drawFocus(){
-  var L=MAP.L, map=MAP.el;
-  if (!map) return;
-  var P=pars(), rows=shown(), all=rows.length===seats().length;
-  var key=(state.dun || (state.par!==null ? "p"+state.par : "") || (all ? "all" : "q"+state.q))+"/"+MAP.detail;
-  if (key===MAP.focusKey) return;
-  MAP.focusKey=key;
-  (MAP.fence||[]).forEach(function(l){ map.removeLayer(l) });
-  MAP.fence=[];
-  var rings=[], edge=[];
-  if (state.par!==null && MAP.parOut[P[state.par][0]]){
-    MAP.parOut[P[state.par][0]].eachLayer(function(l){ rings=rings.concat(ringsOf(l)) });
-    edge=rings;
-  } else {
-    rows.forEach(function(r){ var l=MAP.seats[r[0]]; if (l) rings=rings.concat(ringsOf(l)) });
-    if (!all) edge=rings;
-  }
-  if (!rings.length) return;
-  if (!$("#fglowf")){
-    var svg=map.getPanes().overlayPane.querySelector("svg");
-    if (svg){
-      var ns="http://www.w3.org/2000/svg", defs=document.createElementNS(ns,"defs");
-      defs.innerHTML='<filter id="fglowf" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>';
-      svg.insertBefore(defs, svg.firstChild);
+// signed area (shoelace): > 0 when the ring runs counter-clockwise
+function ringArea(r){ var a=0; for (var i=0,j=r.length-1;i<r.length;j=i++) a+=(r[j][0]-r[i][0])*(r[j][1]+r[i][1]); return a/2 }
+function fc(feats){ return {type:"FeatureCollection", features:feats} }
+function lineF(rings, props){ return {type:"Feature", properties:props||{}, geometry:{type:"MultiLineString", coordinates:rings}} }
+
+/* ----- interaction: one handler, the topmost thing under the pointer wins ----- */
+function bindMapEvents(map){
+  var LAYERS=["kamp-dot","loc-fill","seat-fill"];
+  function topAt(pt){
+    var hits=map.queryRenderedFeatures(pt, {layers:LAYERS.filter(function(l){ return map.getLayer(l) })});
+    for (var i=0;i<LAYERS.length;i++){
+      var h=hits.filter(function(f){ return f.layer.id===LAYERS[i] })[0];
+      if (h) return h;
     }
+    return null;
   }
-  var world=[[-85,-180],[85,-180],[85,180],[-85,180]];
-  MAP.fence.push(L.polygon([world].concat(rings), {className:"fveil", interactive:false, stroke:false, fillOpacity:1}));
-  if (edge.length){
-    MAP.fence.push(L.polygon(edge, {className:"fglow", interactive:false, fill:false, weight:14}));
-    // a seat keeps its own white line; a parliament's outer edge is drawn in blue
-    if (state.par!==null) MAP.fence.push(L.polygon(edge, {className:"fedge", interactive:false, fill:false, weight:1.5}));
+  function setHover(id){
+    if (MAP.hoverLoc===id) return;
+    if (MAP.hoverLoc) map.setFeatureState({source:"loc", id:MAP.hoverLoc}, {h:false});
+    MAP.hoverLoc=id;
+    if (id) map.setFeatureState({source:"loc", id:id}, {h:true});
   }
-  MAP.fence.forEach(function(l){ l.addTo(map) });
-}
-// from a kampung in the list to its point on the map, its seat in scope
-function kampToMap(id){
-  var k=kampById(id);
-  if (!k || !k.ll) return;
-  closeDrawer();
-  if (state.dun!==k.seat){ state.dun=k.seat; state.par=null; drawParlist(); drawDunlist() }
-  KAMP.hot=id; MAP.focus=k;
-  render(); syncURL(); showTab("ringkasan");
-  var top=$(".mapcard"); if (top) top.scrollIntoView({block:"start", behavior:CALM ? "auto" : "smooth"});
-}
-function loadDetail(){
-  if (MAP.detail) return;
-  MAP.detail=1;
-  getJSON("/data/dun82-boundaries-detail.json").then(function(topo){
-    drawShapes(topo); MAP.detail=2;
-    MAP.keep=true; drawMap(); MAP.keep=false;            // restyle, without reframing
-  }, function(){ MAP.detail=3 });                         // keep the overview; it is still right
-}
-function setBasemap(name){
-  MAP.base=name;
-  var bm=BASEMAPS[name], dark=effectiveTheme()==="dark", L=MAP.L, map=MAP.el;
-  [].forEach.call($("#mapBase").querySelectorAll("button"), function(x){ x.classList.toggle("on", x.dataset.bm===name) });
-  if (!map) return;
-  $("#map").className=$("#map").className.replace(/\s*bm-\w+/g,"")+" bm-"+name;
-  var key=name+(dark ? "-d" : "");
-  if (key===MAP.tileKey) return;
-  MAP.tileKey=key;
-  // new layers rather than setUrl: a URL swapped in the middle of a flight is
-  // redrawn at the flight's fractional zoom, which the tile server does not have
-  MAP.tiles.forEach(function(l){ map.removeLayer(l) });
-  var src=dark ? bm.dark : bm.light, attr=name==="sat"
-    ? 'Imej &copy; Esri, Maxar, Earthstar Geographics · Sempadan <a href="https://github.com/Thevesh/paper-meco-maps">MECo</a>'
-    : 'Peta asas &copy; Esri, HERE, Garmin, &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · Sempadan <a href="https://github.com/Thevesh/paper-meco-maps">MECo</a>';
-  MAP.tiles=src.map(function(path, i){
-    return L.tileLayer(ESRI+path+XYZ, {maxNativeZoom:bm.native, maxZoom:19,
-      attribution:i ? undefined : attr, pane:i ? "labels" : "tilePane"}).addTo(map);
+  map.on("mousemove", function(e){
+    var h=topAt(e.point), oe=e.originalEvent;
+    map.getCanvas().style.cursor = h ? "pointer" : "";
+    if (!h){ tip.classList.remove("on"); setHover(null); return }
+    var p=h.properties;
+    if (h.layer.id==="loc-fill"){ setHover(p.id); locTip(p, oe); return }
+    setHover(null);
+    if (h.layer.id==="kamp-dot") kampTip(p, oe);
+    else mapTip(p.code_dun, oe);
   });
-  drawMap();
-}
-/* A seat is labelled once it is big enough on screen to hold its code, and named
-   too once it can hold the name; the picked seat is always labelled and named. */
-function placeLabels(){
-  if (!MAP.el) return;
-  var map=MAP.el, S={};
-  seats().forEach(function(r){ S[r[0]]=r });
-  Object.keys(MAP.labs).forEach(function(c){
-    var m=MAP.labs[c], el=m.getElement(), r=S[c];
-    if (!el || !r) return;
-    var b=MAP.seats[c].getBounds(),
-        a=map.latLngToContainerPoint(b.getNorthWest()), z=map.latLngToContainerPoint(b.getSouthEast());
-    var w=z.x-a.x, h=z.y-a.y, pick=state.dun===c;
-    var named=pick || (w>120 && h>44), show=pick || (w>38 && h>20);
-    var html='<span>'+esc(c)+(named ? '<i>'+esc(r[1])+'</i>' : '')+'</span>';
-    if (el.innerHTML!==html) el.innerHTML=html;
-    el.classList.toggle("off", !show);
-    el.classList.toggle("pick", pick);
-    el.classList.toggle("dim", !pick && !MAP.inScope[c]);
+  map.getCanvas().addEventListener("mouseleave", function(){ tip.classList.remove("on"); setHover(null) });
+  map.on("click", function(e){
+    var h=topAt(e.point);
+    tip.classList.remove("on");
+    if (!h) return;
+    var p=h.properties;
+    if (h.layer.id==="loc-fill"){ focusLocality(p.id); return }
+    var code = h.layer.id==="kamp-dot" ? p.seat : p.code_dun;
+    if (state.dun===code) return;
+    state.dun=code; state.par=null; MAP.locFocus=null; closeDrawer();
+    drawParlist(); drawDunlist(); render(); syncURL();
   });
 }
 function placeTip(e){
@@ -2807,108 +2725,243 @@ function placeTip(e){
 function mapTip(code, e){
   var r=seats().filter(function(x){ return x[0]===code })[0];
   if (!r) return;
-  var avg=AVG(), d=(r[V]-avg)/avg, et=eth7(r), tot=et.reduce(function(a,x){ return a+x },0)||1, top=0;
+  var et=eth7(r), tot=et.reduce(function(a,x){ return a+x },0)||1, top=0;
   for (var i=1;i<7;i++) if (et[i]>et[top]) top=i;
   tip.innerHTML='<b><i style="background:'+ETH[top].c+'"></i>'+esc(r[0]+" "+r[1])+'</b>'+
-    '<em>'+fmt(r[V])+' '+esc(t("voters").toLowerCase())+' · '+(d>=0?"+":"−")+Math.abs(d*100).toFixed(1)+'%</em>'+
+    '<em>'+fmt(r[V])+' '+esc(t("voters").toLowerCase())+'</em>'+
     '<em>'+esc(ETH[top].n)+' '+pc(et[top]/tot*100)+' · '+esc(pars()[r[2]][0]+" "+pars()[r[2]][1])+'</em>';
   tip.classList.add("on"); placeTip(e);
 }
-function mapTheme(){ if (MAP.el) setBasemap(MAP.base) }
+function dmNameOf(seat, dm){ return ((pdsOf()[seat]||[]).filter(function(d){ return d[0]===dm })[0]||[])[1]||"" }
+function locTip(p, e){
+  var kk=kampById(p.id);
+  tip.innerHTML='<b>'+esc(kk ? kname(kk.n) : t("kampOf")(p.dm))+'</b>'+
+    '<em>'+esc(t("kampOf")(p.dm)+" "+dmNameOf(MAP.locCode, p.dm))+'</em><em>'+esc(t("locTip"))+'</em>';
+  tip.classList.add("on"); placeTip(e);
+}
+function kampTip(p, e){
+  var k=kampById(p.id); if (!k) return;
+  var r=seatRow(k.seat);
+  tip.innerHTML='<b>'+esc(kname(k.n))+'</b><em>'+esc(t("kampOf")(k.dm)+" "+dmNameOf(k.seat, k.dm))+'</em>'+
+    (r ? '<em>'+esc(r[0]+" "+r[1])+'</em>' : '')+
+    (k.nw ? '<em>'+esc(t("kampNewT")(k.nw))+'</em>' : '');
+  tip.classList.add("on"); placeTip(e);
+}
+
+/* ----- kampung: a dot each; on a seat or parliament, only that scope's ----- */
+function drawKampPts(){
+  if (!MAP.ready || !KAMP.dm || MAP.kampDrawn) return;
+  MAP.kampDrawn=true;
+  var feats=[];
+  KAMP.all.forEach(function(k){
+    if (!k.ll) return;
+    feats.push({type:"Feature", properties:{id:k.dm+"/"+k.c, seat:k.seat, name:kname(k.n)},
+      geometry:{type:"Point", coordinates:[k.ll[1], k.ll[0]]}});
+  });
+  MAP.el.getSource("kamp").setData(fc(feats));
+  syncKampVis();
+}
+function syncKampVis(){
+  if (!MAP.ready) return;
+  var narrow=shown().length<seats().length;
+  var f = narrow ? ["in",["get","seat"],["literal",Object.keys(MAP.inScope)]] : null;
+  MAP.el.setFilter("kamp-dot", f); MAP.el.setFilter("kamp-lab", f);
+}
+// from a kampung in the list to its point on the map, its seat in scope
+function kampToMap(id){
+  var k=kampById(id);
+  if (!k || !k.ll) return;
+  closeDrawer();
+  if (state.dun!==k.seat){ state.dun=k.seat; state.par=null; drawParlist(); drawDunlist() }
+  KAMP.hot=id; MAP.focus=k; MAP.locFocus=null;
+  render(); syncURL(); showTab("ringkasan");
+  var top=$(".mapcard"); if (top) top.scrollIntoView({block:"start", behavior:CALM ? "auto" : "smooth"});
+}
+
+/* ----- locality outlines for the seat in focus (estimates; see
+   scripts/build_localities.py), and focusing one of them ----- */
+function drawLocal(){
+  var map=MAP.el; if (!MAP.ready) return;
+  var code = state.set==="82" && state.dun || null;
+  if (code===MAP.locCode) return;
+  MAP.locCode=code; MAP.locNote=null; MAP.locData=null; MAP.locFocus=null;
+  map.getSource("loc").setData(fc([]));
+  drawMapLegend();
+  if (!code) return;
+  getJSON("/data/localities/"+code+".json").then(function(j){
+    if (MAP.locCode!==code) return;
+    var feats=[];
+    j.k.forEach(function(k){
+      feats.push({type:"Feature", properties:{t:"k", id:k[0]+"/"+k[1], dm:k[0]},
+        geometry:{type:"MultiPolygon", coordinates:k[2].map(function(r){ return [r] })}});
+    });
+    j.d.forEach(function(d){
+      feats.push({type:"Feature", properties:{t:"d", id:"d:"+d[0], dm:d[0]},
+        geometry:{type:"MultiLineString", coordinates:d[1]}});
+    });
+    MAP.locData=feats;
+    map.getSource("loc").setData(fc(feats));
+    MAP.locNote = j.k.length ? t("locNote")(j.cov[0], j.cov[1]) : t("locNone");
+    drawMapLegend();
+  }, function(){});
+}
+function focusLocality(id){
+  if (!MAP.locData) return;
+  var f=MAP.locData.filter(function(x){ return x.properties.id===id })[0];
+  if (!f) return;
+  MAP.locFocus=id;
+  MAP.focusKey=null; drawFocus();
+  syncBackBtn();
+  var b=boundsOf(ringsOfGeom(f.geometry));
+  if (b) MAP.el.fitBounds(b, {padding:48, maxZoom:16, duration:CALM ? 0 : 600});
+}
+function backToSeat(){
+  if (!MAP.locFocus) return;
+  MAP.locFocus=null; MAP.focusKey=null; drawFocus(); syncBackBtn();
+  var f=state.dun && MAP.feat[state.dun];
+  var b=f && boundsOf(ringsOfGeom(f.geometry));
+  if (b) MAP.el.fitBounds(b, {padding:28, maxZoom:13, duration:CALM ? 0 : 550});
+}
+function syncBackBtn(){
+  var btn=$("#mapback"), r=state.dun && seatRow(state.dun);
+  btn.hidden=!(MAP.locFocus && r);
+  if (r) $("#mapbackTxt").textContent=t("backDun")(r[0]+" "+r[1]);
+  $("#mapreset").hidden = !btn.hidden || MAP.key==="all" || !MAP.key;
+}
+
+/* ----- the focus: a veil over everything outside it, a glow on its edge ----- */
+function drawFocus(){
+  var map=MAP.el; if (!MAP.ready) return;
+  var P=pars(), rows=shown(), all=rows.length===seats().length;
+  var key=(MAP.locFocus ? "l"+MAP.locFocus : "")+
+    (state.dun || (state.par!==null ? "p"+state.par : "") || (all ? "all" : "q"+state.q));
+  if (key===MAP.focusKey) return;
+  MAP.focusKey=key;
+  var rings=[], edge=[];
+  if (MAP.locFocus && MAP.locData){
+    var lf=MAP.locData.filter(function(x){ return x.properties.id===MAP.locFocus })[0];
+    rings=ringsOfGeom(lf && lf.geometry);
+    edge=[lineF(rings, {c:pal().ink, w:2})];
+  } else if (state.par!==null && MAP.par[P[state.par][0]]){
+    rings=ringsOfGeom(MAP.par[P[state.par][0]]);
+    edge=[lineF(rings)];
+  } else {
+    // several seats are merged into one outline first: holes that share edges
+    // cannot be cut cleanly out of the veil
+    var want={}; rows.forEach(function(r){ want[r[0]]=1 });
+    var geoms=MAP.topo.objects.dun.geometries.filter(function(g){ return want[g.properties.code_dun] });
+    rings=ringsOfGeom(rows.length===1 ? MAP.feat[rows[0][0]] : topojson.merge(MAP.topo, geoms));
+    // a seat keeps its own white line; only its glow is added
+    if (!all) edge=[lineF(rings, {c:"rgba(0,0,0,0)", w:0})];
+  }
+  var world=[[-179,-85],[179,-85],[179,85],[-179,85],[-179,-85]];
+  map.getSource("veil").setData(rings.length
+    // the world runs counter-clockwise, so every hole must run clockwise, or
+    // it is read as another filled shape
+    ? fc([{type:"Feature", properties:{}, geometry:{type:"Polygon", coordinates:[world].concat(rings.map(function(r){
+        return ringArea(r)>0 ? r.slice().reverse() : r }))}}])
+    : fc([]));
+  map.getSource("edge").setData(fc(edge));
+}
+
+/* ----- basemap: ours, or Esri streets / satellite under our layers ----- */
+var BASE_OWN=["earth","landcover","landuse","water","river","buildings","r-path","r-min","r-ter","r-sec","r-pri","r-hw","border","road-lab","place-lab","country-lab"];
+function setBasemap(name){
+  MAP.base=name;
+  [].forEach.call($("#mapBase").querySelectorAll("button"), function(x){ x.classList.toggle("on", x.dataset.bm===name) });
+  if (!MAP.ready) return;
+  var map=MAP.el;
+  BASE_OWN.forEach(function(id){
+    var keep = name==="grey" || (name==="sat" && /lab$/.test(id)) || (name==="street" && false);
+    map.setLayoutProperty(id, "visibility", keep ? "visible" : "none");
+  });
+  map.setLayoutProperty("esri-street", "visibility", name==="street" ? "visible" : "none");
+  map.setLayoutProperty("esri-sat", "visibility", name==="sat" ? "visible" : "none");
+  $("#map").className=$("#map").className.replace(/\s*bm-\w+/g,"")+" bm-"+name;
+  drawMap();
+}
+function mapTheme(){ SEATC=null; applyPalette(); drawMap() }
+
+/* ----- seat labels: the code where a seat has room, the name too up close ----- */
+function placeLabels(){
+  if (!MAP.ready) return;
+  var feats=[];
+  seats().forEach(function(r){
+    var f=MAP.feat[r[0]]; if (!f || !f.properties.lab) return;
+    var pick=state.dun===r[0];
+    feats.push({type:"Feature", properties:{code:r[0], name:r[1], pick:pick, named:pick || MAP.el.getZoom()>=9.5,
+      dim:!pick && !MAP.inScope[r[0]]}, geometry:{type:"Point", coordinates:f.properties.lab}});
+  });
+  MAP.el.getSource("seatlab").setData(fc(feats));
+}
+
+var SEATC=null;
+function seatColours(){
+  var cs=getComputedStyle(document.documentElement);
+  SEATC=ETH.map(function(e,i){ return (cs.getPropertyValue("--s"+(i+1))||"#888").trim() });
+}
 /* Colour, dim and frame the seats for the current scope. */
 function drawMap(){
   $("#map").setAttribute("aria-label", t("mapAria"));
   drawMapLegend();
-  if (!MAP.el) return;
-  var rows=shown(), avg=AVG(), on={}, n=0, P=pars();
+  if (!MAP.ready) return;
+  var map=MAP.el, rows=shown(), on={}, n=0, P=pars();
   rows.forEach(function(r){ on[r[0]]=true; n++ });
   MAP.inScope=on;
+  if (!SEATC) seatColours();
+  // On our dark map a scope (a seat, a parliament, a search) is drawn like a
+  // geofence: the picked seat lit white, the rest of the scope in blue, and
+  // every other seat only a faint line. The statewide view keeps its
+  // largest-group colours, translucent so the roads read through.
+  var fence=n<seats().length, raster=MAP.base!=="grey", ink=pal().ink;
   seats().forEach(function(r){
-    var layer=MAP.seats[r[0]];
-    if (!layer || !layer._path) return;
-    var cls, op;
-    if (MAP.mode==="dev"){
-      var d=(r[V]-avg)/avg;
-      cls=d>=0 ? "over" : "under";
-      op=.18+Math.min(Math.abs(d),.6)/.6*.62;
+    var inScope=!!on[r[0]], pick=state.dun===r[0], st;
+    if (fence){
+      st = pick ? {c:ink, op:ink==="#ffffff" ? .16 : .07, lc:ink, lo:1, lw:2.2}
+         : inScope ? {c:"#3D7BFF", op:.16, lc:"#3D7BFF", lo:.95, lw:1.5}
+         : {c:ink, op:0, lc:ink, lo:.16, lw:.8};
     } else {
       var e=eth7(r), tot=e.reduce(function(a,x){ return a+x },0)||1, top=0;
       for (var i=1;i<7;i++) if (e[i]>e[top]) top=i;
-      cls="k"+top;
-      op=.22+Math.max(0,Math.min(1,(e[top]/tot-.35)/.6))*.6;
+      st={c:SEATC[top], op:(.22+Math.max(0,Math.min(1,(e[top]/tot-.35)/.6))*.6)*.75, lc:ink, lo:.35, lw:1};
     }
-    var inScope=!!on[r[0]], pick=state.dun===r[0];
-    // On the dark map a scope (a seat, a parliament, a search) is drawn like a
-    // geofence: the picked seat lit white, the rest of the scope in blue, and
-    // every other seat only a faint line over the roads. The statewide view
-    // keeps its largest-group colours, translucent so the roads read through.
-    var fence=MAP.base==="grey" && n<seats().length;
-    if (fence){
-      cls = pick ? "g-pick" : inScope ? "g-in" : "g-out";
-      op = pick ? .2 : inScope ? .16 : 0;
-    } else if (MAP.base==="grey") op*=.75;
-    layer._path.setAttribute("class", "seat leaflet-interactive "+cls+
-      (inScope ? "" : " out")+(pick ? " pick" : ""));
-    // streets and satellite carry their own detail; a lighter fill lets it show
-    if (MAP.base!=="grey") op*=.5;
-    layer.setStyle({fillOpacity: fence || inScope ? op : op*.22});
-    if (pick) layer.bringToFront();
+    if (raster) st.op*=.6;
+    map.setFeatureState({source:"seats", id:r[0]}, st);
   });
-  drawFocus(); drawLocal(); syncKampVis();
-  (MAP.loc||[]).forEach(function(l){ l.bringToFront() });
-  var pcode=state.par!==null ? P[state.par][0] : null;
-  Object.keys(MAP.parOut).forEach(function(c){
-    var o=MAP.parOut[c], want=c===pcode;
-    if (want && !MAP.el.hasLayer(o)) o.addTo(MAP.el);
-    else if (!want && MAP.el.hasLayer(o)) MAP.el.removeLayer(o);
-  });
+  if (!state.dun) MAP.locFocus=null;
+  drawLocal(); drawFocus(); syncKampVis(); placeLabels();
+  if (MAP.kampHot) map.setFeatureState({source:"kamp", id:MAP.kampHot}, {hot:false});
+  MAP.kampHot=KAMP.hot||null;
+  if (MAP.kampHot) map.setFeatureState({source:"kamp", id:MAP.kampHot}, {hot:true});
   // frame the scope, flying only when the scope itself has changed
   var key=state.dun || (state.par!==null ? "p"+state.par : "") || (n<seats().length ? "q"+state.q : "all");
-  $("#mapreset").hidden = key==="all";
-  placeLabels();
   // a hidden map has no size to fit to; frame it when it is next on screen
   if ($("#ringkasan").hidden){ MAP.key=null; return }
-  if (MAP.keep){ MAP.key=key; return }
-  if (MAP.focus && MAP.kamp){
-    var f=MAP.focus, hot=MAP.kamp[f.dm+"/"+f.c];
-    MAP.focus=null; MAP.key=key;
-    Object.keys(MAP.kamp).forEach(function(id){
-      var e=MAP.kamp[id].getElement(); if (e) e.classList.toggle("hot", MAP.kamp[id]===hot);
-    });
-    if (hot) hot.setZIndexOffset(1000);
-    if (CALM) MAP.el.setView(f.ll, 15); else MAP.el.flyTo(f.ll, 15, {duration:.7});
+  if (MAP.focus){
+    var f=MAP.focus;
+    MAP.focus=null; MAP.key=key; syncBackBtn();
+    map.flyTo({center:[f.ll[1], f.ll[0]], zoom:15, duration:CALM ? 0 : 700});
     return;
   }
-  if (key===MAP.key) return;
-  MAP.key=key;
+  if (key===MAP.key){ syncBackBtn(); return }
+  MAP.key=key; MAP.locFocus=null; MAP.focusKey=null; drawFocus();
+  syncBackBtn();
   var b;
-  if (state.dun && MAP.seats[state.dun]) b=MAP.seats[state.dun].getBounds();
-  else if (state.par!==null) b=MAP.pars[P[state.par][0]];
+  if (state.dun && MAP.feat[state.dun]) b=boundsOf(ringsOfGeom(MAP.feat[state.dun]));
+  else if (state.par!==null) b=boundsOf(ringsOfGeom(MAP.par[P[state.par][0]]));
   else if (n && n<seats().length){
-    b=null;
-    rows.forEach(function(r){
-      var l=MAP.seats[r[0]]; if (!l) return;
-      b = b ? b.extend(l.getBounds()) : MAP.L.latLngBounds(l.getBounds().getSouthWest(), l.getBounds().getNorthEast());
-    });
-  } else b=MAP.all;
+    var rr=[]; rows.forEach(function(r){ rr=rr.concat(ringsOfGeom(MAP.feat[r[0]])) }); b=boundsOf(rr);
+  } else b=[[109.5,0.8],[115.7,5.1]];
   if (!b) return;
-  var opt={padding:[28,28], maxZoom:13};
-  if (CALM) MAP.el.fitBounds(b, opt);
-  else MAP.el.flyToBounds(b, Object.assign({duration:.55, easeLinearity:.35}, opt));
+  map.fitBounds(b, {padding:28, maxZoom:13, duration:CALM ? 0 : 550});
 }
 function drawMapLegend(){
   var leg=$("#mapLegend");
-  $(".mapfoot").hidden = MAP.base==="grey" && shown().length<seats().length && !MAP.locNote;
+  $(".mapfoot").hidden = shown().length<seats().length && !MAP.locNote;
   if (state.dun && MAP.locNote){
     leg.innerHTML='<div><b class="lsw ldmsw"></b>'+esc(t("locDmKey"))+'</div>'+
       '<div><b class="lsw"></b>'+esc(t("locKey"))+'</div>';
     $("#mapNote").textContent=MAP.locNote;
-    return;
-  }
-  if (MAP.mode==="dev"){
-    leg.innerHTML='<div><b class="ramp" style="background:linear-gradient(90deg,color-mix(in srgb,var(--under) 25%,transparent),var(--under))"></b>'+esc(t("mapUnder"))+'</div>'+
-      '<div><b class="ramp" style="background:linear-gradient(90deg,color-mix(in srgb,var(--over) 25%,transparent),var(--over))"></b>'+esc(t("mapOver"))+'</div>';
-    $("#mapNote").textContent=t("mapNoteDev");
     return;
   }
   // only the groups that lead at least one seat
@@ -2923,24 +2976,18 @@ function drawMapLegend(){
   }).join("");
   $("#mapNote").textContent=t("mapNoteMaj");
 }
-[].forEach.call($("#mapMode").querySelectorAll("button"), function(b){
-  b.addEventListener("click", function(){
-    MAP.mode=b.dataset.mm;
-    [].forEach.call($("#mapMode").querySelectorAll("button"), function(x){ x.classList.toggle("on", x===b) });
-    drawMap();
-  });
-});
 [].forEach.call($("#mapBase").querySelectorAll("button"), function(b){
   b.addEventListener("click", function(){
     try { localStorage.setItem("sarawakseats-basemap", b.dataset.bm) } catch(e){}
-    setBasemap(b.dataset.bm); drawMapLegend();
+    setBasemap(b.dataset.bm);
   });
 });
 $("#mapreset").addEventListener("click", function(){
-  state.dun=null; state.par=null;
+  state.dun=null; state.par=null; MAP.locFocus=null;
   if (state.q){ qEl.value=""; state.q=""; state.qRaw="" }
   closeDrawer(); drawParlist(); drawDunlist(); render(); syncURL();
 });
+$("#mapback").addEventListener("click", backToSeat);
 
 /* ---------- render ---------- */
 function render(){
@@ -3245,7 +3292,7 @@ $("#sidebtn").addEventListener("click", function(){
   try { localStorage.setItem("sarawakseats-side", off ? "off" : "on") } catch(e){}
   syncSideBtn();
   // the map's box changes width with the sheet; tell Leaflet once it settles
-  setTimeout(function(){ if (MAP.el) MAP.el.invalidateSize() }, 200);
+  setTimeout(function(){ if (MAP.el) MAP.el.resize() }, 200);
 });
 
 /* ---------- theme ---------- */
