@@ -486,6 +486,21 @@ main{position:relative; min-width:0; min-height:0; margin:8px 8px 8px 0; overflo
 .leaflet-control-attribution a{color:var(--ink-2) !important}
 .leaflet-tile-pane{transition:opacity var(--dur-2) var(--ease-out)}
 .mapfoot[hidden]{display:none}
+/* focus: a veil over everything outside it, a blue glow just past its edge */
+.fveil{fill:#05060a; fill-opacity:.5; pointer-events:none}
+#map.bm-grey .fveil{fill-opacity:.62}
+.fglow{stroke:#3D7BFF; stroke-opacity:.75; filter:url(#fglowf); pointer-events:none}
+.fedge{stroke:#6FA0FF; stroke-opacity:.9; pointer-events:none}
+#map.bm-sat .fveil{fill-opacity:.45}
+/* estimated localities: dashed cells, solid polling-district lines */
+.lcell{stroke:#fff; stroke-opacity:.32; stroke-dasharray:2 3; fill:#fff; fill-opacity:0 !important;
+  transition:fill-opacity var(--dur-1) linear}
+@media (hover:hover) and (pointer:fine){ .lcell:hover{fill-opacity:.1 !important} }
+.ldm{stroke:#fff; stroke-opacity:.6; pointer-events:none}
+#map.bm-street .lcell, #map.bm-street .ldm{stroke:#17181a}
+.legend .lsw{width:14px; height:0; border-radius:0; border-top:1.5px dashed var(--muted); background:none}
+.legend .lsw.ldmsw{border-top-style:solid}
+.mapfoot .note{white-space:normal}
 /* The dark map, in both themes. Roads are lifted a little so they read as a
    network, the way a night map does, not as noise. */
 .mapbox:has(#map.bm-grey), #map.bm-grey, #map.bm-grey.leaflet-container{background:#0a0a0b}
@@ -1147,6 +1162,9 @@ function icon(name, size){
 var I18N={
   ms:{
     brandsub:PROPOSAL ? "Persempadanan 2026" : "PRN Sarawak · 82 DUN", dataset:"Set data", proposed:"Cadangan", current:"Semasa",
+    locKey:"Lokaliti", locDmKey:"Daerah mengundi (anggaran)", locTip:"Kawasan anggaran",
+    locNote:function(a,b){ return "Kawasan terdekat dengan setiap kampung yang diketahui kedudukannya: "+a+" daripada "+b+" daerah mengundi." },
+    locNone:"Tiada kampung dengan kedudukan untuk melukis garis lokaliti di kerusi ini.",
     heldBy:"ADUN terdahulu", dissolvedOn:"DUN dibubarkan 26 Okt 2026", votersTitle:"Pengundi",
     estFoot:function(e,a){ return "Etnik: "+e+". Umur dan jantina: "+a+"." },
     mapTitle:"Peta kawasan", mapMaj:"Etnik terbesar", mapAll:"Seluruh Sarawak",
@@ -1246,6 +1264,9 @@ var I18N={
   },
   en:{
     brandsub:PROPOSAL ? "Redelineation 2026" : "Sarawak election · 82 seats", dataset:"Dataset", proposed:"Proposed", current:"Current",
+    locKey:"Locality", locDmKey:"Polling district (approximate)", locTip:"Approximate area",
+    locNote:function(a,b){ return "Area nearest each kampung with a known position: "+a+" of "+b+" polling districts." },
+    locNone:"No kampung in this seat has a position to draw locality outlines from.",
     heldBy:"Last held by", dissolvedOn:"DUN dissolved 26 Oct 2026", votersTitle:"Voters",
     estFoot:function(e,a){ return "Ethnicity: "+e+". Age and sex: "+a+"." },
     mapTitle:"Seat map", mapMaj:"Largest group", mapAll:"All of Sarawak",
@@ -2615,9 +2636,109 @@ function drawKampPts(){
       state.dun=k.seat; state.par=null; closeDrawer();
       drawParlist(); drawDunlist(); render(); syncURL();
     });
+    m._seat=k.seat;
     MAP.kamp[id]=m; g.addLayer(m);
   });
   g.addTo(MAP.el);
+  syncKampVis();
+}
+/* With a seat or parliament in focus, only its own kampung are on the map;
+   the rest belong to seats the reader is not looking at. */
+function syncKampVis(){
+  if (!MAP.kamp) return;
+  var narrow=shown().length<seats().length, on=MAP.inScope||{};
+  Object.keys(MAP.kamp).forEach(function(id){
+    var m=MAP.kamp[id], e=m.getElement();
+    if (e) e.style.display = !narrow || on[m._seat] ? "" : "none";
+  });
+}
+/* The focus: everything outside the seat, parliament or search in scope is
+   faded under a dark veil, and the focus's edge glows blue just outside it,
+   so the eye lands on the area and the surroundings recede. The veil is one
+   polygon, the world with the focus cut out of it. */
+/* Locality outlines for the seat in focus. They are estimates (see
+   scripts/build_localities.py): each positioned kampung gets the part of its
+   seat nearest to it, so the map says so under it, with how many of the seat's
+   polling districts have a kampung to draw from. */
+function drawLocal(){
+  var map=MAP.el; if (!map) return;
+  var code = state.set==="82" && state.dun || null;
+  if (code===MAP.locCode) return;
+  MAP.locCode=code; MAP.locNote=null;
+  (MAP.loc||[]).forEach(function(l){ map.removeLayer(l) });
+  MAP.loc=[];
+  drawMapLegend();
+  if (!code) return;
+  getJSON("/data/localities/"+code+".json").then(function(j){
+    if (MAP.locCode!==code) return;
+    var L=MAP.L;
+    function flip(r){ return r.map(function(p){ return [p[1],p[0]] }) }
+    j.k.forEach(function(k){
+      var id=k[0]+"/"+k[1];
+      var l=L.polygon(k[2].map(flip), {className:"lcell", weight:.8, fillOpacity:1});
+      l.on("mouseover", function(ev){
+        var kk=kampById(id), dmName=((pdsOf()[code]||[]).filter(function(d){ return d[0]===k[0] })[0]||[])[1]||"";
+        tip.innerHTML='<b>'+esc(kk ? kname(kk.n) : t("kampOf")(k[0]))+'</b>'+
+          '<em>'+esc(t("kampOf")(k[0])+" "+dmName)+'</em><em>'+esc(t("locTip"))+'</em>';
+        tip.classList.add("on"); placeTip(ev.originalEvent);
+      });
+      l.on("mousemove", function(ev){ placeTip(ev.originalEvent) });
+      l.on("mouseout", function(){ tip.classList.remove("on") });
+      MAP.loc.push(l);
+    });
+    j.d.forEach(function(d){
+      MAP.loc.push(L.polygon(d[1].map(flip), {className:"ldm", interactive:false, fill:false, weight:1.3}));
+    });
+    MAP.loc.forEach(function(l){ l.addTo(map) });
+    MAP.locNote = j.k.length ? t("locNote")(j.cov[0], j.cov[1]) : t("locNone");
+    drawMapLegend();
+  }, function(){});
+}
+function ringsOf(layer){
+  var out=[];
+  (function walk(ll){
+    if (!ll.length) return;
+    if (MAP.L.LineUtil.isFlat(ll)){ out.push(ll); return }
+    // a polygon is [outer, holes…]; a multipolygon is a list of those
+    if (MAP.L.LineUtil.isFlat(ll[0])){ out.push(ll[0]); return }
+    ll.forEach(walk);
+  })(layer.getLatLngs());
+  return out;
+}
+function drawFocus(){
+  var L=MAP.L, map=MAP.el;
+  if (!map) return;
+  var P=pars(), rows=shown(), all=rows.length===seats().length;
+  var key=(state.dun || (state.par!==null ? "p"+state.par : "") || (all ? "all" : "q"+state.q))+"/"+MAP.detail;
+  if (key===MAP.focusKey) return;
+  MAP.focusKey=key;
+  (MAP.fence||[]).forEach(function(l){ map.removeLayer(l) });
+  MAP.fence=[];
+  var rings=[], edge=[];
+  if (state.par!==null && MAP.parOut[P[state.par][0]]){
+    MAP.parOut[P[state.par][0]].eachLayer(function(l){ rings=rings.concat(ringsOf(l)) });
+    edge=rings;
+  } else {
+    rows.forEach(function(r){ var l=MAP.seats[r[0]]; if (l) rings=rings.concat(ringsOf(l)) });
+    if (!all) edge=rings;
+  }
+  if (!rings.length) return;
+  if (!$("#fglowf")){
+    var svg=map.getPanes().overlayPane.querySelector("svg");
+    if (svg){
+      var ns="http://www.w3.org/2000/svg", defs=document.createElementNS(ns,"defs");
+      defs.innerHTML='<filter id="fglowf" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="7"/></filter>';
+      svg.insertBefore(defs, svg.firstChild);
+    }
+  }
+  var world=[[-85,-180],[85,-180],[85,180],[-85,180]];
+  MAP.fence.push(L.polygon([world].concat(rings), {className:"fveil", interactive:false, stroke:false, fillOpacity:1}));
+  if (edge.length){
+    MAP.fence.push(L.polygon(edge, {className:"fglow", interactive:false, fill:false, weight:14}));
+    // a seat keeps its own white line; a parliament's outer edge is drawn in blue
+    if (state.par!==null) MAP.fence.push(L.polygon(edge, {className:"fedge", interactive:false, fill:false, weight:1.5}));
+  }
+  MAP.fence.forEach(function(l){ l.addTo(map) });
 }
 // from a kampung in the list to its point on the map, its seat in scope
 function kampToMap(id){
@@ -2733,6 +2854,8 @@ function drawMap(){
     layer.setStyle({fillOpacity: fence || inScope ? op : op*.22});
     if (pick) layer.bringToFront();
   });
+  drawFocus(); drawLocal(); syncKampVis();
+  (MAP.loc||[]).forEach(function(l){ l.bringToFront() });
   var pcode=state.par!==null ? P[state.par][0] : null;
   Object.keys(MAP.parOut).forEach(function(c){
     var o=MAP.parOut[c], want=c===pcode;
@@ -2775,7 +2898,13 @@ function drawMap(){
 }
 function drawMapLegend(){
   var leg=$("#mapLegend");
-  $(".mapfoot").hidden = MAP.base==="grey" && shown().length<seats().length;
+  $(".mapfoot").hidden = MAP.base==="grey" && shown().length<seats().length && !MAP.locNote;
+  if (state.dun && MAP.locNote){
+    leg.innerHTML='<div><b class="lsw ldmsw"></b>'+esc(t("locDmKey"))+'</div>'+
+      '<div><b class="lsw"></b>'+esc(t("locKey"))+'</div>';
+    $("#mapNote").textContent=MAP.locNote;
+    return;
+  }
   if (MAP.mode==="dev"){
     leg.innerHTML='<div><b class="ramp" style="background:linear-gradient(90deg,color-mix(in srgb,var(--under) 25%,transparent),var(--under))"></b>'+esc(t("mapUnder"))+'</div>'+
       '<div><b class="ramp" style="background:linear-gradient(90deg,color-mix(in srgb,var(--over) 25%,transparent),var(--over))"></b>'+esc(t("mapOver"))+'</div>';
