@@ -292,6 +292,12 @@ main{position:relative; min-width:0; min-height:0; margin:8px 8px 8px 0; overflo
   font-size:13px; color:var(--muted)}
 .sexline b{font-weight:400; color:var(--ink); font-variant-numeric:tabular-nums; margin-left:4px}
 .estfoot{margin:10px 0 18px}
+.locnote{padding:10px 16px 0; max-width:72ch}
+.locnote[hidden]{display:none}
+.locback{display:inline-flex; align-items:center; gap:4px; margin-left:10px; padding:2px 10px 2px 6px;
+  border:1px solid var(--rule); border-radius:999px; font-size:12.5px; color:var(--ink-2); vertical-align:1px;
+  transition:background-color var(--dur-1) linear, color var(--dur-1) linear}
+@media (hover:hover) and (pointer:fine){ .locback:hover{background:var(--surface-2); color:var(--ink)} }
 .vblock .legend{gap:6px 12px}
 #pdslot .sect{padding-top:4px}
 #daerah .pdrow .c-name{color:var(--ink); font-weight:500}
@@ -832,6 +838,7 @@ table.pds .v{text-align:right; color:var(--ink); width:66px}
   .ctitle{padding:0}
   .cbody{padding:12px 0 0}
   .votercard .ctitle{display:none}
+  .locnote{padding:10px 0 0}
   .vgrid{gap:22px; padding-top:4px}
   .stack{height:20px}
   .vblock + .vblock{padding-top:18px; border-top:1px solid var(--rule)}
@@ -986,6 +993,7 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
       <section class="sect" id="ringkasan" role="tabpanel" aria-labelledby="tab-ringkasan">
         <div class="card votercard">
           <div class="ctitle"><h3 data-i18n="votersTitle">Pengundi</h3></div>
+          <p class="note locnote" id="locNote" hidden></p>
           <div class="cbody vgrid">
             <div class="vblock">
               <h4 data-i18n="ethnic">Komposisi etnik</h4>
@@ -1204,6 +1212,12 @@ var I18N={
     brandsub:PROPOSAL ? "Persempadanan 2026" : "PRN Sarawak · 82 DUN", dataset:"Set data", proposed:"Cadangan", current:"Semasa",
     backDun:function(s){ return "Kembali ke "+s },
     sideFilter:"Tapis kerusi", sheetMap:"Tunjuk peta", sheetUp:"Tunjuk butiran",
+    locSub:"Lokaliti · sempadan di peta ialah anggaran", locShare:function(p,s){ return p+" daripada pengundi "+s },
+    locDmVoters:"Pengundi daerah mengundi", locKamp:"Kampung dalam DM", locKampSub:"dalam daerah mengundi yang sama",
+    locNew:"Pemilih baharu", locNewSub:"didaftar Ogos–Sep 2026", locSeatShare:"Bahagian kerusi",
+    locYouth:"Pemilih muda (18–28)", locRollFoot:"Lokaliti: daftar pemilih penuh SPR, April 2026. Umur pada 9 Nov 2026.",
+    locNoSplit:function(s){ return "Pecahan etnik, umur dan jantina belum ada di bawah peringkat kerusi untuk "+s+". Carta di bawah ialah untuk seluruh kerusi." },
+    locFew:function(s){ return "Lokaliti ini mempunyai kurang 10 pemilih, jadi pecahannya tidak ditunjukkan. Carta di bawah ialah untuk seluruh "+s+"." },
     locKey:"Lokaliti", locDmKey:"Daerah mengundi (anggaran)", locTip:"Kawasan anggaran",
     locNote:function(a,b){ return "Kawasan terdekat dengan setiap kampung yang diketahui kedudukannya: "+a+" daripada "+b+" daerah mengundi." },
     locNone:"Tiada kampung dengan kedudukan untuk melukis garis lokaliti di kerusi ini.",
@@ -1308,6 +1322,12 @@ var I18N={
     brandsub:PROPOSAL ? "Redelineation 2026" : "Sarawak election · 82 seats", dataset:"Dataset", proposed:"Proposed", current:"Current",
     backDun:function(s){ return "Back to "+s },
     sideFilter:"Filter seats", sheetMap:"Show map", sheetUp:"Show details",
+    locSub:"Locality · the outline on the map is an estimate", locShare:function(p,s){ return p+" of "+s+" electors" },
+    locDmVoters:"Polling district electors", locKamp:"Kampung in district", locKampSub:"in the same polling district",
+    locNew:"New electors", locNewSub:"registered Aug–Sep 2026", locSeatShare:"Share of seat",
+    locYouth:"Young voters (18–28)", locRollFoot:"Locality: SPR full electoral roll, April 2026. Age on 9 Nov 2026.",
+    locNoSplit:function(s){ return "Ethnicity, age and sex are not yet available below seat level for "+s+". The charts below are for the whole seat." },
+    locFew:function(s){ return "This locality has fewer than 10 electors, so its split is not shown. The charts below are for all of "+s+"." },
     locKey:"Locality", locDmKey:"Polling district (approximate)", locTip:"Approximate area",
     locNote:function(a,b){ return "Area nearest each kampung with a known position: "+a+" of "+b+" polling districts." },
     locNone:"No kampung in this seat has a position to draw locality outlines from.",
@@ -1641,11 +1661,11 @@ function drawSex(a){
   el.innerHTML='<span>'+esc(t("male"))+' <b>'+pc(a.m/tot*100)+'</b></span>'+
     '<span>'+esc(t("female"))+' <b>'+pc(a.f/tot*100)+'</b></span>';
 }
-function drawAge(a){
+function drawAge(a, labels){
   var box=$("#ageRows"); box.textContent="";
   var tot=a.age.reduce(function(s,x){ return s+x }, 0) || 1;
   var max=Math.max.apply(null, a.age) || 1;
-  D.age.forEach(function(lbl,i){
+  (labels || D.age).forEach(function(lbl,i){
     var v=a.age[i];
     var row=document.createElement("div"); row.className="brow";
     row.innerHTML='<span class="bl">'+esc(lbl)+'</span>'+
@@ -2923,12 +2943,18 @@ function focusLocality(id){
   MAP.locFocus=id;
   MAP.focusKey=null; drawFocus();
   syncBackBtn();
+  // the page follows the map: the cards and the district list become this locality's
+  var cut=id.lastIndexOf("/"), dm=id.slice(0,cut);
+  KAMP.open[dm]=true; KAMP.hot=id;
+  render();
+  Promise.all([loadKampung(), rollOf(state.dun) ? loadRoll() : null]).then(function(){ if (MAP.locFocus===id) render() });
   var b=boundsOf(ringsOfGeom(f.geometry));
   if (b) MAP.el.fitBounds(b, {padding:fitPad(48), maxZoom:16, duration:CALM ? 0 : 600});
 }
 function backToSeat(){
   if (!MAP.locFocus) return;
-  MAP.locFocus=null; MAP.focusKey=null; drawFocus(); syncBackBtn();
+  MAP.locFocus=null; MAP.focusKey=null; KAMP.hot=null; drawFocus(); syncBackBtn();
+  render();
   var f=state.dun && MAP.feat[state.dun];
   var b=f && boundsOf(ringsOfGeom(f.geometry));
   if (b) MAP.el.fitBounds(b, {padding:fitPad(28), maxZoom:13, duration:CALM ? 0 : 550});
@@ -3047,7 +3073,7 @@ function drawMap(){
   // frame the scope, flying only when the scope itself has changed
   var key=state.dun || (state.par!==null ? "p"+state.par : "") || (n<seats().length ? "q"+state.q : "all");
   // a hidden map has no size to fit to; frame it when it is next on screen
-  if ($("#ringkasan").hidden){ MAP.key=null; return }
+  if ($("#ringkasan").hidden && !PHONE.matches){ MAP.key=null; return }
   if (MAP.focus){
     var f=MAP.focus;
     MAP.focus=null; MAP.key=key; syncBackBtn();
@@ -3101,16 +3127,76 @@ $("#mapreset").addEventListener("click", function(){
 $("#mapback").addEventListener("click", backToSeat);
 
 /* ---------- render ---------- */
+/* The locality picked on the map, with whatever is known about it: its name and
+   polling district always, its own roll breakdown where SPR's full roll is in. */
+function locInfo(){
+  var id=MAP.locFocus;
+  if (!id || !state.dun || MAP.locCode!==state.dun) return null;
+  var cut=id.lastIndexOf("/"), dm=id.slice(0,cut), kc=+id.slice(cut+1);
+  var dmRow=(D.pd82[state.dun]||[]).filter(function(x){ return x[0]===dm })[0];
+  var ks=KAMP.dm && KAMP.dm[dm] || [], k=ks.filter(function(x){ return x.c===kc })[0];
+  var rl=ROLLK.dm[dm] && ROLLK.dm[dm][kc];
+  return {id:id, dm:dm, kc:kc, dmRow:dmRow, k:k, nK:ks.filter(function(x){ return !x.inst }).length,
+          name:k ? kname(k.n) : (rl ? kname(rl.name) : dm+"/"+String(kc).padStart(3,"0")),
+          roll:rl, split:rl && rl.L!=null};
+}
+function drawLoc(L, seatRowNow, a){
+  var r=seatRowNow, seatName=r[0]+" "+r[1], items=[];
+  $("#peyebrow").textContent=r[0]+" "+r[1]+" · "+(L.dmRow ? L.dmRow[0]+" "+L.dmRow[1] : L.dm);
+  $("#psub").innerHTML='<span class="hk">'+esc(t("locSub"))+'</span>'+
+    '<button type="button" class="locback" id="locback">'+'<svg class="ic" width="12" height="12" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 6 8.5 12l6 6"/></svg>'+esc(t("backDun")(seatName))+'</button>';
+  $("#psub").hidden=false; $("#plead").innerHTML="";
+  var dmV=L.dmRow ? L.dmRow[2] : 0;
+  if (L.roll){
+    items.push([t("voters"), fmt(L.roll.n), t("locShare")(pc(L.roll.n/r[V]*100), r[0])]);
+    if (L.split){
+      var at=L.roll.age.reduce(function(x,y){ return x+y },0)||1, kt=L.roll.kaum.reduce(function(x,y){ return x+y },0)||1, top=0;
+      for (var i=1;i<L.roll.kaum.length;i++) if (L.roll.kaum[i]>L.roll.kaum[top]) top=i;
+      items.push([t("locYouth"), pc(L.roll.age[0]/at*100), t("youthN")(fmt(L.roll.age[0]))]);
+      items.push([t("topEthnic"), pc(L.roll.kaum[top]/kt*100), rollKaumName(top)]);
+    }
+    items.push([t("locDmVoters"), fmt(dmV), L.dmRow ? L.dmRow[1]+" · "+L.dm : ""]);
+  } else {
+    items.push([t("locDmVoters"), fmt(dmV), L.dmRow ? L.dmRow[1]+" · "+L.dm : L.dm]);
+    items.push([t("locKamp"), String(L.nK||"–"), t("locKampSub")]);
+    items.push([t("locNew"), L.k && L.k.nw ? "+"+fmt(L.k.nw) : "0", t("locNewSub")]);
+    items.push([t("locSeatShare"), pc(dmV/r[V]*100), LANG==="ms" ? "pengundi "+r[0]+" di DM ini" : "of "+r[0]+" electors are in this district"]);
+  }
+  $("#bignums").innerHTML=items.map(function(x){
+    return '<div class="stat"><div class="k">'+esc(x[0])+'</div><div class="v anim">'+x[1]+'</div>'+
+      (x[2] ? '<div class="s">'+esc(x[2])+'</div>' : '')+'</div>';
+  }).join("");
+  lastBig=[];
+  var note=$("#locNote");
+  if (L.split){
+    var R=L.roll, k=R.kaum, e=[k[1],k[2],k[0],k[3],0,k[4],k[5]];
+    var save=ETH[2].n; ETH[2].n=rollKaumName(0);
+    drawEth({eth:e}); ETH[2].n=save;
+    drawAge({age:R.age}, ROLLK.age); drawSex({m:R.L, f:R.P});
+    note.hidden=true; $("#estFoot").textContent=t("locRollFoot");
+  } else {
+    drawEth(a); drawAge(a); drawSex(a);
+    note.textContent=L.roll ? t("locFew")(r[0]) : t("locNoSplit")(r[0]); note.hidden=false;
+  }
+  $("#locback").addEventListener("click", backToSeat);
+}
+function rollKaumName(i){
+  return i===ROLLK.kaum.length-1 ? t("eth")[6] : ROLLK.kaum[i];
+}
 function render(){
-  var rows=shown(), a=agg(rows), P=pars();
-  drawBig(a,rows); drawLead(a,rows);
-  drawEth(a); drawAge(a); drawSex(a); drawDev(rows); drawRank(rows); drawTable(rows); drawDemo(); drawPd(); drawChange();
+  var rows=shown(), a=agg(rows), P=pars(), L=locInfo();
+  if (L){ drawLoc(L, rows[0], a) }
+  else { drawBig(a,rows); drawLead(a,rows); drawEth(a); drawAge(a); drawSex(a); $("#locNote").hidden=true }
+  drawDev(rows); drawRank(rows); drawTable(rows); drawDemo(); drawPd(); drawChange();
   // The header names the scope and nothing else: every figure that used to sit
   // in a subtitle here is already in the headline row directly below it.
   var setName = state.set==="99" ? t("crumbProposed") : t("crumbCurrent");
   var title, crumb=setName;
 
-  if (state.dun && rows.length===1){
+  if (L){
+    title = L.name;
+    crumb = setName+" / "+rows[0][0]+" / "+L.name;
+  } else if (state.dun && rows.length===1){
     title = rows[0][0]+" "+rows[0][1]+(isNew(rows[0][0]) ? " "+newTag() : "");
     crumb = setName+" / "+rows[0][0];
   } else if (state.par!==null){
@@ -3130,7 +3216,7 @@ function render(){
   $("#q").placeholder = t("searchPh");
   markSel();
   drawMap();
-  syncRollLabels();
+  if (!L) syncRollLabels();
 }
 
 /* ---------- search results panel ----------
