@@ -774,6 +774,104 @@ table.pds .v{text-align:right; color:var(--ink); width:66px}
   .lang button{padding:4px 8px}
 }
 
+/* ---------------- phone ----------------
+   Not a squeezed laptop: the map is the ground, the seat is a sheet pulled up
+   over it, the tabs stick under the bar, and every card loses its frame. */
+.sheetgrip,.sfilter{display:none}
+.mhero[hidden]{display:none}
+@media (max-width:700px){
+  .top{gap:6px; padding:8px 10px 8px 6px; min-height:52px}
+  .crumb{display:block; flex:1 1 auto; font-size:14px; color:var(--ink-2)}
+  .burger{width:40px; height:40px}
+  .lang button{padding:5px 8px}
+  .themebtn{width:36px; height:36px}
+  /* search folds to a round button and opens across the whole bar */
+  .search{flex:0 0 36px; width:36px; margin-left:0; order:0}
+  .search > svg{left:10px}
+  .search input{height:36px; padding:0; font-size:16px}
+  .search input::placeholder{color:transparent}
+  .search:focus-within{position:absolute; left:8px; right:8px; top:50%; transform:translateY(-50%); width:auto; z-index:6;
+    background:var(--surface); box-shadow:var(--shadow-2); animation:dropIn var(--dur-2) var(--ease-out)}
+  .search:focus-within input{padding:0 14px 0 34px}
+  .search:focus-within input::placeholder{color:var(--faint)}
+  .sdrop{left:8px; right:8px}
+
+  /* the map behind the sheet */
+  .mhero{position:sticky; top:var(--top-h,52px); z-index:0; height:46svh; min-height:280px}
+  .mhero .mapbox{position:absolute; inset:0; height:auto; border-top:0}
+  .mhero .mapbase{left:10px; bottom:34px}
+  .mhero .mapreset{top:10px; right:10px}
+  .mhero #map .maplibregl-ctrl-bottom-right{bottom:22px}
+  .wrap{position:relative; z-index:1; margin-top:-22px; padding:6px 16px 40px; background:var(--surface);
+    border-radius:20px 20px 0 0; box-shadow:0 -1px 0 var(--rule), 0 -12px 32px rgba(0,0,0,.18);
+    min-height:calc(100svh - var(--top-h,52px))}
+  .sheetgrip{display:flex; justify-content:center; width:100%; height:22px; margin:0 0 4px; padding-top:4px}
+  .sheetgrip i{display:block; width:36px; height:4px; border-radius:999px; background:var(--rule-2)}
+  .ehead h1{font-size:30px; margin-top:6px}
+  .ehead .q{font-size:14px}
+
+  /* headline figures: open grid, hairlines between, no box */
+  .summary:empty + .stats{margin-top:18px}
+  .stats{border:0; border-radius:0; border-top:1px solid var(--rule)}
+  .stat{padding:12px 0 14px}
+  .stat:nth-child(even){padding-left:16px}
+  .stat .v{font-size:26px}
+  .stat .s{line-height:1.35}
+
+  /* tabs: an underlined row that sticks under the bar */
+  .tabs{position:sticky; top:var(--top-h,52px); z-index:20; width:auto; max-width:none; gap:22px;
+    margin:14px -16px 0; padding:0 16px; background:var(--surface); border:0; border-bottom:1px solid var(--rule);
+    border-radius:0}
+  .tabs button{padding:13px 0 12px; border-radius:0; font-size:14px; color:var(--muted)}
+  .tabs button .ic{display:none}
+  .tabs button.on{background:none; box-shadow:inset 0 -2px 0 var(--ink)}
+  .sect{scroll-margin-top:calc(var(--top-h,52px) + 50px)}
+
+  /* cards lose their frames; sections are divided by space and hairlines */
+  .card{border:0; border-radius:0; background:none}
+  .ctitle{padding:0}
+  .cbody{padding:12px 0 0}
+  .votercard .ctitle{display:none}
+  .vgrid{gap:22px; padding-top:4px}
+  .stack{height:20px}
+  .vblock + .vblock{padding-top:18px; border-top:1px solid var(--rule)}
+  #ageRows{gap:12px}
+  #ageRows .brow{grid-template-columns:minmax(0,1fr) auto; grid-template-areas:"l v" "t t"; gap:6px 12px}
+  #ageRows .bl{grid-area:l; font-size:13px; color:var(--ink-2)}
+  #ageRows .bv{grid-area:v; font-size:13px}
+  #ageRows .bt{grid-area:t; height:6px}
+  .estfoot{margin:14px 0 6px}
+  .mapcard{margin:0}
+  .mapcard > .ctitle{display:none}
+  .mapcard .mapfoot{padding:12px 0; border-top:1px solid var(--rule)}
+
+  /* polling districts as a list: name and kampung count, voters on the right */
+  #daerah .secthead{gap:10px}
+  #daerah table.seats thead{display:none}
+  #daerah table.seats td:first-child{display:none}
+  #daerah table.seats td{border-bottom:1px solid var(--rule)}
+  #daerah .kexp{padding:12px 0; min-height:52px}
+  #daerah .pdv{padding-right:0}
+  table.seats th{top:calc(var(--top-h,52px) + 46px)}
+
+  /* the seat picker: a tall sheet from the bottom, filterable, parliaments as headings */
+  .side{top:auto; bottom:0; width:100%; height:92dvh; padding:8px 12px 0;
+    border-right:0; border-radius:20px 20px 0 0; transform:translateY(100%)}
+  .side.on{box-shadow:0 -16px 40px rgba(0,0,0,.25)}
+  .side::before{content:""; display:block; width:36px; height:4px; margin:0 auto 6px; border-radius:999px; background:var(--rule-2)}
+  .sideclose{width:40px; height:40px}
+  .sfilter{display:block; position:sticky; top:0; z-index:3; margin:4px 2px 6px; background:var(--ground)}
+  .sfilter .ic{position:absolute; left:12px; top:50%; transform:translateY(-50%); color:var(--faint); pointer-events:none}
+  .sfilter input{width:100%; height:42px; padding:0 14px 0 36px; font:inherit; font-size:16px; color:var(--ink);
+    background:var(--surface); border:1px solid var(--rule); border-radius:12px; outline:none}
+  .sfilter input:focus{border-color:var(--rule-2)}
+  .acchead{display:none}
+  .acclist button{height:46px; font-size:15px}
+  .acclist button[hidden]{display:none}
+  .acclist .sgh{height:auto; margin-top:14px; font-size:12px}
+  .pfoot{flex-direction:column; gap:6px; margin-top:32px}
+}
+
 /* Entrances: transform/opacity/filter only; stagger capped so a long table never crawls. */
 @keyframes rowIn{from{opacity:0; transform:translateY(4px)} to{opacity:1; transform:none}}
 @keyframes segIn{from{opacity:0; transform:scaleY(.35)} to{opacity:1; transform:none}}
@@ -819,6 +917,8 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
           <svg class="ic accchev" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="m9.75 5.5 6.5 6.5-6.5 6.5"/></svg>
           <span data-i18n="tabSeats">Kerusi DUN</span><span class="accn" id="duncount"></span>
         </button>
+        <div class="sfilter"><svg class="ic" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20.5 20.5-4.2-4.2"/></svg>
+          <input type="search" id="sidefilter" autocomplete="off" aria-label="Tapis kerusi" placeholder="Tapis kerusi"></div>
         <div class="acclist" id="dunlist"></div>
       </div>
       <div class="acc" hidden>
@@ -863,7 +963,9 @@ tbody tr.anim{animation:rowIn var(--dur-2) var(--ease-out) both}
       </button>
     </header>
 
+    <div class="mhero" id="mhero" hidden></div>
     <div class="wrap">
+      <button type="button" class="sheetgrip" id="sheetgrip" aria-label="Peta"><i></i></button>
       <div class="ehead">
         <div class="eyebrow"><svg class="ic" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21.5s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10.5" r="2.5"/></svg><span id="peyebrow">Sarawak</span></div>
         <h1 id="ptitle">82 DUN Sarawak</h1>
@@ -1101,6 +1203,7 @@ var I18N={
   ms:{
     brandsub:PROPOSAL ? "Persempadanan 2026" : "PRN Sarawak · 82 DUN", dataset:"Set data", proposed:"Cadangan", current:"Semasa",
     backDun:function(s){ return "Kembali ke "+s },
+    sideFilter:"Tapis kerusi", sheetMap:"Tunjuk peta", sheetUp:"Tunjuk butiran",
     locKey:"Lokaliti", locDmKey:"Daerah mengundi (anggaran)", locTip:"Kawasan anggaran",
     locNote:function(a,b){ return "Kawasan terdekat dengan setiap kampung yang diketahui kedudukannya: "+a+" daripada "+b+" daerah mengundi." },
     locNone:"Tiada kampung dengan kedudukan untuk melukis garis lokaliti di kerusi ini.",
@@ -1204,6 +1307,7 @@ var I18N={
   en:{
     brandsub:PROPOSAL ? "Redelineation 2026" : "Sarawak election · 82 seats", dataset:"Dataset", proposed:"Proposed", current:"Current",
     backDun:function(s){ return "Back to "+s },
+    sideFilter:"Filter seats", sheetMap:"Show map", sheetUp:"Show details",
     locKey:"Locality", locDmKey:"Polling district (approximate)", locTip:"Approximate area",
     locNote:function(a,b){ return "Area nearest each kampung with a known position: "+a+" of "+b+" polling districts." },
     locNone:"No kampung in this seat has a position to draw locality outlines from.",
@@ -2410,6 +2514,7 @@ function drawDunlist(){
       if (innerWidth<=900) setSide(false);
     });
   });
+  applySideFilter();
   // a seat picked elsewhere (the map, search, a link) is brought into view here
   var on=state.dun && box.querySelector("button.on");
   if (on && !box.hidden && innerWidth>900) on.scrollIntoView({block:"nearest"});
@@ -2450,6 +2555,12 @@ function loadScript(src){
   });
 }
 function getJSON(url){ return fetch(url).then(function(r){ if (!r.ok) throw r; return r.json() }) }
+/* On a phone the map sits behind the sheet, whose rounded top overlaps it. */
+var PHONE=matchMedia("(max-width:700px)");
+function fitPad(p){
+  if (!PHONE.matches) return p;
+  p=Math.min(p,24); return {top:p+40, left:p, right:p, bottom:p+28};
+}
 function ensureMap(){
   if (MAP.el){ MAP.el.resize(); if (MAP.key===null) drawMap(); return }
   if (MAP.loading || MAP.failed) return;
@@ -2624,7 +2735,7 @@ function buildMap(topo){
   var proto=new pmtiles.Protocol();
   gl.addProtocol("pmtiles", proto.tile);
   var map=new gl.Map({container:el, style:mapStyle(), bounds:[109.5,0.8,115.7,5.1],
-    fitBoundsOptions:{padding:12}, minZoom:5.5, maxZoom:18.5, maxBounds:[[104,-3],[121,9]],
+    fitBoundsOptions:{padding:12}, minZoom:PHONE.matches ? 4.6 : 5.5, maxZoom:18.5, maxBounds:[[104,-3],[121,9]],
     attributionControl:false, dragRotate:false, pitchWithRotate:false, touchPitch:false});
   map.touchZoomRotate.disableRotation();
   map.addControl(new gl.NavigationControl({showCompass:false}), "top-left");
@@ -2813,14 +2924,14 @@ function focusLocality(id){
   MAP.focusKey=null; drawFocus();
   syncBackBtn();
   var b=boundsOf(ringsOfGeom(f.geometry));
-  if (b) MAP.el.fitBounds(b, {padding:48, maxZoom:16, duration:CALM ? 0 : 600});
+  if (b) MAP.el.fitBounds(b, {padding:fitPad(48), maxZoom:16, duration:CALM ? 0 : 600});
 }
 function backToSeat(){
   if (!MAP.locFocus) return;
   MAP.locFocus=null; MAP.focusKey=null; drawFocus(); syncBackBtn();
   var f=state.dun && MAP.feat[state.dun];
   var b=f && boundsOf(ringsOfGeom(f.geometry));
-  if (b) MAP.el.fitBounds(b, {padding:28, maxZoom:13, duration:CALM ? 0 : 550});
+  if (b) MAP.el.fitBounds(b, {padding:fitPad(28), maxZoom:13, duration:CALM ? 0 : 550});
 }
 function syncBackBtn(){
   var btn=$("#mapback"), r=state.dun && seatRow(state.dun);
@@ -2953,7 +3064,7 @@ function drawMap(){
     var rr=[]; rows.forEach(function(r){ rr=rr.concat(ringsOfGeom(MAP.feat[r[0]])) }); b=boundsOf(rr);
   } else b=[[109.5,0.8],[115.7,5.1]];
   if (!b) return;
-  map.fitBounds(b, {padding:28, maxZoom:13, duration:CALM ? 0 : 550});
+  map.fitBounds(b, {padding:fitPad(28), maxZoom:13, duration:CALM ? 0 : 550});
 }
 function drawMapLegend(){
   var leg=$("#mapLegend");
@@ -3268,6 +3379,7 @@ function applyLang(lang, persist){
   $("#q").setAttribute("aria-label", t("searchPh"));
   $("#sort").setAttribute("aria-label", t("sortCode"));
   $("#pdsort").setAttribute("aria-label", t("sortByDun"));
+  $("#sidefilter").placeholder=t("sideFilter"); $("#sidefilter").setAttribute("aria-label", t("sideFilter"));
   $("#lang").setAttribute("aria-label", lang==="ms" ? "Tukar bahasa" : "Change language");
   relabelEth();
   applyTheme(document.documentElement.getAttribute("data-theme"), false);
@@ -3402,6 +3514,41 @@ function placePd(){
     sec.hidden = state.tab!=="daerah";
   }
 }
+/* Phone: the map leaves its card and becomes the ground the sheet slides over,
+   on every tab, so a seat is always seen before it is read about. */
+function placeMap(){
+  var box=$(".mapbox"), hero=$("#mhero"), card=$(".mapcard");
+  if (PHONE.matches){
+    if (box.parentNode!==hero) hero.appendChild(box);
+    hero.hidden=false; ensureMap();
+  } else {
+    if (box.parentNode===hero) card.insertBefore(box, card.querySelector(".mapfoot"));
+    hero.hidden=true;
+  }
+  if (MAP.el) requestAnimationFrame(function(){ MAP.el.resize() });
+}
+PHONE.addEventListener("change", placeMap);
+// the grip: a tap lifts the sheet over the map, or drops it to show the map
+$("#sheetgrip").addEventListener("click", function(){
+  var top=$("#mhero").offsetHeight - 24;
+  scrollTo({top: scrollY < top/2 ? top : 0, behavior: CALM ? "auto" : "smooth"});
+});
+function applySideFilter(){
+  var f=$("#sidefilter"), q=f ? f.value.trim().toLowerCase() : "", box=$("#dunlist"), head=null, any=false;
+  [].forEach.call(box.children, function(b){
+    if (b.classList.contains("sgh")){
+      if (head) head.hidden=!any;
+      head=b; any=false;
+      if (q && b.textContent.toLowerCase().indexOf(q)>-1){ head.dataset.hit="1" } else delete head.dataset.hit;
+      return;
+    }
+    var hit=!q || b.textContent.toLowerCase().indexOf(q)>-1 || (head && head.dataset.hit);
+    if (!b.dataset.dun && q) hit=false;
+    b.hidden=!hit; if (hit) any=true;
+  });
+  if (head) head.hidden=!any;
+}
+$("#sidefilter").addEventListener("input", applySideFilter);
 function tabAvailable(name){
   if (name==="daerah" && state.dun) return false;
   // The site reads one seat at a time, so the seat-against-seat deviation view
@@ -3461,6 +3608,7 @@ tabBtns.forEach(function(b){
 });
 applyLang(LANG, false);
 applyURL();
+placeMap();
 // the kampung list is not needed to draw the page; fetch it once the page is idle
 (window.requestIdleCallback || function(f){ setTimeout(f, 1200) })(function(){ loadKampung() });
 })();
