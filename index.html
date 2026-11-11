@@ -802,16 +802,28 @@ table.pds .v{text-align:right; color:var(--ink); width:66px}
   .search:focus-within input::placeholder{color:var(--faint)}
   .sdrop{left:8px; right:8px}
 
-  /* the map behind the sheet */
-  .mhero{position:sticky; top:var(--top-h,52px); z-index:0; height:46svh; min-height:280px}
+  /* The map fills the screen; the page is a card that rests at three heights
+     over it (low: the name, mid: half, full) and is dragged between them.
+     The page itself never scrolls; only the card does, and only at full. */
+  html,body{height:100%; overflow:hidden; overscroll-behavior:none}
+  main{height:100vh; height:100dvh; min-height:0; overflow:hidden}
+  .mhero{position:fixed; top:var(--top-h,52px); left:0; right:0; bottom:0; z-index:0}
   .mhero .mapbox{position:absolute; inset:0; height:auto; border-top:0}
-  .mhero .mapbase{left:10px; bottom:34px}
+  .mhero .mapbase{left:10px; bottom:calc(var(--sheet-vis,50vh) + 16px);
+    transition:bottom var(--dur-3) var(--ease-out), opacity var(--dur-1) linear}
   .mhero .mapreset{top:10px; right:10px}
-  .mhero #map .maplibregl-ctrl-bottom-right{bottom:22px}
-  .wrap{position:relative; z-index:1; margin-top:-22px; padding:6px 16px 40px; background:var(--surface);
-    border-radius:20px 20px 0 0; box-shadow:0 -1px 0 var(--rule), 0 -12px 32px rgba(0,0,0,.18);
-    min-height:calc(100svh - var(--top-h,52px))}
-  .sheetgrip{display:flex; justify-content:center; width:100%; height:22px; margin:0 0 4px; padding-top:4px}
+  .mhero #map .maplibregl-ctrl-bottom-right{bottom:calc(var(--sheet-vis,50vh) + 8px);
+    transition:bottom var(--dur-3) var(--ease-out)}
+  .mhero.covered .mapbase{opacity:0; pointer-events:none}
+  .wrap{position:fixed; z-index:10; left:6px; right:6px; top:calc(var(--top-h,52px) + 8px);
+    bottom:calc(6px + env(safe-area-inset-bottom)); max-width:none; margin:0; padding:0 16px 40px;
+    overflow:hidden; overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+    background:var(--surface); border:1px solid var(--rule); border-radius:22px;
+    box-shadow:0 10px 40px rgba(0,0,0,.35); will-change:transform; touch-action:pan-x}
+  .wrap.full{overflow-y:auto; touch-action:pan-y}
+  .wrap.low{cursor:pointer}
+  .sheetgrip{display:flex; justify-content:center; position:sticky; top:0; z-index:25; width:calc(100% + 32px); height:24px;
+    margin:0 -16px 2px; padding-top:8px; background:var(--surface); touch-action:none}
   .sheetgrip i{display:block; width:36px; height:4px; border-radius:999px; background:var(--rule-2)}
   .ehead h1{font-size:30px; margin-top:6px}
   .ehead .q{font-size:14px}
@@ -825,13 +837,13 @@ table.pds .v{text-align:right; color:var(--ink); width:66px}
   .stat .s{line-height:1.35}
 
   /* tabs: an underlined row that sticks under the bar */
-  .tabs{position:sticky; top:var(--top-h,52px); z-index:20; width:auto; max-width:none; gap:22px;
+  .tabs{position:sticky; top:24px; z-index:20; width:auto; max-width:none; gap:22px;
     margin:14px -16px 0; padding:0 16px; background:var(--surface); border:0; border-bottom:1px solid var(--rule);
     border-radius:0}
   .tabs button{padding:13px 0 12px; border-radius:0; font-size:14px; color:var(--muted)}
   .tabs button .ic{display:none}
   .tabs button.on{background:none; box-shadow:inset 0 -2px 0 var(--ink)}
-  .sect{scroll-margin-top:calc(var(--top-h,52px) + 50px)}
+  .sect{scroll-margin-top:80px}
 
   /* cards lose their frames; sections are divided by space and hairlines */
   .card{border:0; border-radius:0; background:none}
@@ -859,7 +871,7 @@ table.pds .v{text-align:right; color:var(--ink); width:66px}
   #daerah table.seats td{border-bottom:1px solid var(--rule)}
   #daerah .kexp{padding:12px 0; min-height:52px}
   #daerah .pdv{padding-right:0}
-  table.seats th{top:calc(var(--top-h,52px) + 46px)}
+  table.seats th{top:70px}
 
   /* the seat picker: a tall sheet from the bottom, filterable, parliaments as headings */
   .side{top:auto; bottom:0; width:100%; height:92dvh; padding:8px 12px 0;
@@ -2433,7 +2445,7 @@ function openDrawer(r, from){
   if (os) os.addEventListener("click", function(){
     state.dun=r[0]; state.par=null;
     closeDrawer(); drawParlist(); drawDunlist(); render(); syncURL(); showTab("ringkasan");
-    $("main").scrollTop=0; window.scrollTo(0,0);
+    $("main").scrollTop=0; window.scrollTo(0,0); if (PHONE.matches) snapTo("mid");
   });
 
   drawer.hidden=false; scrim.hidden=false;
@@ -2579,7 +2591,9 @@ function getJSON(url){ return fetch(url).then(function(r){ if (!r.ok) throw r; r
 var PHONE=matchMedia("(max-width:700px)");
 function fitPad(p){
   if (!PHONE.matches) return p;
-  p=Math.min(p,24); return {top:p+40, left:p, right:p, bottom:p+28};
+  p=Math.min(p,24);
+  var vis=typeof SHEET!=="undefined" ? sheetVisible() : 0, H=$("#mhero").offsetHeight||innerHeight;
+  return {top:p+44, left:p, right:p, bottom:Math.min(vis+p+40, Math.max(p, H-p-160))};
 }
 function ensureMap(){
   if (MAP.el){ MAP.el.resize(); if (MAP.key===null) drawMap(); return }
@@ -2906,6 +2920,7 @@ function kampToMap(id){
   if (state.dun!==k.seat){ state.dun=k.seat; state.par=null; drawParlist(); drawDunlist() }
   KAMP.hot=id; MAP.focus=k; MAP.locFocus=null;
   render(); syncURL(); showTab("ringkasan");
+  if (PHONE.matches){ snapTo("mid"); return }
   var top=$(".mapcard"); if (top) top.scrollIntoView({block:"start", behavior:CALM ? "auto" : "smooth"});
 }
 
@@ -2946,6 +2961,7 @@ function focusLocality(id){
   // the page follows the map: the cards and the district list become this locality's
   var cut=id.lastIndexOf("/"), dm=id.slice(0,cut);
   KAMP.open[dm]=true; KAMP.hot=id;
+  if (PHONE.matches && SHEET.snap!=="mid") snapTo("mid");
   render();
   Promise.all([loadKampung(), rollOf(state.dun) ? loadRoll() : null]).then(function(){ if (MAP.locFocus===id) render() });
   var b=boundsOf(ringsOfGeom(f.geometry));
@@ -2954,6 +2970,7 @@ function focusLocality(id){
 function backToSeat(){
   if (!MAP.locFocus) return;
   MAP.locFocus=null; MAP.focusKey=null; KAMP.hot=null; drawFocus(); syncBackBtn();
+  if (PHONE.matches && SHEET.snap==="full") snapTo("mid");
   render();
   var f=state.dun && MAP.feat[state.dun];
   var b=f && boundsOf(ringsOfGeom(f.geometry));
@@ -3217,6 +3234,12 @@ function render(){
   markSel();
   drawMap();
   if (!L) syncRollLabels();
+  if (PHONE.matches && typeof SHEET!=="undefined"){
+    var scope=(state.dun||"")+"|"+state.par+"|"+state.set;
+    if (SHEET.scope!==undefined && SHEET.scope!==scope && SHEET.snap!=="mid") snapTo("mid");
+    else if (SHEET.snap==="low") snapTo("low", false);
+    SHEET.scope=scope;
+  }
 }
 
 /* ---------- search results panel ----------
@@ -3364,6 +3387,7 @@ function choose(i){
     KAMP.hot=x.k.dm+"/"+x.k.c; delete KAMP.open[x.k.dm];
     drawParlist(); drawDunlist(); render(); syncURL(); qEl.blur();
     showTab("daerah");
+    if (PHONE.matches) snapTo("full", false);
     var li=$("#pdbody").querySelector('[data-k="'+KAMP.hot+'"]');
     if (li) li.scrollIntoView({block:"center", behavior:CALM ? "auto" : "smooth"});
     return;
@@ -3607,18 +3631,103 @@ function placeMap(){
   if (PHONE.matches){
     if (box.parentNode!==hero) hero.appendChild(box);
     hero.hidden=false; ensureMap();
+    requestAnimationFrame(function(){ snapTo(SHEET.snap, false) });
   } else {
+    sheetOff();
     if (box.parentNode===hero) card.insertBefore(box, card.querySelector(".mapfoot"));
     hero.hidden=true;
   }
   if (MAP.el) requestAnimationFrame(function(){ MAP.el.resize() });
 }
 PHONE.addEventListener("change", placeMap);
-// the grip: a tap lifts the sheet over the map, or drops it to show the map
+/* ----- the card over the map (phone) -----
+   Three resting heights. It tracks the finger 1:1, keeps the velocity on
+   release to pick where it lands, and can be caught mid-flight. */
+var SHEET={el:$(".wrap"), y:0, snap:"mid", drag:null};
+function sheetH(){ return SHEET.el.offsetHeight }
+function peekH(){
+  var h=$("#ptitle"), base=h.offsetTop+h.offsetHeight+16, sub=$("#psub");
+  if (!sub.hidden) base+=Math.min(sub.offsetHeight, 24);
+  return Math.min(base, sheetH()*0.4);
+}
+function snapY(name){
+  var H=sheetH();
+  return name==="full" ? 0 : name==="mid" ? Math.round(H*0.52) : Math.round(H-peekH());
+}
+function setSheet(y, anim){
+  var el=SHEET.el, H=sheetH();
+  SHEET.y=y;
+  el.style.transition=anim ? "transform 420ms cubic-bezier(0.22,1,0.36,1)" : "none";
+  el.style.transform="translate3d(0,"+y+"px,0)";
+  var vis=Math.max(0, Math.min(H, H-y));
+  var hero=$("#mhero");
+  hero.style.setProperty("--sheet-vis", Math.round(Math.min(vis, H*0.6)+6)+"px");
+  hero.classList.toggle("covered", vis>H*0.8);
+}
+function snapTo(name, anim){
+  if (!PHONE.matches) return;
+  SHEET.snap=name;
+  var el=SHEET.el;
+  if (name!=="full") el.scrollTop=0;
+  el.classList.toggle("full", name==="full");
+  el.classList.toggle("low", name==="low");
+  setSheet(snapY(name), anim!==false && !CALM);
+}
+function sheetVisible(){
+  // what the map can count on keeping clear: the card's height when it rests below full
+  return sheetH()-snapY(SHEET.snap==="full" ? "mid" : SHEET.snap);
+}
+function sheetOff(){
+  var el=SHEET.el; el.style.transform=""; el.style.transition="";
+  el.classList.remove("full","low");
+}
+SHEET.el.addEventListener("touchstart", function(e){
+  if (!PHONE.matches || e.touches.length>1) return;
+  var t=e.touches[0], el=SHEET.el;
+  // catch it where it is, even mid-animation
+  var m=getComputedStyle(el).transform, cur=SHEET.y;
+  if (m && m!=="none"){ var parts=m.match(/-?[\d.]+/g); if (parts) cur=+parts[parts.length===6 ? 5 : 13] }
+  if (Math.abs(cur-SHEET.y)>0.5) setSheet(cur, false);
+  SHEET.drag={y0:t.clientY, s0:cur, mode:null, pts:[[t.clientY, e.timeStamp]],
+    grip:!!e.target.closest(".sheetgrip"), noDrag:!!e.target.closest(".tabs, .kwrap, .demoscroll, .tablewrap .ktab")};
+}, {passive:true});
+SHEET.el.addEventListener("touchmove", function(e){
+  var d=SHEET.drag; if (!d) return;
+  var t=e.touches[0], dy=t.clientY-d.y0, el=SHEET.el;
+  if (!d.mode){
+    if (Math.abs(dy)<6) return;
+    var full=el.classList.contains("full");
+    d.mode = !d.grip && full && (el.scrollTop>0 || dy<0) ? "scroll" : "sheet";
+    if (d.mode==="sheet"){ d.y0=t.clientY; dy=0 }
+  }
+  if (d.mode==="scroll") return;
+  e.preventDefault();
+  var y=d.s0+dy, lo=snapY("low");
+  if (y<0) y=-Math.sqrt(-y)*3;
+  else if (y>lo) y=lo+(y-lo)*0.35;
+  setSheet(y, false);
+  d.pts.push([t.clientY, e.timeStamp]); if (d.pts.length>6) d.pts.shift();
+}, {passive:false});
+function sheetRelease(){
+  var d=SHEET.drag; SHEET.drag=null;
+  if (!d || d.mode!=="sheet") return;
+  var a=d.pts[0], b=d.pts[d.pts.length-1], dt=Math.max(1, b[1]-a[1]);
+  var v=(b[1]-a[1])>120 ? 0 : (b[0]-a[0])/dt;            // px per ms; a pause cancels the fling
+  var proj=SHEET.y+v*240, best="mid", bd=1e9;
+  ["full","mid","low"].forEach(function(n){ var dd=Math.abs(snapY(n)-proj); if (dd<bd){ bd=dd; best=n } });
+  snapTo(best);
+}
+SHEET.el.addEventListener("touchend", sheetRelease);
+SHEET.el.addEventListener("touchcancel", sheetRelease);
+// a tap on the grip steps up; at the top it steps back to the map
 $("#sheetgrip").addEventListener("click", function(){
-  var top=$("#mhero").offsetHeight - 24;
-  scrollTo({top: scrollY < top/2 ? top : 0, behavior: CALM ? "auto" : "smooth"});
+  snapTo(SHEET.snap==="low" ? "mid" : SHEET.snap==="mid" ? "full" : "mid");
 });
+// resting low, the card is one big handle: a tap anywhere on it opens it
+SHEET.el.addEventListener("click", function(e){
+  if (SHEET.snap==="low" && !e.target.closest("button, a, input, select")) snapTo("mid");
+});
+addEventListener("resize", function(){ if (PHONE.matches) snapTo(SHEET.snap, false) });
 function applySideFilter(){
   var f=$("#sidefilter"), q=f ? f.value.trim().toLowerCase() : "", box=$("#dunlist"), head=null, any=false;
   [].forEach.call(box.children, function(b){
